@@ -7,33 +7,37 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MotorConstants;
 
 public class Drivetrain extends SubsystemBase {
-  private CANSparkMax frontLeftMotor = new CANSparkMax(MotorConstants.frontLeft, MotorType.kBrushless);
-  private CANSparkMax frontRightMotor = new CANSparkMax(MotorConstants.frontRight, MotorType.kBrushless);
-  private CANSparkMax backLeftMotor = new CANSparkMax(MotorConstants.backLeft, MotorType.kBrushless);
-  private CANSparkMax backRightMotor = new CANSparkMax(MotorConstants.backRight, MotorType.kBrushless);
-
-  // DEPRECATED??
-  // MotorControllerGroup leftMotors = new MotorControllerGroup(frontLeftMotor, backLeftMotor);
+  // There is a different system used than previous years because MotorControlGroup is deprecated :(.
+  // We set a motor to a leader, and make followers follow the leader in the constructor.  
+  // Front wheels are leaders for no reason because its redundant
+  private CANSparkMax LeftLeader = new CANSparkMax(MotorConstants.frontLeft, MotorType.kBrushless);
+  private CANSparkMax RightLeader = new CANSparkMax(MotorConstants.frontRight, MotorType.kBrushless);
+  private CANSparkMax LeftFollower = new CANSparkMax(MotorConstants.backLeft, MotorType.kBrushless);
+  private CANSparkMax RightFollower = new CANSparkMax(MotorConstants.backRight, MotorType.kBrushless);
   
   public void setLeftMotors (double volt) {
-    frontLeftMotor.set(volt);
-    backLeftMotor.set(volt);
+    LeftLeader.set(volt);
   }
   public void setRightMotors (double volt) {
-    frontRightMotor.set(volt);
-    backRightMotor.set(volt);
+    RightLeader.set(volt);
   }
+
+  public DifferentialDrive arcadeDrive = new DifferentialDrive(LeftLeader, RightLeader);
 
   /** Creates a new Drivetrain. */
   public Drivetrain() {
-    frontLeftMotor.setInverted(true);
-    backLeftMotor.setInverted(true);
-    frontRightMotor.setInverted(false);
-    backRightMotor.setInverted(false);
+    LeftFollower.follow(LeftLeader);
+    RightFollower.follow(RightLeader);
+
+    LeftLeader.setInverted(true);
+    LeftFollower.setInverted(true);
+    RightLeader.setInverted(false);
+    RightFollower.setInverted(false);
   }
 
   // runs the motors
