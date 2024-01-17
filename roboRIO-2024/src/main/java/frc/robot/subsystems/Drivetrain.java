@@ -4,10 +4,25 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.sensors.PigeonIMU;
+import com.ctre.phoenix.sensors.WPI_PigeonIMU;
+import com.ctre.phoenix6.hardware.Pigeon2;
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.math.kinematics.Kinematics;
+import edu.wpi.first.units.BaseUnits;
+import edu.wpi.first.units.Distance;
+import edu.wpi.first.units.Measure;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.MotorConstants;
 
 public class Drivetrain extends SubsystemBase {
@@ -16,9 +31,11 @@ public class Drivetrain extends SubsystemBase {
   private CANSparkMax backLeftMotor = new CANSparkMax(MotorConstants.backLeft, MotorType.kBrushless);
   private CANSparkMax backRightMotor = new CANSparkMax(MotorConstants.backRight, MotorType.kBrushless);
 
+  private PigeonIMU gyro = new PigeonIMU(Constants.PIGEON_PORT);
+
   // DEPRECATED??
   // MotorControllerGroup leftMotors = new MotorControllerGroup(frontLeftMotor, backLeftMotor);
-  
+
   public void setLeftMotors (double volt) {
     frontLeftMotor.set(volt);
     backLeftMotor.set(volt);
@@ -30,6 +47,7 @@ public class Drivetrain extends SubsystemBase {
 
   /** Creates a new Drivetrain. */
   public Drivetrain() {
+    
     frontLeftMotor.setInverted(true);
     backLeftMotor.setInverted(true);
     frontRightMotor.setInverted(false);
@@ -44,6 +62,20 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    
   }
+
+  public PigeonIMU getGyro() {
+    return gyro;
+  }
+
+  public RelativeEncoder getRightEncoder() {
+    return frontRightMotor.getEncoder();
+  }
+
+
+  public RelativeEncoder getLeftEncoder() {
+    return frontLeftMotor.getEncoder();
+  }
+  
 }
