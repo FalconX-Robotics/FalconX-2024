@@ -20,6 +20,8 @@ import edu.wpi.first.units.Unit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.Settings;
 
 /**<h1>i hate this **/
 public class Odometry extends SubsystemBase{
@@ -122,5 +124,9 @@ public class Odometry extends SubsystemBase{
 
   public void driveChassisSpeeds(ChassisSpeeds chassisSpeeds) {
     setSpeeds(kinematics.toWheelSpeeds(chassisSpeeds));
+  }
+
+  public static boolean flipPaths() {
+    return Settings.team == Constants.TeamColors.RED;   
   }
 }

@@ -13,6 +13,7 @@ import frc.robot.subsystems.ExampleSubsystem;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -39,6 +40,7 @@ public class RobotContainer {
   final Drivetrain m_drivetrain = new Drivetrain();
   final TankDrive m_tankDrive = new TankDrive(m_drivetrain, xboxController);
   
+
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -83,6 +85,10 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
+    PathPlannerPath path = PathPlannerPath.fromPathFile("Example Path");
+    
+    return AutoBuilder.followPath(path);
+
+    // return autoChooser.getSelected();
   }
 }

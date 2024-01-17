@@ -15,6 +15,11 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static enum TeamColors {
+    RED,
+    BLUE
+}
+
   public static final double KITBOT_GEAR_RATIO = 8.45;
 
   //FIX THIS WHEN PIGEON IS ADDED
