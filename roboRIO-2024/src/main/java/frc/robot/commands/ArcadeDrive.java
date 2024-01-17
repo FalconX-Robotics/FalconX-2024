@@ -4,23 +4,20 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.ExampleSubsystem;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Settings.DriveController;
+import frc.robot.subsystems.Drivetrain;
 
-/** An example command that uses an example subsystem. */
-public class ExampleCommand extends Command {
-  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final ExampleSubsystem m_subsystem;
+public class ArcadeDrive extends Command {
+  XboxController m_xboxController;
+  Drivetrain m_drivetrain;
 
-  /**
-   * Creates a new ExampleCommand.
-   *
-   * @param subsystem The subsystem used by this command.
-   */
-  public ExampleCommand(ExampleSubsystem subsystem) {
-    m_subsystem = subsystem;
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(subsystem);
+  /** Creates a new ArcadeDrive. */
+  public ArcadeDrive(Drivetrain drivetrain, XboxController xboxController) {
+    m_xboxController = xboxController;
+    m_drivetrain = drivetrain;
+  addRequirements(drivetrain);
   }
 
   // Called when the command is initially scheduled.
@@ -29,7 +26,9 @@ public class ExampleCommand extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    m_drivetrain.arcadeDrive(DriveController.getSpeedJoystick(), DriveController.getRotationJoystick());
+  }
 
   // Called once the command ends or is interrupted.
   @Override
