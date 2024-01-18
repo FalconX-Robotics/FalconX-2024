@@ -5,11 +5,12 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.ArcadeDrive;
+import frc.robot.commands.CurvatureDrive;
 import frc.robot.commands.TankDrive;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.ExampleSubsystem;
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -26,13 +27,14 @@ public class RobotContainer {
   private final XboxController xboxController = new XboxController(OperatorConstants.kDriverControllerPort); 
 
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   final Drivetrain m_drivetrain = new Drivetrain();
   final TankDrive m_tankDrive = new TankDrive(m_drivetrain, xboxController);
-
+  final ArcadeDrive m_arcadeDrive = new ArcadeDrive(m_drivetrain, xboxController);
+  final CurvatureDrive m_curvatureDrive = new CurvatureDrive(m_drivetrain, xboxController);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    
+    DataLogManager.start();
+    DriverStation.startDataLog(DataLogManager.getLog());
     // Configure the trigger bindings
     configureBindings();
   }
@@ -47,7 +49,7 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    m_drivetrain.setDefaultCommand(m_tankDrive);
+    m_drivetrain.setDefaultCommand(m_curvatureDrive);
   }
 
   /**
@@ -57,6 +59,8 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
+    // return Autos.exampleAuto(m_exampleSubsystem);
+    // im goin to put a useless command here cause im annoyed by the err
+    return new Command() {};
   }
 }

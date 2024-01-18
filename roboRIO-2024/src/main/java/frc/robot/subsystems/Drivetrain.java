@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Settings;
 import frc.robot.Constants.MotorConstants;
 
 public class Drivetrain extends SubsystemBase {
@@ -27,8 +28,6 @@ public class Drivetrain extends SubsystemBase {
     RightLeader.set(volt);
   }
 
-  public DifferentialDrive arcadeDrive = new DifferentialDrive(LeftLeader, RightLeader);
-
   /** Creates a new Drivetrain. */
   public Drivetrain() {
     LeftFollower.follow(LeftLeader);
@@ -38,12 +37,24 @@ public class Drivetrain extends SubsystemBase {
     LeftFollower.setInverted(true);
     RightLeader.setInverted(false);
     RightFollower.setInverted(false);
+
+    m_drive.setDeadband(Settings.DriveController.driveControllerDeadband);
   }
 
   // runs the motors
   public void setMotors(double leftVolt, double rightVolt) {
     setLeftMotors(leftVolt);
     setRightMotors(rightVolt);
+  }
+
+  public DifferentialDrive m_drive = new DifferentialDrive(LeftLeader, RightLeader);
+
+  public void arcadeDrive (double speed, double rotation){
+    m_drive.arcadeDrive(speed, rotation);
+  }
+
+  public void curvatureDrive (double speed, double rotation, boolean allowTurnInPlace){
+    m_drive.curvatureDrive(speed, rotation, allowTurnInPlace);
   }
 
   @Override
