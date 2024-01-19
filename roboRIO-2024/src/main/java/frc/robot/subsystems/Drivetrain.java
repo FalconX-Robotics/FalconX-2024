@@ -37,8 +37,6 @@ public class Drivetrain extends SubsystemBase {
     LeftFollower.setInverted(true);
     RightLeader.setInverted(false);
     RightFollower.setInverted(false);
-
-    m_drive.setDeadband(Settings.DriveController.driveControllerDeadband);
   }
 
   // runs the motors

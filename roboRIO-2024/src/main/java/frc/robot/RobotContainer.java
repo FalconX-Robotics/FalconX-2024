@@ -30,6 +30,8 @@ public class RobotContainer {
   private final XboxController noteController = new XboxController(OperatorConstants.kShooterControllerPort);
 
   // The robot's subsystems and commands are defined here...
+  final Settings settings = new Settings(driveController, noteController);
+
   final Drivetrain m_drivetrain = new Drivetrain();
   final TankDrive m_tankDrive = new TankDrive(m_drivetrain, driveController);
   final ArcadeDrive m_arcadeDrive = new ArcadeDrive(m_drivetrain, driveController);
