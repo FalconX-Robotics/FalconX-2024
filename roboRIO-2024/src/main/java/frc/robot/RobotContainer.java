@@ -9,6 +9,8 @@ import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.CurvatureDrive;
 import frc.robot.commands.TankDrive;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
@@ -24,13 +26,18 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final XboxController xboxController = new XboxController(OperatorConstants.kDriverControllerPort); 
+  private final XboxController driveController = new XboxController(OperatorConstants.kDriverControllerPort);
+  private final XboxController noteController = new XboxController(OperatorConstants.kShooterControllerPort);
 
   // The robot's subsystems and commands are defined here...
   final Drivetrain m_drivetrain = new Drivetrain();
-  final TankDrive m_tankDrive = new TankDrive(m_drivetrain, xboxController);
-  final ArcadeDrive m_arcadeDrive = new ArcadeDrive(m_drivetrain, xboxController);
-  final CurvatureDrive m_curvatureDrive = new CurvatureDrive(m_drivetrain, xboxController);
+  final TankDrive m_tankDrive = new TankDrive(m_drivetrain, driveController);
+  final ArcadeDrive m_arcadeDrive = new ArcadeDrive(m_drivetrain, driveController);
+  final CurvatureDrive m_curvatureDrive = new CurvatureDrive(m_drivetrain, driveController);
+  
+  final Shooter m_shooter = new Shooter();
+  final Intake m_intake = new Intake();
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     DataLogManager.start();
