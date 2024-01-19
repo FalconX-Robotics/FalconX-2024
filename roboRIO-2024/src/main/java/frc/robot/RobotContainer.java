@@ -10,6 +10,7 @@ import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.TankDrive;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.OdometrySubsystem;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -36,9 +37,10 @@ public class RobotContainer {
   private final XboxController xboxController = new XboxController(OperatorConstants.kDriverControllerPort); 
 
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
-  final Drivetrain m_drivetrain = new Drivetrain();
-  final TankDrive m_tankDrive = new TankDrive(m_drivetrain, xboxController);
+  // private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+  public final Drivetrain m_drivetrain = new Drivetrain();
+  public final TankDrive m_tankDrive = new TankDrive(m_drivetrain, xboxController);
+  public final OdometrySubsystem m_odometry = new OdometrySubsystem(m_drivetrain);
   
 
 
@@ -46,6 +48,7 @@ public class RobotContainer {
   public RobotContainer() {
 
     autoChooser = AutoBuilder.buildAutoChooser();
+    autoChooser.addOption("Test Auto", AutoBuilder.buildAuto("Test auto"));
 
         // Another option that allows you to specify the default auto by its name
         // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
@@ -66,15 +69,6 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    new Trigger(m_exampleSubsystem::exampleCondition)
-        .onTrue(new ExampleCommand(m_exampleSubsystem));
-
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
-    while (xboxController.getBButton()) {
-      m_exampleSubsystem.exampleMethodCommand();
-    }
     m_drivetrain.setDefaultCommand(m_tankDrive);
   }
   
@@ -85,10 +79,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    PathPlannerPath path = PathPlannerPath.fromPathFile("Example Path");
-    
-    return AutoBuilder.followPath(path);
-
-    // return autoChooser.getSelected();
+    // PathPlannerPath path = PathPlannerAuto.getPathGroupFromAutoFile("Test auto");
+  
+    return autoChooser.getSelected();
   }
 }

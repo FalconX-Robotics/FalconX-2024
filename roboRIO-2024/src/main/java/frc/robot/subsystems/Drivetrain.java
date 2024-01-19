@@ -37,12 +37,12 @@ public class Drivetrain extends SubsystemBase {
   // MotorControllerGroup leftMotors = new MotorControllerGroup(frontLeftMotor, backLeftMotor);
 
   public void setLeftMotors (double volt) {
-    frontLeftMotor.set(volt);
-    backLeftMotor.set(volt);
+    frontLeftMotor.setVoltage(volt);
+    backLeftMotor.setVoltage(volt);
   }
   public void setRightMotors (double volt) {
-    frontRightMotor.set(volt);
-    backRightMotor.set(volt);
+    frontRightMotor.setVoltage(volt);
+    backRightMotor.setVoltage(volt);
   }
 
   /** Creates a new Drivetrain. */
@@ -52,6 +52,11 @@ public class Drivetrain extends SubsystemBase {
     backLeftMotor.setInverted(true);
     frontRightMotor.setInverted(false);
     backRightMotor.setInverted(false);
+
+    frontLeftMotor.getEncoder().setVelocityConversionFactor(4. * Constants.NESSIE_GEAR_RATIO);
+    backLeftMotor.getEncoder().setVelocityConversionFactor(4. * Constants.NESSIE_GEAR_RATIO);
+    frontRightMotor.getEncoder().setVelocityConversionFactor(4. * Constants.NESSIE_GEAR_RATIO);
+    backRightMotor.getEncoder().setVelocityConversionFactor(4. * Constants.NESSIE_GEAR_RATIO); // m/s
   }
 
   // runs the motors
