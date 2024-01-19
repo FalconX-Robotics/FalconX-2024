@@ -15,11 +15,18 @@ package frc.robot;
 public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
+    public static final int kShooterControllerPort = 1;
   }
   public static class MotorConstants {
     public static final int frontLeft = 0;
     public static final int frontRight = 0;
     public static final int backLeft = 0;
     public static final int backRight = 0;
+
+    public static final int bottomIntake = 0;
+    public static final int topIntake = 0;
+    public static final int shooter = 0;
+    public static final int shooterArm = 0;
   }
+  public static final int gyroId = 42;
 }

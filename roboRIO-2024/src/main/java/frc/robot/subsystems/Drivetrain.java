@@ -20,7 +20,7 @@ public class Drivetrain extends SubsystemBase {
   private CANSparkMax RightLeader = new CANSparkMax(MotorConstants.frontRight, MotorType.kBrushless);
   private CANSparkMax LeftFollower = new CANSparkMax(MotorConstants.backLeft, MotorType.kBrushless);
   private CANSparkMax RightFollower = new CANSparkMax(MotorConstants.backRight, MotorType.kBrushless);
-  
+
   public void setLeftMotors (double volt) {
     LeftLeader.set(volt);
   }
