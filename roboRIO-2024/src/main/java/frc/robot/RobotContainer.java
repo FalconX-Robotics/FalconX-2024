@@ -5,11 +5,14 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.ArcadeDrive;
+import frc.robot.commands.CurvatureDrive;
 import frc.robot.commands.TankDrive;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.subsystems.OdometrySubsystem;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -34,12 +37,19 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final XboxController xboxController = new XboxController(OperatorConstants.kDriverControllerPort); 
+  private final XboxController driveController = new XboxController(OperatorConstants.kDriverControllerPort);
+  private final XboxController noteController = new XboxController(OperatorConstants.kShooterControllerPort);
 
   // The robot's subsystems and commands are defined here...
-  // private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+  // final Settings m_settings = new Settings(driveController, noteController);
+
   public final Drivetrain m_drivetrain = new Drivetrain();
-  public final TankDrive m_tankDrive = new TankDrive(m_drivetrain, xboxController);
+  public final TankDrive m_tankDrive = new TankDrive(m_drivetrain, driveController);
+  final ArcadeDrive m_arcadeDrive = new ArcadeDrive(m_drivetrain, m_settings);
+  final CurvatureDrive m_curvatureDrive = new CurvatureDrive(m_drivetrain, m_settings);
+  
+  final Shooter m_shooter = new Shooter();
+  final Intake m_intake = new Intake();
   public final OdometrySubsystem m_odometry = new OdometrySubsystem(m_drivetrain);
   
 
@@ -54,7 +64,8 @@ public class RobotContainer {
         // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
-    
+    DataLogManager.start();
+    DriverStation.startDataLog(DataLogManager.getLog());
     // Configure the trigger bindings
     configureBindings();
   }
@@ -69,7 +80,7 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    m_drivetrain.setDefaultCommand(m_tankDrive);
+    m_drivetrain.setDefaultCommand(m_curvatureDrive);
   }
   
 
@@ -81,6 +92,8 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // PathPlannerPath path = PathPlannerAuto.getPathGroupFromAutoFile("Test auto");
   
-    return autoChooser.getSelected();
+    // return autoChooser.getSelected();
+    // im goin to put a useless command here cause im annoyed by the err
+    return new Command() {};
   }
 }

@@ -4,23 +4,22 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Drivetrain;
+import frc.robot.Settings;
+import frc.robot.subsystems.Intake;
 
-public class TankDrive extends Command {
-  /** Creates a new TankDrive. */
-  private final Drivetrain m_drivetrain;
-  private final XboxController m_xboxController;
+public class RunIntake extends Command {
+  Intake m_intake;
+  Settings m_settings;
+  double volt;
 
-  public TankDrive(Drivetrain drivetrain, XboxController xboxController) {
-    m_drivetrain = drivetrain;
-    m_xboxController = xboxController;
-    addRequirements(m_drivetrain);
+  /** Creates a new RunIntake. */
+  public RunIntake(Intake intake, Settings settings, double volt) {
+    m_intake = intake;
+    m_settings = settings;
+    this.volt = volt;
+    addRequirements(intake);
   }
-
-  // logan what this
-  // public 
 
   // Called when the command is initially scheduled.
   @Override
@@ -29,16 +28,18 @@ public class TankDrive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_drivetrain.setMotors(m_xboxController.getLeftY(), m_xboxController.getRightY());
+    m_intake.setSparks(volt);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_intake.setSparks(0);
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return !m_settings.noteController.getShooterButton();
   }
 }

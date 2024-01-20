@@ -26,45 +26,30 @@ import frc.robot.Constants;
 import frc.robot.Constants.MotorConstants;
 
 public class Drivetrain extends SubsystemBase {
-  private CANSparkMax frontLeftMotor = new CANSparkMax(MotorConstants.frontLeft, MotorType.kBrushless);
-  private CANSparkMax frontRightMotor = new CANSparkMax(MotorConstants.frontRight, MotorType.kBrushless);
-  private CANSparkMax backLeftMotor = new CANSparkMax(MotorConstants.backLeft, MotorType.kBrushless);
-  private CANSparkMax backRightMotor = new CANSparkMax(MotorConstants.backRight, MotorType.kBrushless);
+  // There is a different system used than previous years because MotorControlGroup is deprecated :(.
+  // We set a motor to a leader, and make followers follow the leader in the constructor.  
+  // Front wheels are leaders for no reason because its redundant
+  private CANSparkMax LeftLeader = new CANSparkMax(MotorConstants.frontLeft, MotorType.kBrushless);
+  private CANSparkMax RightLeader = new CANSparkMax(MotorConstants.frontRight, MotorType.kBrushless);
+  private CANSparkMax LeftFollower = new CANSparkMax(MotorConstants.backLeft, MotorType.kBrushless);
+  private CANSparkMax RightFollower = new CANSparkMax(MotorConstants.backRight, MotorType.kBrushless);
 
-  private WPI_PigeonIMU gyro = new WPI_PigeonIMU(Constants.PIGEON_PORT);
-
-  // DEPRECATED??
-  // MotorControllerGroup leftMotors = new MotorControllerGroup(frontLeftMotor, backLeftMotor);
-
-  public void setLeftMotors (double amount) {
-    frontLeftMotor.set(amount);
-    backLeftMotor.set(amount);
+  public void setLeftMotors (double volt) {
+    LeftLeader.set(volt);
   }
-  public void setRightMotors (double amount) {
-    frontRightMotor.set(amount);
-    backRightMotor.set(amount);
+  public void setRightMotors (double volt) {
+    RightLeader.set(volt);
   }
 
   /** Creates a new Drivetrain. */
   public Drivetrain() {
-    
-    frontLeftMotor.setInverted(true);
-    backLeftMotor.setInverted(true);
-    frontRightMotor.setInverted(false);
-    backRightMotor.setInverted(false);
+    LeftFollower.follow(LeftLeader);
+    RightFollower.follow(RightLeader);
 
-    setMotorConversionFactors();
-  }
-  private void setMotorConversionFactors() {
-    frontLeftMotor.getEncoder().setVelocityConversionFactor(4. * Constants.NESSIE_GEAR_RATIO);
-    backLeftMotor.getEncoder().setVelocityConversionFactor(4. * Constants.NESSIE_GEAR_RATIO);
-    frontRightMotor.getEncoder().setVelocityConversionFactor(4. * Constants.NESSIE_GEAR_RATIO);
-    backRightMotor.getEncoder().setVelocityConversionFactor(4. * Constants.NESSIE_GEAR_RATIO); // m/s
-
-    frontLeftMotor.getEncoder().setPositionConversionFactor(4. * Constants.NESSIE_GEAR_RATIO);
-    backLeftMotor.getEncoder().setPositionConversionFactor(4. * Constants.NESSIE_GEAR_RATIO);
-    frontRightMotor.getEncoder().setPositionConversionFactor(4. * Constants.NESSIE_GEAR_RATIO);
-    backRightMotor.getEncoder().setPositionConversionFactor(4. * Constants.NESSIE_GEAR_RATIO); // m/s
+    LeftLeader.setInverted(true);
+    LeftFollower.setInverted(true);
+    RightLeader.setInverted(false);
+    RightFollower.setInverted(false);
   }
 
   // runs the motors
@@ -79,13 +64,31 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void setLeftMotorsVoltage(double voltage) {
-    frontLeftMotor.setVoltage(voltage);
-    backLeftMotor.setVoltage(voltage);
+    LeftLeader.setVoltage(voltage);
   }
 
   public void setRightMotorsVoltage(double voltage) {
-    frontRightMotor.setVoltage(voltage);
-    backRightMotor.setVoltage(voltage);
+    RightLeader.setVoltage(voltage);
+  }
+
+  public DifferentialDrive m_drive = new DifferentialDrive(LeftLeader, RightLeader);
+
+  public void arcadeDrive (double speed, double rotation){
+    m_drive.arcadeDrive(speed, rotation);
+  }
+
+  public void curvatureDrive (double speed, double rotation, boolean allowTurnInPlace){
+    m_drive.curvatureDrive(speed, rotation, allowTurnInPlace);
+  }
+
+  public DifferentialDrive m_drive = new DifferentialDrive(LeftLeader, RightLeader);
+
+  public void arcadeDrive (double speed, double rotation){
+    m_drive.arcadeDrive(speed, rotation);
+  }
+
+  public void curvatureDrive (double speed, double rotation, boolean allowTurnInPlace){
+    m_drive.curvatureDrive(speed, rotation, allowTurnInPlace);
   }
 
   @Override

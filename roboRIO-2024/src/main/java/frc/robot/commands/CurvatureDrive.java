@@ -6,30 +6,32 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Settings;
 import frc.robot.subsystems.Drivetrain;
 
-public class TankDrive extends Command {
-  /** Creates a new TankDrive. */
-  private final Drivetrain m_drivetrain;
-  private final XboxController m_xboxController;
+public class CurvatureDrive extends Command {
+  XboxController m_xboxController;
+  Drivetrain m_drivetrain;
+  Settings m_settings;
 
-  public TankDrive(Drivetrain drivetrain, XboxController xboxController) {
+  /** Creates a new ArcadeDrive. */
+  public CurvatureDrive(Drivetrain drivetrain, Settings settings) {
+    m_settings = settings;
     m_drivetrain = drivetrain;
-    m_xboxController = xboxController;
-    addRequirements(m_drivetrain);
+    addRequirements(drivetrain);
   }
-
-  // logan what this
-  // public 
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {}
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_drivetrain.setMotors(m_xboxController.getLeftY(), m_xboxController.getRightY());
+    m_drivetrain.curvatureDrive(
+      m_settings.driveController.getSpeedJoystick(), 
+      m_settings.driveController.getRotationJoystick(),
+      m_settings.driveController.getTurnInPlaceButton()
+    );
   }
 
   // Called once the command ends or is interrupted.
