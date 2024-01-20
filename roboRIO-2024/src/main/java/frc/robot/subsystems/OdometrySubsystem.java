@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
+import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
@@ -25,13 +26,13 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.Settings;
 
-/**<h1>i hate this **/
+/**<img src="https://imageio.forbes.com/specials-images/imageserve/62bf4a76be9035384b5bfc2e/The-Dad-Gang-Founder-and-Author-Sean-Williams/960x0.jpg?format=jpg&width=1440"> **/
 public class OdometrySubsystem extends SubsystemBase{
 
 
   Pose2d pose = new Pose2d();
 
-  PigeonIMU gyro;
+  WPI_PigeonIMU gyro;
   RelativeEncoder leftEncoder;
   RelativeEncoder rightEncoder;
   Drivetrain drivetrain;
@@ -79,13 +80,13 @@ public class OdometrySubsystem extends SubsystemBase{
     }
 
   DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(
-    new Rotation2d(getAngle()),
+    getRotation(),
     leftEncoder.getPosition(), rightEncoder.getPosition(),
     new Pose2d(5.0, 13.5, new Rotation2d()));
 
   @Override
   public void periodic() {
-    pose = m_odometry.update(new Rotation2d(getAngle()),
+    pose = m_odometry.update(getRotation(),
     leftEncoder.getPosition(),
     rightEncoder.getPosition());
   }
@@ -103,8 +104,8 @@ public class OdometrySubsystem extends SubsystemBase{
   }
 
   public ChassisSpeeds getCurrentSpeeds() {
-    kinematics.toChassisSpeeds(kinematics)
-    return new ChassisSpeeds(leftEncoder.getVelocity(), rightEncoder.getVelocity(), getAn);
+    var wheelSpeeds = new DifferentialDriveWheelSpeeds(leftEncoder.getVelocity(), rightEncoder.getVelocity());
+    return kinematics.toChassisSpeeds(wheelSpeeds);
   }
 
   public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
@@ -121,12 +122,13 @@ public class OdometrySubsystem extends SubsystemBase{
     setSpeeds(kinematics.toWheelSpeeds(chassisSpeeds));
   }
 
-  private double getAngle() {
-    return BaseUnits.Angle.convertFrom(gyro.getYaw(), Units.Degrees);
+  private Rotation2d getRotation() {
+    return gyro.getRotation2d();
   }
 
   private double getAngularVelocity() {
-    return gyro.
+    return gyro.getRate();
   }
   //4 inches
+  //6 inches nessie
 }

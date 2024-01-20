@@ -31,18 +31,18 @@ public class Drivetrain extends SubsystemBase {
   private CANSparkMax backLeftMotor = new CANSparkMax(MotorConstants.backLeft, MotorType.kBrushless);
   private CANSparkMax backRightMotor = new CANSparkMax(MotorConstants.backRight, MotorType.kBrushless);
 
-  private PigeonIMU gyro = new PigeonIMU(Constants.PIGEON_PORT);
+  private WPI_PigeonIMU gyro = new WPI_PigeonIMU(Constants.PIGEON_PORT);
 
   // DEPRECATED??
   // MotorControllerGroup leftMotors = new MotorControllerGroup(frontLeftMotor, backLeftMotor);
 
-  public void setLeftMotors (double volt) {
-    frontLeftMotor.setVoltage(volt);
-    backLeftMotor.setVoltage(volt);
+  public void setLeftMotors (double amount) {
+    frontLeftMotor.set(amount);
+    backLeftMotor.set(amount);
   }
-  public void setRightMotors (double volt) {
-    frontRightMotor.setVoltage(volt);
-    backRightMotor.setVoltage(volt);
+  public void setRightMotors (double amount) {
+    frontRightMotor.set(amount);
+    backRightMotor.set(amount);
   }
 
   /** Creates a new Drivetrain. */
@@ -53,16 +53,39 @@ public class Drivetrain extends SubsystemBase {
     frontRightMotor.setInverted(false);
     backRightMotor.setInverted(false);
 
+    setMotorConversionFactors();
+  }
+  private void setMotorConversionFactors() {
     frontLeftMotor.getEncoder().setVelocityConversionFactor(4. * Constants.NESSIE_GEAR_RATIO);
     backLeftMotor.getEncoder().setVelocityConversionFactor(4. * Constants.NESSIE_GEAR_RATIO);
     frontRightMotor.getEncoder().setVelocityConversionFactor(4. * Constants.NESSIE_GEAR_RATIO);
     backRightMotor.getEncoder().setVelocityConversionFactor(4. * Constants.NESSIE_GEAR_RATIO); // m/s
+
+    frontLeftMotor.getEncoder().setPositionConversionFactor(4. * Constants.NESSIE_GEAR_RATIO);
+    backLeftMotor.getEncoder().setPositionConversionFactor(4. * Constants.NESSIE_GEAR_RATIO);
+    frontRightMotor.getEncoder().setPositionConversionFactor(4. * Constants.NESSIE_GEAR_RATIO);
+    backRightMotor.getEncoder().setPositionConversionFactor(4. * Constants.NESSIE_GEAR_RATIO); // m/s
   }
 
   // runs the motors
-  public void setMotors(double leftVolt, double rightVolt) {
-    setLeftMotors(leftVolt);
-    setRightMotors(rightVolt);
+  public void setMotors(double left, double right) {
+    setLeftMotors(left);
+    setRightMotors(right);
+  }
+
+  public void setMotorVoltage() {
+    setLeftMotorsVoltage(0);
+    setRightMotorsVoltage(0);
+  }
+
+  public void setLeftMotorsVoltage(double voltage) {
+    frontLeftMotor.setVoltage(voltage);
+    backLeftMotor.setVoltage(voltage);
+  }
+
+  public void setRightMotorsVoltage(double voltage) {
+    frontRightMotor.setVoltage(voltage);
+    backRightMotor.setVoltage(voltage);
   }
 
   @Override
@@ -70,7 +93,7 @@ public class Drivetrain extends SubsystemBase {
     
   }
 
-  public PigeonIMU getGyro() {
+  public WPI_PigeonIMU getGyro() {
     return gyro;
   }
 
