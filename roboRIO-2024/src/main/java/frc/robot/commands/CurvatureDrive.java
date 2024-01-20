@@ -6,16 +6,17 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Settings.DriveController;
+import frc.robot.Settings;
 import frc.robot.subsystems.Drivetrain;
 
 public class CurvatureDrive extends Command {
   XboxController m_xboxController;
   Drivetrain m_drivetrain;
+  Settings m_settings;
 
   /** Creates a new ArcadeDrive. */
-  public CurvatureDrive(Drivetrain drivetrain, XboxController xboxController) {
-    m_xboxController = xboxController;
+  public CurvatureDrive(Drivetrain drivetrain, Settings settings) {
+    m_settings = settings;
     m_drivetrain = drivetrain;
     addRequirements(drivetrain);
   }
@@ -27,9 +28,9 @@ public class CurvatureDrive extends Command {
   @Override
   public void execute() {
     m_drivetrain.curvatureDrive(
-      DriveController.getSpeedJoystick(), 
-      DriveController.getRotationJoystick(),
-      DriveController.getTurnInPlaceButton()
+      m_settings.driveController.getSpeedJoystick(), 
+      m_settings.driveController.getRotationJoystick(),
+      m_settings.driveController.getTurnInPlaceButton()
     );
   }
 

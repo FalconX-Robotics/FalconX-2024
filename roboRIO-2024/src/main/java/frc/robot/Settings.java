@@ -2,13 +2,15 @@ package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
-
+ 
 public class Settings {
     private XboxController m_driveController, m_noteController;
     Settings (XboxController driveController, XboxController noteController){
         m_driveController = driveController;
         m_noteController = noteController;
     }
+    public DriveController driveController = new DriveController();
+    public NoteController noteController = new NoteController();
 
     public class DriveController {          
         public boolean getTurnInPlaceButton () { return m_driveController.getAButtonPressed();}

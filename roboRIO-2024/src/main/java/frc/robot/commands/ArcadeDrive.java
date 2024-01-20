@@ -4,18 +4,16 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Settings.DriveController;
+import frc.robot.Settings;
 import frc.robot.subsystems.Drivetrain;
 
 public class ArcadeDrive extends Command {
-  XboxController m_xboxController;
+  Settings m_settings;
   Drivetrain m_drivetrain;
-
   /** Creates a new ArcadeDrive. */
-  public ArcadeDrive(Drivetrain drivetrain, XboxController xboxController) {
-    m_xboxController = xboxController;
+  public ArcadeDrive(Drivetrain drivetrain, Settings settings) {
+    m_settings = settings;
     m_drivetrain = drivetrain;
   addRequirements(drivetrain);
   }
@@ -27,7 +25,7 @@ public class ArcadeDrive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_drivetrain.arcadeDrive(DriveController.getSpeedJoystick(), DriveController.getRotationJoystick());
+    m_drivetrain.arcadeDrive(m_settings.driveController.getSpeedJoystick(), m_settings.driveController.getRotationJoystick());
   }
 
   // Called once the command ends or is interrupted.
