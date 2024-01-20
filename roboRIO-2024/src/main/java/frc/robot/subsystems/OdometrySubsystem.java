@@ -1,10 +1,7 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.RelativeEncoder;
 
@@ -16,25 +13,27 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.BaseUnits;
-import edu.wpi.first.units.Unit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
-import frc.robot.Settings;
+import frc.robot.Robot;
+import frc.robot.simulation.RelativeEncoderSim;
 
-/**<img src="https://imageio.forbes.com/specials-images/imageserve/62bf4a76be9035384b5bfc2e/The-Dad-Gang-Founder-and-Author-Sean-Williams/960x0.jpg?format=jpg&width=1440"> **/
-public class OdometrySubsystem extends SubsystemBase{
+public class OdometrySubsystem {
 
 
   Pose2d pose = new Pose2d();
 
   WPI_PigeonIMU gyro;
-  RelativeEncoder leftEncoder;
-  RelativeEncoder rightEncoder;
+  RelativeEncoder m_leftEncoder;
+  RelativeEncoder m_rightEncoder;
   Drivetrain drivetrain;
     
   Field2d field2d = new Field2d();
@@ -49,14 +48,14 @@ public class OdometrySubsystem extends SubsystemBase{
     new DifferentialDriveKinematics(kTrackWidth);
 
     
-  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(1, 3);
+  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0, 0);
     
     // constructor so i can find in in the wall of code
   public OdometrySubsystem (Drivetrain drivetrain) {
       this.drivetrain = drivetrain;
       gyro = drivetrain.getGyro();
-      leftEncoder = drivetrain.getLeftEncoder();
-      rightEncoder = drivetrain.getRightEncoder();
+      m_leftEncoder = drivetrain.getLeftEncoder();
+      m_rightEncoder = drivetrain.getRightEncoder();
 
       AutoBuilder.configureRamsete(
         this::getPose, // Robot pose supplier
@@ -75,20 +74,27 @@ public class OdometrySubsystem extends SubsystemBase{
           }
           return false;
         },
-        this // Reference to this subsystem to set requirements
+        drivetrain // Reference to this subsystem to set requirements
         );
+
+        if (Robot.isSimulation()) {
+          m_leftEncoder = new RelativeEncoderSim();
+          m_rightEncoder = new RelativeEncoderSim();
+        }
+        m_odometry = new DifferentialDriveOdometry(
+          getRotation(),
+          m_leftEncoder.getPosition(), m_rightEncoder.getPosition(),
+          new Pose2d(1.94, 3.79, new Rotation2d()));
     }
 
-  DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(
-    getRotation(),
-    leftEncoder.getPosition(), rightEncoder.getPosition(),
-    new Pose2d(5.0, 13.5, new Rotation2d()));
+  DifferentialDriveOdometry m_odometry;
 
-  @Override
-  public void periodic() {
+  public void  periodic() {
     pose = m_odometry.update(getRotation(),
-    leftEncoder.getPosition(),
-    rightEncoder.getPosition());
+    m_leftEncoder.getPosition(),
+    m_rightEncoder.getPosition());
+
+    field2d.setRobotPose(pose);
   }
   
   public void resetPose(Pose2d newPose) {
@@ -104,7 +110,7 @@ public class OdometrySubsystem extends SubsystemBase{
   }
 
   public ChassisSpeeds getCurrentSpeeds() {
-    var wheelSpeeds = new DifferentialDriveWheelSpeeds(leftEncoder.getVelocity(), rightEncoder.getVelocity());
+    var wheelSpeeds = new DifferentialDriveWheelSpeeds(m_leftEncoder.getVelocity(), m_rightEncoder.getVelocity());
     return kinematics.toChassisSpeeds(wheelSpeeds);
   }
 
@@ -112,10 +118,10 @@ public class OdometrySubsystem extends SubsystemBase{
     final double leftFeedforward = feedforward.calculate(speeds.leftMetersPerSecond);
     final double rightFeedforward = feedforward.calculate(speeds.rightMetersPerSecond);
     final double leftOutput =
-        leftController.calculate(leftEncoder.getVelocity(), speeds.leftMetersPerSecond);
+        leftController.calculate(m_leftEncoder.getVelocity(), speeds.leftMetersPerSecond);
     final double rightOutput =
-        rightController.calculate(rightEncoder.getVelocity(), speeds.rightMetersPerSecond);
-    drivetrain.setMotors(leftOutput + leftFeedforward, rightOutput + rightFeedforward);
+        rightController.calculate(m_rightEncoder.getVelocity(), speeds.rightMetersPerSecond);
+    drivetrain.setMotorVoltage(leftOutput + leftFeedforward, rightOutput + rightFeedforward);
   }
 
   public void driveChassisSpeeds(ChassisSpeeds chassisSpeeds) {
@@ -123,12 +129,28 @@ public class OdometrySubsystem extends SubsystemBase{
   }
 
   private Rotation2d getRotation() {
+    if (Robot.isSimulation()) return simulationGyro;
+
     return gyro.getRotation2d();
   }
+  //4 inches wheels
+  //nessie 6 inches wheels
 
-  private double getAngularVelocity() {
-    return gyro.getRate();
+
+  
+  Rotation2d simulationGyro = new Rotation2d();
+
+  public void simulationPeriodic() {
+    SmartDashboard.putData(field2d);
+
+    DifferentialDrivetrainSim simulation = drivetrain.getSimulation();
+    simulationGyro = simulation.getHeading();
+
+    RelativeEncoderSim leftEncoder = (RelativeEncoderSim) m_leftEncoder;
+    RelativeEncoderSim rightEncoder = (RelativeEncoderSim) m_rightEncoder;
+    leftEncoder.setSimulationPositionMeters(simulation.getLeftPositionMeters());
+    rightEncoder.setSimulationPositionMeters(simulation.getRightPositionMeters());
+    leftEncoder.setSimulationVelocityMetersPerSecond(simulation.getLeftVelocityMetersPerSecond());
+    rightEncoder.setSimulationVelocityMetersPerSecond(simulation.getRightVelocityMetersPerSecond());
   }
-  //4 inches
-  //6 inches nessie
 }

@@ -40,6 +40,7 @@ public class RobotContainer {
   private final XboxController driveController = new XboxController(OperatorConstants.kDriverControllerPort);
   private final XboxController noteController = new XboxController(OperatorConstants.kShooterControllerPort);
 
+  private final Settings m_settings = new Settings(driveController, noteController);
   // The robot's subsystems and commands are defined here...
   // final Settings m_settings = new Settings(driveController, noteController);
 
@@ -49,16 +50,13 @@ public class RobotContainer {
   final CurvatureDrive m_curvatureDrive = new CurvatureDrive(m_drivetrain, m_settings);
   
   final Shooter m_shooter = new Shooter();
-  final Intake m_intake = new Intake();
-  public final OdometrySubsystem m_odometry = new OdometrySubsystem(m_drivetrain);
-  
+  final Intake m_intake = new Intake();  
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
     autoChooser = AutoBuilder.buildAutoChooser();
-    autoChooser.addOption("Test Auto", AutoBuilder.buildAuto("Test auto"));
 
         // Another option that allows you to specify the default auto by its name
         // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
@@ -90,10 +88,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // PathPlannerPath path = PathPlannerAuto.getPathGroupFromAutoFile("Test auto");
-  
-    // return autoChooser.getSelected();
-    // im goin to put a useless command here cause im annoyed by the err
-    return new Command() {};
+    return autoChooser.getSelected();
   }
 }
