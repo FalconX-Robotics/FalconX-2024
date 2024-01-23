@@ -22,6 +22,8 @@ public final class Constants {
   //FIX THIS WHEN PIGEON IS ADDED
   public static final int PIGEON_PORT = 0;
 
+  public static final int LED_PORT = -1;
+
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
     public static final int kShooterControllerPort = 1;

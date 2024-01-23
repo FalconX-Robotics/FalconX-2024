@@ -11,6 +11,7 @@ import frc.robot.commands.PathfindToPose;
 import frc.robot.commands.TankDrive;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -49,6 +50,8 @@ public class RobotContainer {
   public final TankDrive m_tankDrive = new TankDrive(m_drivetrain, driveController);
   final ArcadeDrive m_arcadeDrive = new ArcadeDrive(m_drivetrain, m_settings);
   final CurvatureDrive m_curvatureDrive = new CurvatureDrive(m_drivetrain, m_settings);
+
+  public final LEDs m_leds = new LEDs();
   
   final Shooter m_shooter = new Shooter();
   final Intake m_intake = new Intake();  
