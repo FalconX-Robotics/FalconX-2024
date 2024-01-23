@@ -38,8 +38,8 @@ public class OdometrySubsystem {
     
   Field2d field2d = new Field2d();
 
-  PIDController leftController = new PIDController(0.2, 0, 0.02);
-  PIDController rightController = new PIDController(0.2, 0, 0.02);
+  PIDController leftController = new PIDController(0.4, 0, 0.02);
+  PIDController rightController = new PIDController(0.4, 0, 0.02);
 
   private static final double kTrackWidth = 0.381 * 2; // meters, this is the defauklt from wpilib
                                                        // change this later
@@ -84,7 +84,7 @@ public class OdometrySubsystem {
         m_odometry = new DifferentialDriveOdometry(
           getRotation(),
           m_leftEncoder.getPosition(), m_rightEncoder.getPosition(),
-          new Pose2d(1.94, 3.79, new Rotation2d()));
+          new Pose2d(1.94, 6.79, new Rotation2d()));
     }
 
   DifferentialDriveOdometry m_odometry;

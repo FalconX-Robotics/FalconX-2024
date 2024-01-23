@@ -33,9 +33,9 @@ public final class Constants {
     public static final int backRight = 3;
 
     public static final int bottomIntake = 4;
-    public static final int topIntake = 5;
-    public static final int shooter = 6;
-    public static final int shooterArm = 7;
+    public static final int topIntake = 5; // bodie says we need 1 for intake
+    public static final int shooter = 6; 
+    public static final int shooterArm = 7; //we might need another for arm
   }
   public static final int gyroId = 42;
 }

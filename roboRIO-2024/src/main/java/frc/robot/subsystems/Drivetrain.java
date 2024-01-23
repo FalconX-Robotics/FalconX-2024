@@ -89,8 +89,8 @@ public class Drivetrain extends SubsystemBase {
     System.out.println(leftVoltage + ", " + rightVoltage);
 
     if(Robot.isSimulation()) {
-      setLeftMotors(leftVoltage);
-      setRightMotors(rightVoltage);
+      setLeftMotors(leftVoltage/12);
+      setRightMotors(rightVoltage/12);
     } else {
       setLeftMotorsVoltage(leftVoltage);
       setRightMotorsVoltage(rightVoltage);
