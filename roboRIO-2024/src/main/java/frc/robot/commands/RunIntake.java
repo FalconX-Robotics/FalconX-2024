@@ -40,6 +40,6 @@ public class RunIntake extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !m_settings.noteController.getShooterButton();
+    return !m_settings.noteController.getShooterButtonValue();
   }
 }
