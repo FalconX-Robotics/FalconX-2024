@@ -46,6 +46,8 @@ public class Drivetrain extends SubsystemBase {
 
   private OdometrySubsystem m_odometry;
 
+  public boolean turboModeOn = false;
+
   public void setLeftMotors (double volt) {
     leftLeader.set(volt);
   }
@@ -81,8 +83,8 @@ public class Drivetrain extends SubsystemBase {
 
   // runs the motors
   public void setMotors(double left, double right) {
-    setLeftMotors(left);
-    setRightMotors(right);
+    setLeftMotors(left * (turboModeOn ? 1 : (1/3)));
+    setRightMotors(right * (turboModeOn ? 1 : (1/3)));
   }
 
   public void setMotorVoltage(double leftVoltage, double rightVoltage) {
@@ -92,8 +94,8 @@ public class Drivetrain extends SubsystemBase {
       setLeftMotors(leftVoltage/12);
       setRightMotors(rightVoltage/12);
     } else {
-      setLeftMotorsVoltage(leftVoltage);
-      setRightMotorsVoltage(rightVoltage);
+      setLeftMotorsVoltage(leftVoltage * (turboModeOn ? 1 : (1/3)));
+      setRightMotorsVoltage(rightVoltage * (turboModeOn ? 1 : (1/3)));
     }
   }
 
@@ -108,11 +110,11 @@ public class Drivetrain extends SubsystemBase {
   public DifferentialDrive m_drive = new DifferentialDrive(leftLeader, rightLeader);
 
   public void arcadeDrive (double speed, double rotation){
-    m_drive.arcadeDrive(speed, rotation);
+    m_drive.arcadeDrive(speed * (turboModeOn ? 1 : (1/3)), rotation * (turboModeOn ? 1 : (1/2)));
   }
 
   public void curvatureDrive (double speed, double rotation, boolean allowTurnInPlace){
-    m_drive.curvatureDrive(speed, rotation, allowTurnInPlace);
+    m_drive.curvatureDrive(speed * (turboModeOn ? 1 : (1/3)), rotation * (turboModeOn ? 1 : (1/3)), allowTurnInPlace);
   }
   @Override
   public void periodic() {
@@ -137,6 +139,7 @@ public class Drivetrain extends SubsystemBase {
   new DifferentialDrivetrainSim(DCMotor.getNEO(2), Constants.NESSIE_GEAR_RATIO, 5, 
   BaseUnits.Mass.convertFrom(120, Units.Pounds), BaseUnits.Distance.convertFrom(3, Units.Inches), 
   BaseUnits.Distance.convertFrom(18, Units.Inches), null);
+  
 
   @Override
   public void simulationPeriodic() {
