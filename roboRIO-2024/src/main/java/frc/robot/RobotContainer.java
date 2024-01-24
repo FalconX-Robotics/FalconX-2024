@@ -97,6 +97,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // return autoChooser.getSelected();
-    return PathfindToPose.getPathfindCommand(5, 1, 0);
+    return autoChooser.getSelected();
   }
 }

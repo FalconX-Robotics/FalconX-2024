@@ -84,7 +84,7 @@ public class OdometrySubsystem {
         m_odometry = new DifferentialDriveOdometry(
           getRotation(),
           m_leftEncoder.getPosition(), m_rightEncoder.getPosition(),
-          new Pose2d(1.94, 6.79, new Rotation2d()));
+          new Pose2d(1, 7, new Rotation2d()));
     }
 
   DifferentialDriveOdometry m_odometry;
