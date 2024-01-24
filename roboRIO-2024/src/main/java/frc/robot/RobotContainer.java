@@ -97,6 +97,8 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // return autoChooser.getSelected();
-    return autoChooser.getSelected();
+    return new Command() {
+      
+    };
   }
 }
