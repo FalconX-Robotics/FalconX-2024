@@ -29,15 +29,15 @@ public final class Constants {
     public static final int kShooterControllerPort = 1;
   }
   public static class MotorConstants {
-    public static final int frontLeft = 0;
-    public static final int frontRight = 1;
-    public static final int backLeft = 2;
-    public static final int backRight = 3;
+    public static final int frontLeft = 7;
+    public static final int frontRight = 3;
+    public static final int backLeft = 9;
+    public static final int backRight = 0;
 
-    public static final int bottomIntake = 4;
-    public static final int topIntake = 5; // bodie says we need 1 for intake
-    public static final int shooter = 6; 
-    public static final int shooterArm = 7; //we might need another for arm
+    public static final int bottomIntake = 5;
+    public static final int topIntake = 100;
+    public static final int shooter = 6;
+    public static final int shooterArm = 8;
   }
   public static final int gyroId = 42;
 }

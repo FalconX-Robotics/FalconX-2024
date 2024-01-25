@@ -17,7 +17,7 @@ public class LEDs extends SubsystemBase{
     private final SendableChooser<LEDs.Color> colorChooser = new SendableChooser<>();
 
     private CANSparkMax LEDs;
-    private Color color;
+    private Color color = Color.PURPLE;
 
     public LEDs() {
         LEDs = new CANSparkMax(Constants.LED_PORT, MotorType.kBrushless);

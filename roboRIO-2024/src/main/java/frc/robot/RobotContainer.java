@@ -17,6 +17,7 @@ import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.subsystems.OdometrySubsystem;
+import frc.robot.subsystems.Sensors;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -54,6 +55,8 @@ public class RobotContainer {
   final CurvatureDrive m_curvatureDrive = new CurvatureDrive(m_drivetrain, m_settings);
 
   public final LEDs m_leds = new LEDs();
+
+  public final Sensors sensors = new Sensors();
   
   final Shooter m_shooter = new Shooter();
   final Intake m_intake = new Intake();  
