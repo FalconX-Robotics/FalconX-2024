@@ -83,8 +83,8 @@ public class Drivetrain extends SubsystemBase {
 
   // runs the motors
   public void setMotors(double left, double right) {
-    setLeftMotors(left * (turboModeOn ? 1 : (1/3)));
-    setRightMotors(right * (turboModeOn ? 1 : (1/3)));
+    setLeftMotors(left);
+    setRightMotors(right);
   }
 
   public void setMotorVoltage(double leftVoltage, double rightVoltage) {
@@ -94,27 +94,29 @@ public class Drivetrain extends SubsystemBase {
       setLeftMotors(leftVoltage/12);
       setRightMotors(rightVoltage/12);
     } else {
-      setLeftMotorsVoltage(leftVoltage * (turboModeOn ? 1 : (1/3)));
-      setRightMotorsVoltage(rightVoltage * (turboModeOn ? 1 : (1/3)));
+      setLeftMotorsVoltage(leftVoltage);
+      setRightMotorsVoltage(rightVoltage);
     }
   }
 
   public void setLeftMotorsVoltage(double voltage) {
     leftLeader.setVoltage(voltage);
+    SmartDashboard.putNumber("Left Motor Voltage", voltage);
   }
 
   public void setRightMotorsVoltage(double voltage) {
     rightLeader.setVoltage(voltage);
+    SmartDashboard.putNumber("Right Motor Voltage", voltage);
   }
 
   public DifferentialDrive m_drive = new DifferentialDrive(leftLeader, rightLeader);
 
   public void arcadeDrive (double speed, double rotation){
-    m_drive.arcadeDrive(speed * (turboModeOn ? 1 : (1/3)), rotation * (turboModeOn ? 1 : (1/2)));
+    m_drive.arcadeDrive(speed * (turboModeOn ? 1 : (1./2.)), rotation * (turboModeOn ? 1 : (1./2.)));
   }
 
   public void curvatureDrive (double speed, double rotation, boolean allowTurnInPlace){
-    m_drive.curvatureDrive(speed * (turboModeOn ? 1 : (1/3)), rotation * (turboModeOn ? 1 : (1/3)), allowTurnInPlace);
+    m_drive.curvatureDrive(speed * (turboModeOn ? 1 : (1./2.)), rotation, allowTurnInPlace);
   }
   @Override
   public void periodic() {

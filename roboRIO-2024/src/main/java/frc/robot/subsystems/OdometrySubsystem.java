@@ -38,9 +38,9 @@ public class OdometrySubsystem {
     
   Field2d field2d = new Field2d();
 
-  PIDController leftController = new PIDController(0.4, 0, 0.02);
-  PIDController rightController = new PIDController(0.4, 0, 0.02);
-
+  PIDController leftController = new PIDController(3, 0.01, 0.95);
+  PIDController rightController = new PIDController(3, 0.01, 0.95);
+  
   private static final double kTrackWidth = 0.381 * 2; // meters, this is the defauklt from wpilib
                                                        // change this later
 
@@ -48,7 +48,7 @@ public class OdometrySubsystem {
     new DifferentialDriveKinematics(kTrackWidth);
 
     
-  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0, 0);
+  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.52,  2.4, 0.7);
     
     // constructor so i can find in in the wall of code
   public OdometrySubsystem (Drivetrain drivetrain) {
@@ -81,10 +81,7 @@ public class OdometrySubsystem {
           m_leftEncoder = new RelativeEncoderSim();
           m_rightEncoder = new RelativeEncoderSim();
         }
-        m_odometry = new DifferentialDriveOdometry(
-          getRotation(),
-          m_leftEncoder.getPosition(), m_rightEncoder.getPosition(),
-          new Pose2d(1, 7, new Rotation2d()));
+        resetPose(new Pose2d(1, 7, new Rotation2d()));
     }
 
   DifferentialDriveOdometry m_odometry;
@@ -98,7 +95,11 @@ public class OdometrySubsystem {
   }
   
   public void resetPose(Pose2d newPose) {
-    pose = newPose; 
+    m_odometry = new DifferentialDriveOdometry(
+          getRotation(),
+          m_leftEncoder.getPosition(), m_rightEncoder.getPosition(),
+          newPose);
+    pose = m_odometry.getPoseMeters();
   }
 
 //   public void resetPose(Pose2d pose) {
@@ -133,7 +134,7 @@ public class OdometrySubsystem {
 
     return gyro.getRotation2d();
   }
-  //4 inches wheels
+  //kitbot 4 inches wheels
   //nessie 6 inches wheels
 
 
