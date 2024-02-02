@@ -23,7 +23,7 @@ public final class Constants {
   public static final double NESSIE_WHEEL_DIAMETER = 6.;
 
   //FIX THIS WHEN PIGEON IS ADDED
-  public static final int PIGEON_PORT = 0;
+  public static final int PIGEON_PORT = 42;
 
   public static final int LED_PORT = -1;
 
@@ -32,15 +32,15 @@ public final class Constants {
     public static final int kShooterControllerPort = 1;
   }
   public static class MotorConstants {
-    public static final int frontLeft = 0;
-    public static final int frontRight = 1;
-    public static final int backLeft = 2;
-    public static final int backRight = 3;
+    public static final int frontLeft = 5;
+    public static final int frontRight = 9;
+    public static final int backLeft = 100;
+    public static final int backRight = 101;
 
-    public static final int bottomIntake = 4;
-    public static final int topIntake = 5; // bodie says we need 1 for intake
-    public static final int shooter = 6; 
-    public static final int shooterArm = 7; //we might need another for arm
+    public static final int bottomIntake = 102;
+    public static final int topIntake = 103; // bodie says we need 1 for intake
+    public static final int shooter = 104; 
+    public static final int shooterArm = 8; //we might need another for arm
   }
   public static final int gyroId = 42;
 }
