@@ -23,12 +23,14 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -85,6 +87,35 @@ public class RobotContainer {
 
     Trigger rightBumper = new JoystickButton(driveController, XboxController.Button.kRightBumper.value);
     rightBumper.whileTrue(new TurboMode(m_drivetrain));
+    
+    // Trigger aButtonTrigger = new Trigger(() -> {return driveController.getAButton();});
+    // aButtonTrigger.whileTrue(new Command() {
+    //   @Override
+    //   public void execute() {
+    //       m_drivetrain.sysIdDynamic(SysIdRoutine.Direction.kForward);
+    //       System.out.println("a button");
+    //   }
+    // });
+    Trigger bButtonTrigger = new Trigger(() -> {return driveController.getBButton();});
+    bButtonTrigger.whileTrue(m_drivetrain.sysIdDynamic(SysIdRoutine.Direction.kForward).andThen(new Command() {
+      @Override
+      public boolean isFinished () {
+        m_drivetrain.setMotors(0., 0.);
+        return true;
+      }
+    }));
+
+    // EventLoop aButton = new EventLoop();
+    // driveController.a(aButton);
+    // aButton.bind(() -> {m_drivetrain.sysIdQuasistatic(SysIdRoutine.Direction.kForward);});
+
+    // EventLoop bButton = new EventLoop().;
+    // driveController.b(bButton);
+    // bButton.bind(() -> {m_drivetrain.sysIdDynamic(SysIdRoutine.Direction.kForward);});
+
+    // driveController.getAButton().whileTrue(m_drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    // driveController.getAButton().whileTrue(m_drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // driveController.button().whileTrue(m_drive.sysIdDynamic(SysIdRou()tine.Direction.kReverse));
 
     m_drivetrain.setDefaultCommand(m_curvatureDrive);
   }

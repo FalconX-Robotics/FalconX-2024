@@ -38,17 +38,17 @@ public class OdometrySubsystem {
     
   Field2d field2d = new Field2d();
 
-  PIDController leftController = new PIDController(3, 0.01, 0.95);
-  PIDController rightController = new PIDController(3, 0.01, 0.95);
+  PIDController leftController = new PIDController(0.0006, 0.0, 0.00005);
+  PIDController rightController = new PIDController(0.0006, 0.0, 0.00005);
   
-  private static final double kTrackWidth = 0.381 * 2; // meters, this is the defauklt from wpilib
+  private static final double   kTrackWidth = 0.457; // meters, this is the defauklt from wpilib
                                                        // change this later
 
   private final DifferentialDriveKinematics kinematics =
     new DifferentialDriveKinematics(kTrackWidth);
 
     
-  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.52,  2.4, 0.7);
+  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.1, 0.1, 0.1);
     
     // constructor so i can find in in the wall of code
   public OdometrySubsystem (Drivetrain drivetrain) {
@@ -112,20 +112,23 @@ public class OdometrySubsystem {
 
   public ChassisSpeeds getCurrentSpeeds() {
     var wheelSpeeds = new DifferentialDriveWheelSpeeds(m_leftEncoder.getVelocity(), m_rightEncoder.getVelocity());
-    return kinematics.toChassisSpeeds(wheelSpeeds);
+    return kinematics.toChassisSpeeds(
+      wheelSpeeds);
   }
-
+  
   public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
     SmartDashboard.putNumber("left m/s", speeds.leftMetersPerSecond);
     SmartDashboard.putNumber("right m/s", speeds.rightMetersPerSecond);
     final double leftFeedforward = feedforward.calculate(speeds.leftMetersPerSecond);
     final double rightFeedforward = feedforward.calculate(speeds.rightMetersPerSecond);
+    // final double leftFeedforward = 0;
+    // final double rightFeedforward = 0;
     final double leftOutput =
         leftController.calculate(m_leftEncoder.getVelocity(), speeds.leftMetersPerSecond);
     final double rightOutput =
         rightController.calculate(m_rightEncoder.getVelocity(), speeds.rightMetersPerSecond);
-    // SmartDashboard.putNumber("right feedforward", rightFeedforward);
-    // SmartDashboard.putNumber("left feedforward", leftFeedforward);
+    SmartDashboard.putNumber("right pid output", rightOutput);
+    SmartDashboard.putNumber("left pid output", leftOutput);
         drivetrain.setMotorVoltage(leftOutput + leftFeedforward, rightOutput + rightFeedforward);
   }
 

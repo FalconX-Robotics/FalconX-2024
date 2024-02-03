@@ -22,12 +22,19 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.BaseUnits;
 import edu.wpi.first.units.Distance;
 import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.MutableMeasure;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.Velocity;
+import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog.State;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.Constants.MotorConstants;
@@ -45,6 +52,49 @@ public class Drivetrain extends SubsystemBase {
   private WPI_PigeonIMU gyro = new WPI_PigeonIMU(Constants.PIGEON_PORT);
 
   private OdometrySubsystem m_odometry;
+  private State state;
+
+
+  // Mutable holder for unit-safe voltage values, persisted to avoid reallocation.
+  private final MutableMeasure<Voltage> m_appliedVoltage = MutableMeasure.mutable(Units.Volts.of(0));
+  // Mutable holder for unit-safe linear distance values, persisted to avoid reallocation.
+  private final MutableMeasure<Distance> m_distance = MutableMeasure.mutable(Units.Meters.of(0));
+  // Mutable holder for unit-safe linear velocity values, persisted to avoid reallocation.
+  private final MutableMeasure<Velocity<Distance>> m_velocity = MutableMeasure.mutable(Units.MetersPerSecond.of(0));
+
+  SysIdRoutine routine = new SysIdRoutine(
+    new SysIdRoutine.Config(),
+    new SysIdRoutine.Mechanism(this::voltageDrive, log -> {
+
+      log.motor("drive-left")
+        .voltage(
+          m_appliedVoltage.mut_replace(
+            leftLeader.get() * RobotController.getBatteryVoltage(), Units.Volts))
+        .linearPosition(m_distance.mut_replace(leftLeader.getEncoder().getPosition(), Units.Meters))
+        .linearVelocity(
+          m_velocity.mut_replace(leftLeader.getEncoder().getVelocity(), Units.MetersPerSecond));
+      // Record a frame for the right motors.  Since these share an encoder, we consider
+      // the entire group to be one motor.
+      log.motor("drive-right")
+        .voltage(
+          m_appliedVoltage.mut_replace(
+            rightLeader.get() * RobotController.getBatteryVoltage(), Units.Volts))
+          .linearPosition(m_distance.mut_replace(rightLeader.getEncoder().getPosition(), Units.Meters))
+          .linearVelocity(
+            m_velocity.mut_replace(rightLeader.getEncoder().getVelocity(), Units.MetersPerSecond));
+        
+        
+    }, this)
+);
+public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+  state = State.kQuasistaticForward;
+  return routine.quasistatic(direction);
+}
+
+public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+  state = State.kDynamicForward;
+  return routine.dynamic(direction);
+}
 
   public boolean turboModeOn = false;
 
@@ -53,6 +103,15 @@ public class Drivetrain extends SubsystemBase {
   }
   public void setRightMotors (double volt) {
     rightLeader.set(volt);
+  }
+
+  public void voltageDrive (Measure<Voltage> voltageMeasure) {
+    setLeftMotorsVoltage(voltageMeasure.in(Units.Volts));
+    setRightMotorsVoltage(voltageMeasure.in(Units.Volts));
+  }
+
+  public void logMotors(SysIdRoutineLog log) {
+    log.recordState(state);
   }
 
   /** Creates a new Drivetrain. */
@@ -70,15 +129,15 @@ public class Drivetrain extends SubsystemBase {
     m_odometry = new OdometrySubsystem(this);
   }
   private void setMotorConversionFactors() {
-    leftLeader.getEncoder().setVelocityConversionFactor(4. * Constants.NESSIE_GEAR_RATIO);
-    leftFollower.getEncoder().setVelocityConversionFactor(4. * Constants.NESSIE_GEAR_RATIO);
-    rightLeader.getEncoder().setVelocityConversionFactor(4. * Constants.NESSIE_GEAR_RATIO);
-    rightFollower.getEncoder().setVelocityConversionFactor(4. * Constants.NESSIE_GEAR_RATIO);
+    leftLeader.getEncoder().setVelocityConversionFactor(6. * Constants.NESSIE_GEAR_RATIO * BaseUnits.Distance.convertFrom(6 * Math.PI, Units.Inches));
+    leftFollower.getEncoder().setVelocityConversionFactor(6. * Constants.NESSIE_GEAR_RATIO * BaseUnits.Distance.convertFrom(6 * Math.PI, Units.Inches));
+    rightLeader.getEncoder().setVelocityConversionFactor(6. * Constants.NESSIE_GEAR_RATIO * BaseUnits.Distance.convertFrom(6 * Math.PI, Units.Inches));
+    rightFollower.getEncoder().setVelocityConversionFactor(6. * Constants.NESSIE_GEAR_RATIO * BaseUnits.Distance.convertFrom(6 * Math.PI, Units.Inches));
     
-    leftLeader.getEncoder().setPositionConversionFactor(4. * Constants.NESSIE_GEAR_RATIO);
-    leftFollower.getEncoder().setPositionConversionFactor(4. * Constants.NESSIE_GEAR_RATIO);
-    rightLeader.getEncoder().setPositionConversionFactor(4. * Constants.NESSIE_GEAR_RATIO);
-    rightFollower.getEncoder().setPositionConversionFactor(4. * Constants.NESSIE_GEAR_RATIO); // m/s
+    leftLeader.getEncoder().setPositionConversionFactor(6. * Constants.NESSIE_GEAR_RATIO * BaseUnits.Distance.convertFrom(6 * Math.PI, Units.Inches));
+    leftFollower.getEncoder().setPositionConversionFactor(6. * Constants.NESSIE_GEAR_RATIO * BaseUnits.Distance.convertFrom(6 * Math.PI, Units.Inches));
+    rightLeader.getEncoder().setPositionConversionFactor(6. * Constants.NESSIE_GEAR_RATIO * BaseUnits.Distance.convertFrom(6 * Math.PI, Units.Inches));
+    rightFollower.getEncoder().setPositionConversionFactor(6. * Constants.NESSIE_GEAR_RATIO * BaseUnits.Distance.convertFrom(6 * Math.PI, Units.Inches)); // m/s
   }
 
   // runs the motors
@@ -120,7 +179,7 @@ public class Drivetrain extends SubsystemBase {
   }
   @Override
   public void periodic() {
-    m_odometry.periodic();
+    // m_odometry.periodic();
     SmartDashboard.putNumber("gyro", gyro.getAngle());
   }
 
