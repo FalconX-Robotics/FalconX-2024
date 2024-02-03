@@ -53,7 +53,7 @@ public class RobotContainer {
   final ArcadeDrive m_arcadeDrive = new ArcadeDrive(m_drivetrain, m_settings);
   final CurvatureDrive m_curvatureDrive = new CurvatureDrive(m_drivetrain, m_settings);
 
-  public final LEDs m_leds = new LEDs();
+  // public final LEDs m_leds = new LEDs();
   
   final Shooter m_shooter = new Shooter();
   final Intake m_intake = new Intake();  

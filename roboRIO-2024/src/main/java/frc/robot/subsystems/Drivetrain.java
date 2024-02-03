@@ -121,6 +121,7 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     m_odometry.periodic();
+    SmartDashboard.putNumber("gyro", gyro.getAngle());
   }
 
   public WPI_PigeonIMU getGyro() {

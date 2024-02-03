@@ -116,13 +116,17 @@ public class OdometrySubsystem {
   }
 
   public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
+    SmartDashboard.putNumber("left m/s", speeds.leftMetersPerSecond);
+    SmartDashboard.putNumber("right m/s", speeds.rightMetersPerSecond);
     final double leftFeedforward = feedforward.calculate(speeds.leftMetersPerSecond);
     final double rightFeedforward = feedforward.calculate(speeds.rightMetersPerSecond);
     final double leftOutput =
         leftController.calculate(m_leftEncoder.getVelocity(), speeds.leftMetersPerSecond);
     final double rightOutput =
         rightController.calculate(m_rightEncoder.getVelocity(), speeds.rightMetersPerSecond);
-    drivetrain.setMotorVoltage(leftOutput + leftFeedforward, rightOutput + rightFeedforward);
+    // SmartDashboard.putNumber("right feedforward", rightFeedforward);
+    // SmartDashboard.putNumber("left feedforward", leftFeedforward);
+        drivetrain.setMotorVoltage(leftOutput + leftFeedforward, rightOutput + rightFeedforward);
   }
 
   public void driveChassisSpeeds(ChassisSpeeds chassisSpeeds) {
