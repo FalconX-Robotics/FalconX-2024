@@ -23,6 +23,9 @@ public class Settings {
             -m_driveController.getRightX(), deadband);
         }
         public double deadband = 0.1;
+
+        public double normalSpeed = 0.5;
+        public double turboSpeed = 1.;
     }
     /** Configurations for controller centered around note manipulation */
     public class NoteController {
