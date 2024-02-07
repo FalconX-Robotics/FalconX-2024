@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -14,7 +15,7 @@ import frc.robot.subsystems.Shooter;
 
 public class Shoot extends Command {
   private Shooter m_shooter;
-  private Settings m_settings;
+  private Settings m_settings;//TODO: Contemplate removal.
   private SparkPIDController m_pidController;
   public double kP, kI, kD, kIz, kFF, kMinOutput, kMaxOutput, maxRPM;
 
@@ -24,7 +25,7 @@ public class Shoot extends Command {
     m_settings = settings;
     addRequirements(shooter, intake);
     m_pidController = m_shooter.getShooterPidController();
-    setPID(6e-5, 0, 0, 0, 0.000015, -1, -1);
+    setPID(6e-5, 0, 0, 0, 0.000015, -1, 1);
 
     SmartDashboard.putNumber("Shooter I Gain", 0);
     SmartDashboard.putNumber("Shooter D Gain", 0);
@@ -63,18 +64,11 @@ public class Shoot extends Command {
       SmartDashboard.getNumber("Shooter D Gain", 0), 
       SmartDashboard.getNumber("Shooter I Zone", 0), 
       SmartDashboard.getNumber("Shooter Feed Forward", 0), 
-      SmartDashboard.getNumber("Shooter Max Output", 0), 
-      SmartDashboard.getNumber("Shooter Min Output", 0)
+      SmartDashboard.getNumber("Shooter Min Output", 0), 
+      SmartDashboard.getNumber("Shooter Max Output", 0)
     );
-  }
+    // TODO: fix later
+    // m_shooter.setShooterReference(m_pidController, m_shooter.getShooterPidController().);
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
-
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return !m_settings.noteController.getShooterButtonValue();
   }
 }

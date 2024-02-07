@@ -14,6 +14,7 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.SimpleShootAndIntake;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.subsystems.OdometrySubsystem;
@@ -55,8 +56,10 @@ public class RobotContainer {
 
   public final LEDs m_leds = new LEDs();
   
-  final Shooter m_shooter = new Shooter();
-  final Intake m_intake = new Intake();  
+  final Shooter m_shooter = new Shooter(m_settings);
+  final SimpleShootAndIntake m_simpleShootAndIntake = new SimpleShootAndIntake(m_shooter, m_settings);
+
+  final Intake m_intake = new Intake();
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -87,6 +90,7 @@ public class RobotContainer {
     rightBumper.whileTrue(new TurboMode(m_drivetrain));
 
     m_drivetrain.setDefaultCommand(m_curvatureDrive);
+    m_shooter.setDefaultCommand(m_simpleShootAndIntake);
   }
   
 
