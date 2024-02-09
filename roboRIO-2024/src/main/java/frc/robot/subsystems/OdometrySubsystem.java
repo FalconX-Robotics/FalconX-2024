@@ -81,10 +81,7 @@ public class OdometrySubsystem {
           m_leftEncoder = new RelativeEncoderSim();
           m_rightEncoder = new RelativeEncoderSim();
         }
-        m_odometry = new DifferentialDriveOdometry(
-          getRotation(),
-          m_leftEncoder.getPosition(), m_rightEncoder.getPosition(),
-          new Pose2d(1.94, 3.79, new Rotation2d()));
+        resetPose(new Pose2d(1, 7, new Rotation2d()));
     }
 
   DifferentialDriveOdometry m_odometry;
@@ -98,7 +95,13 @@ public class OdometrySubsystem {
   }
   
   public void resetPose(Pose2d newPose) {
-    pose = newPose; 
+    pose = newPose;
+    // idk if we need these -will
+    gyro.reset();
+    m_leftEncoder.setPosition(0);
+    m_rightEncoder.setPosition(0);
+
+    m_odometry.resetPosition(gyro.getRotation2d(), m_leftEncoder.getPosition(), m_rightEncoder.getPosition(), newPose);
   }
 
 //   public void resetPose(Pose2d pose) {
