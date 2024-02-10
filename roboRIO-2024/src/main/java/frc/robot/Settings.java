@@ -32,7 +32,7 @@ public class Settings {
         public boolean getShooterButtonValue () {return m_noteController.getAButton();}
         public boolean getIntakeButtonValue () {return m_noteController.getBButton();}
         public double getArmJoystickValue () {return MathUtil.applyDeadband( 
-            -m_noteController.getLeftY(), deadband);
+            m_noteController.getLeftY(), deadband);
         }
         public double deadband = 0.1;
     }

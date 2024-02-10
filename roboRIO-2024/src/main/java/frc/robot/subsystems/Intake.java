@@ -17,6 +17,7 @@ public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
   public Intake() {
     bottomIntakeSparkMax.follow(topIntakeSparkMax);
+    topIntakeSparkMax.setInverted(true);
     // TODO: Set inverted here if necessary
   }
 

@@ -8,6 +8,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.CurvatureDrive;
 import frc.robot.commands.PathfindToPose;
+import frc.robot.commands.RunIntake;
 import frc.robot.commands.SimpleShootAndIntake;
 import frc.robot.commands.TankDrive;
 import frc.robot.commands.TurboMode;
@@ -94,7 +95,8 @@ public class RobotContainer {
 
     Trigger intakeTrigger = new JoystickButton(noteController, XboxController.Button.kA.value);
     intakeTrigger.whileTrue(m_simpleShootAndIntake);
-
+    Trigger backIntakeTrigger = new JoystickButton(noteController, XboxController.Button.kB.value);
+    backIntakeTrigger.whileTrue(new RunIntake(m_intake, m_settings, -.5));
   }
   
 

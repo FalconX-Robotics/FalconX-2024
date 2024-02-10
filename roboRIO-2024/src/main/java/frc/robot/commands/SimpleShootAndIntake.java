@@ -35,7 +35,7 @@ public class SimpleShootAndIntake extends Command {
       // m_shooter.setMotors(1.);
     // }
     // if(m_settings.noteController.getIntakeButtonValue()){
-      m_intake.setMotors(1.);
+      m_intake.setMotors(.5);
     // }
     // SmartDashboard.putBoolean("intakeButton", m_settings.noteController.getIntakeButtonValue());
     // temporary++;
