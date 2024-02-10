@@ -30,16 +30,19 @@ public final class Constants {
     public static final int kShooterControllerPort = 1;
   }
   public static class MotorConstants {
-    public static final int frontLeft = 0;
-    public static final int frontRight = 1;
-    public static final int backLeft = 2;
-    public static final int backRight = 3;
+    // 0 is reserved for RIO
+    // 1 is reserved for PDP
 
-    public static final int bottomIntake = 4;
-    public static final int topIntake = 5; // bodie says we need 1 for intake
-    public static final int shooter = 6; 
-    public static final int shooterFollower = 7;
-    public static final int shooterArm = 8; //we might need another for arm
+    public static final int frontLeft = 5;
+    public static final int frontRight = 2;
+    public static final int backLeft = 3;
+    public static final int backRight = 4;
+
+    public static final int bottomIntake = 7;
+    public static final int topIntake = 115; // bodie says we need 1 for intake
+    public static final int shooter = 116; 
+    public static final int shooterFollower = 117;
+    public static final int shooterArm = 118; //we might need another for arm
   }
   public static final int gyroId = 42;
 }
