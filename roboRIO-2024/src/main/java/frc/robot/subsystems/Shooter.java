@@ -65,6 +65,11 @@ public class Shooter extends SubsystemBase {
     pidController.setReference(setPoint, CANSparkMax.ControlType.kVelocity);
   }
 
+  public void setMotors(double speed){
+    shooterSparkMax.set(speed);
+    shooterFollowerSparkMax.set(speed);
+  }
+
   @Override
   public void periodic() {
     shooterArmSparkMax.getEncoder().setPosition(0); // resets position of encoder

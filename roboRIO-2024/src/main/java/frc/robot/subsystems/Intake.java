@@ -24,6 +24,11 @@ public class Intake extends SubsystemBase {
     // TODO: Set inverted here if necessary
   }
 
+  public void setMotors(double speed){
+    topIntakeSparkMax.set(speed);
+    bottomIntakeSparkMax.set(speed);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

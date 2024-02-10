@@ -2,17 +2,21 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Settings;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 
 public class SimpleShootAndIntake extends Command {
+  Intake m_intake;
   Shooter m_shooter;
   Settings m_settings;
   /** Creates a new SimpleShoot. */
-  public SimpleShootAndIntake(Shooter shooter, Settings settings) {
+  public SimpleShootAndIntake(Shooter shooter, Intake intake, Settings settings) {
     m_settings = settings;
+    m_intake = intake;
     m_shooter = shooter;
     addRequirements(m_shooter);
   }
@@ -25,10 +29,10 @@ public class SimpleShootAndIntake extends Command {
   @Override
   public void execute() {
     if(m_settings.noteController.getShooterButtonValue()){
-      m_shooter.shooterSparkMax.set(1.);
+      m_shooter.setMotors(1.);
     }
     if(m_settings.noteController.getIntakeButtonValue()){
-      m_shooter.shooterSparkMax.set(1.);
+      m_intake.setMotors(1.);
     }
   }
 
