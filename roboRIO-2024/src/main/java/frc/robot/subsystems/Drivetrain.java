@@ -4,12 +4,15 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.Consumer;
+
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
@@ -55,54 +58,17 @@ public class Drivetrain extends SubsystemBase {
   private State state;
 
 
-  // Mutable holder for unit-safe voltage values, persisted to avoid reallocation.
-  private final MutableMeasure<Voltage> m_appliedVoltage = MutableMeasure.mutable(Units.Volts.of(0));
-  // Mutable holder for unit-safe linear distance values, persisted to avoid reallocation.
-  private final MutableMeasure<Distance> m_distance = MutableMeasure.mutable(Units.Meters.of(0));
-  // Mutable holder for unit-safe linear velocity values, persisted to avoid reallocation.
-  private final MutableMeasure<Velocity<Distance>> m_velocity = MutableMeasure.mutable(Units.MetersPerSecond.of(0));
-
-  SysIdRoutine routine = new SysIdRoutine(
-    new SysIdRoutine.Config(),
-    new SysIdRoutine.Mechanism(this::voltageDrive, log -> {
-
-      log.motor("drive-left")
-        .voltage(
-          m_appliedVoltage.mut_replace(
-            leftLeader.get() * RobotController.getBatteryVoltage(), Units.Volts))
-        .linearPosition(m_distance.mut_replace(leftLeader.getEncoder().getPosition(), Units.Meters))
-        .linearVelocity(
-          m_velocity.mut_replace(leftLeader.getEncoder().getVelocity(), Units.MetersPerSecond));
-      // Record a frame for the right motors.  Since these share an encoder, we consider
-      // the entire group to be one motor.
-      log.motor("drive-right")
-        .voltage(
-          m_appliedVoltage.mut_replace(
-            rightLeader.get() * RobotController.getBatteryVoltage(), Units.Volts))
-          .linearPosition(m_distance.mut_replace(rightLeader.getEncoder().getPosition(), Units.Meters))
-          .linearVelocity(
-            m_velocity.mut_replace(rightLeader.getEncoder().getVelocity(), Units.MetersPerSecond));
-        
-        
-    }, this)
-);
-public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-  state = State.kQuasistaticForward;
-  return routine.quasistatic(direction);
-}
-
-public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-  state = State.kDynamicForward;
-  return routine.dynamic(direction);
-}
+  
 
   public boolean turboModeOn = false;
 
   public void setLeftMotors (double volt) {
     leftLeader.set(volt);
+    SmartDashboard.putNumber("Left Motors Set", volt);
   }
   public void setRightMotors (double volt) {
     rightLeader.set(volt);
+    SmartDashboard.putNumber("Right Motors Set", volt);
   }
 
   public void voltageDrive (Measure<Voltage> voltageMeasure) {
@@ -124,20 +90,26 @@ public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     rightLeader.setInverted(false);
     rightFollower.setInverted(false);
 
+    leftLeader.setIdleMode(IdleMode.kBrake);
+    leftFollower.setIdleMode(IdleMode.kBrake);
+    rightLeader.setIdleMode(IdleMode.kBrake);
+    rightFollower.setIdleMode(IdleMode.kBrake);
+
     setMotorConversionFactors();
 
     m_odometry = new OdometrySubsystem(this);
   }
   private void setMotorConversionFactors() {
-    leftLeader.getEncoder().setVelocityConversionFactor(6. * Constants.NESSIE_GEAR_RATIO * BaseUnits.Distance.convertFrom(6 * Math.PI, Units.Inches));
-    leftFollower.getEncoder().setVelocityConversionFactor(6. * Constants.NESSIE_GEAR_RATIO * BaseUnits.Distance.convertFrom(6 * Math.PI, Units.Inches));
-    rightLeader.getEncoder().setVelocityConversionFactor(6. * Constants.NESSIE_GEAR_RATIO * BaseUnits.Distance.convertFrom(6 * Math.PI, Units.Inches));
-    rightFollower.getEncoder().setVelocityConversionFactor(6. * Constants.NESSIE_GEAR_RATIO * BaseUnits.Distance.convertFrom(6 * Math.PI, Units.Inches));
+    double conversionFactor = 1./(Constants.NESSIE_GEAR_RATIO) * BaseUnits.Distance.convertFrom(6 * Math.PI, Units.Inches);
+    leftLeader.getEncoder().setVelocityConversionFactor(conversionFactor/60);
+    leftFollower.getEncoder().setVelocityConversionFactor(conversionFactor/60);
+    rightLeader.getEncoder().setVelocityConversionFactor(conversionFactor/60);
+    rightFollower.getEncoder().setVelocityConversionFactor(conversionFactor/60);
     
-    leftLeader.getEncoder().setPositionConversionFactor(6. * Constants.NESSIE_GEAR_RATIO * BaseUnits.Distance.convertFrom(6 * Math.PI, Units.Inches));
-    leftFollower.getEncoder().setPositionConversionFactor(6. * Constants.NESSIE_GEAR_RATIO * BaseUnits.Distance.convertFrom(6 * Math.PI, Units.Inches));
-    rightLeader.getEncoder().setPositionConversionFactor(6. * Constants.NESSIE_GEAR_RATIO * BaseUnits.Distance.convertFrom(6 * Math.PI, Units.Inches));
-    rightFollower.getEncoder().setPositionConversionFactor(6. * Constants.NESSIE_GEAR_RATIO * BaseUnits.Distance.convertFrom(6 * Math.PI, Units.Inches)); // m/s
+    leftLeader.getEncoder().setPositionConversionFactor(conversionFactor);
+    leftFollower.getEncoder().setPositionConversionFactor(conversionFactor);
+    rightLeader.getEncoder().setPositionConversionFactor(conversionFactor);
+    rightFollower.getEncoder().setPositionConversionFactor(conversionFactor); // m/s
   }
 
   // runs the motors
@@ -147,7 +119,6 @@ public Command sysIdDynamic(SysIdRoutine.Direction direction) {
   }
 
   public void setMotorVoltage(double leftVoltage, double rightVoltage) {
-    System.out.println(leftVoltage + ", " + rightVoltage);
 
     if(Robot.isSimulation()) {
       setLeftMotors(leftVoltage/12);
@@ -179,8 +150,7 @@ public Command sysIdDynamic(SysIdRoutine.Direction direction) {
   }
   @Override
   public void periodic() {
-    // m_odometry.periodic();
-    SmartDashboard.putNumber("gyro", gyro.getAngle());
+    m_odometry.periodic();
   }
 
   public WPI_PigeonIMU getGyro() {
@@ -213,4 +183,6 @@ public Command sysIdDynamic(SysIdRoutine.Direction direction) {
   DifferentialDrivetrainSim getSimulation() {
     return m_simulation;
   }
+
+  
 }

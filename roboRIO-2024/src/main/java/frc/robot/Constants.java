@@ -32,9 +32,9 @@ public final class Constants {
     public static final int kShooterControllerPort = 1;
   }
   public static class MotorConstants {
-    public static final int frontLeft = 5;
-    public static final int frontRight = 9;
-    public static final int backLeft = 100;
+    public static final int frontLeft = 9;
+    public static final int frontRight = 5;
+    public static final int backLeft = 100; //change these on ne robot
     public static final int backRight = 101;
 
     public static final int bottomIntake = 102;

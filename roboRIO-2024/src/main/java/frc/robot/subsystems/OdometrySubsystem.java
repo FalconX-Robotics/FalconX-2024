@@ -38,8 +38,8 @@ public class OdometrySubsystem {
     
   Field2d field2d = new Field2d();
 
-  PIDController leftController = new PIDController(0.0006, 0.0, 0.00005);
-  PIDController rightController = new PIDController(0.0006, 0.0, 0.00005);
+  PIDController leftController = new PIDController(0.4, 0.0, 0.3);
+  PIDController rightController = new PIDController(0.4, 0.0, 0.3); //this sorta works (maybe? (i dont know))
   
   private static final double   kTrackWidth = 0.457; // meters, this is the defauklt from wpilib
                                                        // change this later
@@ -48,7 +48,7 @@ public class OdometrySubsystem {
     new DifferentialDriveKinematics(kTrackWidth);
 
     
-  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.1, 0.1, 0.1);
+  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.52, 2.4, 0.7);
     
     // constructor so i can find in in the wall of code
   public OdometrySubsystem (Drivetrain drivetrain) {
@@ -92,6 +92,13 @@ public class OdometrySubsystem {
     m_rightEncoder.getPosition());
 
     field2d.setRobotPose(pose);
+
+    SmartDashboard.putNumber("Left Encoder Position", m_leftEncoder.getPosition());
+    SmartDashboard.putNumber("Right Encoder Position", m_rightEncoder.getPosition());
+    SmartDashboard.putNumber("Left Encoder Velocity", m_leftEncoder.getVelocity());
+    SmartDashboard.putNumber("Right Encoder Velocity", m_rightEncoder.getVelocity());
+    SmartDashboard.putNumber("gyro", getRotation().getDegrees());
+
   }
   
   public void resetPose(Pose2d newPose) {
@@ -129,7 +136,12 @@ public class OdometrySubsystem {
         rightController.calculate(m_rightEncoder.getVelocity(), speeds.rightMetersPerSecond);
     SmartDashboard.putNumber("right pid output", rightOutput);
     SmartDashboard.putNumber("left pid output", leftOutput);
-        drivetrain.setMotorVoltage(leftOutput + leftFeedforward, rightOutput + rightFeedforward);
+    if (Robot.isSimulation()) {
+      drivetrain.setMotorVoltage(leftOutput + leftFeedforward, rightOutput + rightFeedforward);
+    } else {
+      drivetrain.setMotorVoltage(-(leftOutput + leftFeedforward), -(rightOutput + rightFeedforward));
+    }
+        
   }
 
   public void driveChassisSpeeds(ChassisSpeeds chassisSpeeds) {
@@ -160,5 +172,6 @@ public class OdometrySubsystem {
     rightEncoder.setSimulationPositionMeters(simulation.getRightPositionMeters());
     leftEncoder.setSimulationVelocityMetersPerSecond(simulation.getLeftVelocityMetersPerSecond());
     rightEncoder.setSimulationVelocityMetersPerSecond(simulation.getRightVelocityMetersPerSecond());
+
   }
 }

@@ -96,27 +96,7 @@ public class RobotContainer {
     //       System.out.println("a button");
     //   }
     // });
-    Trigger bButtonTrigger = new Trigger(() -> {return driveController.getBButton();});
-    bButtonTrigger.whileTrue(m_drivetrain.sysIdDynamic(SysIdRoutine.Direction.kForward).andThen(new Command() {
-      @Override
-      public boolean isFinished () {
-        m_drivetrain.setMotors(0., 0.);
-        return true;
-      }
-    }));
-
-    // EventLoop aButton = new EventLoop();
-    // driveController.a(aButton);
-    // aButton.bind(() -> {m_drivetrain.sysIdQuasistatic(SysIdRoutine.Direction.kForward);});
-
-    // EventLoop bButton = new EventLoop().;
-    // driveController.b(bButton);
-    // bButton.bind(() -> {m_drivetrain.sysIdDynamic(SysIdRoutine.Direction.kForward);});
-
-    // driveController.getAButton().whileTrue(m_drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    // driveController.getAButton().whileTrue(m_drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    // driveController.button().whileTrue(m_drive.sysIdDynamic(SysIdRou()tine.Direction.kReverse));
-
+    
     m_drivetrain.setDefaultCommand(m_curvatureDrive);
   }
   
