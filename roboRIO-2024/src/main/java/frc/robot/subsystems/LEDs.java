@@ -18,12 +18,12 @@ public class LEDs extends SubsystemBase{
 
     private final SendableChooser<LEDs.Color> colorChooser = new SendableChooser<>();
 
-    private Spark LEDs;
+    private Spark LEDs = new Spark(Constants.LED_PORT);
     private Color color = Color.PURPLE;
 
     public LEDs() {
-        LEDs = new Spark(Constants.LED_PORT);
-
+        //?
+        // LEDs = new Spark(Constants.LED_PORT);
     }
 
     @Override

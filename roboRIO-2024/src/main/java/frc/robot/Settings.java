@@ -15,7 +15,7 @@ public class Settings {
 
     /** Configurations for controller centered around drivetrain repositioning */
     public class DriveController {
-        public boolean getTurnInPlaceButtonValue () { return m_driveController.getAButtonPressed();}
+        public boolean getTurnInPlaceButtonValue () { return m_driveController.getAButton();}
         public double getSpeedJoystickValue () { return MathUtil.applyDeadband(
             -m_driveController.getLeftY(), deadband);
         }
@@ -29,8 +29,8 @@ public class Settings {
     }
     /** Configurations for controller centered around note manipulation */
     public class NoteController {
-        public boolean getShooterButtonValue () {return m_noteController.getAButtonPressed();}
-        public boolean getIntakeButtonValue () {return m_noteController.getBButtonPressed();}
+        public boolean getShooterButtonValue () {return m_noteController.getAButton();}
+        public boolean getIntakeButtonValue () {return m_noteController.getBButton();}
         public double getArmJoystickValue () {return MathUtil.applyDeadband( 
             -m_noteController.getLeftY(), deadband);
         }

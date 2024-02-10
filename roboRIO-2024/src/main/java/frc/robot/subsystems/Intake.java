@@ -14,10 +14,6 @@ public class Intake extends SubsystemBase {
   CANSparkMax topIntakeSparkMax = new CANSparkMax(MotorConstants.topIntake, MotorType.kBrushless);
   CANSparkMax bottomIntakeSparkMax = new CANSparkMax(MotorConstants.bottomIntake, MotorType.kBrushless);
   
-  public void setSparks(double volt) {
-    topIntakeSparkMax.set(volt);
-  }
-  
   /** Creates a new Intake. */
   public Intake() {
     bottomIntakeSparkMax.follow(topIntakeSparkMax);
@@ -25,8 +21,8 @@ public class Intake extends SubsystemBase {
   }
 
   public void setMotors(double speed){
+    System.out.println("setting intake to "+speed);
     topIntakeSparkMax.set(speed);
-    bottomIntakeSparkMax.set(speed);
   }
 
   @Override

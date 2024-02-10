@@ -86,11 +86,15 @@ public class RobotContainer {
    */
   private void configureBindings() {
 
-    Trigger rightBumper = new JoystickButton(driveController, XboxController.Button.kRightBumper.value);
-    rightBumper.whileTrue(new TurboMode(m_drivetrain));
+    Trigger turboModeTrigger = new JoystickButton(driveController, XboxController.Button.kRightBumper.value);
+    // Trigger turboMode = m_settings.getTurboModeButton();
+    turboModeTrigger.whileTrue(new TurboMode(m_drivetrain));
 
     m_drivetrain.setDefaultCommand(m_curvatureDrive);
-    m_shooter.setDefaultCommand(m_simpleShootAndIntake);
+
+    Trigger intakeTrigger = new JoystickButton(noteController, XboxController.Button.kA.value);
+    intakeTrigger.whileTrue(m_simpleShootAndIntake);
+
   }
   
 

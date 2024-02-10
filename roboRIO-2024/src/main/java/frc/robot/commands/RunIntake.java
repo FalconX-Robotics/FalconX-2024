@@ -28,18 +28,18 @@ public class RunIntake extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_intake.setSparks(volt);
+    m_intake.setMotors(volt);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_intake.setSparks(0);
+    m_intake.setMotors(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !m_settings.noteController.getShooterButtonValue();
+    return false;
   }
 }
