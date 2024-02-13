@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.RelativeEncoder;
 
@@ -16,6 +17,9 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.BaseUnits;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
@@ -37,6 +41,17 @@ public class OdometrySubsystem {
   Drivetrain drivetrain;
     
   Field2d field2d = new Field2d();
+
+  DataLog log = DataLogManager.getLog();
+  DoubleLogEntry gyroEntry = new DoubleLogEntry(log, "/odometry/gyroAngleDegrees");
+  DoubleLogEntry leftEncoderPositionEntry = new DoubleLogEntry(log, "/odometry/leftPosition");
+  DoubleLogEntry rightEncoderPositionEntry = new DoubleLogEntry(log, "/odometry/rightPosition");
+  DoubleLogEntry leftEncoderVelocityEntry = new DoubleLogEntry(log, "/odometry/leftVelocity");
+  DoubleLogEntry rightEncoderVelocityEntry = new DoubleLogEntry(log, "/odometry/rightVelocity"); 
+  DoubleLogEntry rightTargetPosition;
+  DoubleLogEntry leftTargetPosition;
+  DoubleLogEntry rotationTarget;
+  
 
   PIDController leftController = new PIDController(0.4, 0.0, 0.3);
   PIDController rightController = new PIDController(0.4, 0.0, 0.3); //this sorta works (maybe? (i dont know))
@@ -82,6 +97,10 @@ public class OdometrySubsystem {
           m_rightEncoder = new RelativeEncoderSim();
         }
         resetPose(new Pose2d(1, 7, new Rotation2d()));
+        
+        PathPlannerLogging.setLogTargetPoseCallback((pose) -> {
+          
+        });
     }
 
   DifferentialDriveOdometry m_odometry;
@@ -99,9 +118,18 @@ public class OdometrySubsystem {
     SmartDashboard.putNumber("Right Encoder Velocity", m_rightEncoder.getVelocity());
     SmartDashboard.putNumber("gyro", getRotation().getDegrees());
 
+    gyroEntry.append(getRotation().getDegrees());
+    leftEncoderPositionEntry.append(m_leftEncoder.getPosition());
+    rightEncoderPositionEntry.append(m_rightEncoder.getPosition());
+    leftEncoderVelocityEntry.append(m_leftEncoder.getVelocity());
+    rightEncoderVelocityEntry.append(m_rightEncoder.getVelocity());
+
   }
   
   public void resetPose(Pose2d newPose) {
+    gyro.reset();
+    m_leftEncoder.setPosition(0);
+    m_rightEncoder.setPosition(0);
     m_odometry = new DifferentialDriveOdometry(
           getRotation(),
           m_leftEncoder.getPosition(), m_rightEncoder.getPosition(),
@@ -119,8 +147,7 @@ public class OdometrySubsystem {
 
   public ChassisSpeeds getCurrentSpeeds() {
     var wheelSpeeds = new DifferentialDriveWheelSpeeds(m_leftEncoder.getVelocity(), m_rightEncoder.getVelocity());
-    return kinematics.toChassisSpeeds(
-      wheelSpeeds);
+    return kinematics.toChassisSpeeds(wheelSpeeds);
   }
   
   public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
@@ -139,7 +166,7 @@ public class OdometrySubsystem {
     if (Robot.isSimulation()) {
       drivetrain.setMotorVoltage(leftOutput + leftFeedforward, rightOutput + rightFeedforward);
     } else {
-      drivetrain.setMotorVoltage(-(leftOutput + leftFeedforward), -(rightOutput + rightFeedforward));
+      drivetrain.setMotorVoltage((leftOutput + leftFeedforward), (rightOutput + rightFeedforward));
     }
         
   }

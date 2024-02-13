@@ -29,6 +29,9 @@ import edu.wpi.first.units.MutableMeasure;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.Velocity;
 import edu.wpi.first.units.Voltage;
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
@@ -52,6 +55,12 @@ public class Drivetrain extends SubsystemBase {
   private CANSparkMax leftFollower = new CANSparkMax(MotorConstants.backLeft, MotorType.kBrushless);
   private CANSparkMax rightFollower = new CANSparkMax(MotorConstants.backRight, MotorType.kBrushless);
 
+  private DataLog log = DataLogManager.getLog();
+  
+  DoubleLogEntry leftVoltageEntry = new DoubleLogEntry(log, "/dt/leftVoltage");
+  DoubleLogEntry rightVoltageEntry = new DoubleLogEntry(log, "/dt/rightVoltage");
+  
+
   private WPI_PigeonIMU gyro = new WPI_PigeonIMU(Constants.PIGEON_PORT);
 
   private OdometrySubsystem m_odometry;
@@ -65,10 +74,14 @@ public class Drivetrain extends SubsystemBase {
   public void setLeftMotors (double volt) {
     leftLeader.set(volt);
     SmartDashboard.putNumber("Left Motors Set", volt);
+    
+    leftVoltageEntry.append(leftLeader.get() * RobotController.getBatteryVoltage());
+    
   }
   public void setRightMotors (double volt) {
     rightLeader.set(volt);
     SmartDashboard.putNumber("Right Motors Set", volt);
+    rightVoltageEntry.append(rightLeader.get() * RobotController.getBatteryVoltage());
   }
 
   public void voltageDrive (Measure<Voltage> voltageMeasure) {
@@ -89,6 +102,10 @@ public class Drivetrain extends SubsystemBase {
     leftFollower.setInverted(true);
     rightLeader.setInverted(false);
     rightFollower.setInverted(false);
+    leftLeader.getEncoder().setMeasurementPeriod(20);
+    rightLeader.getEncoder().setMeasurementPeriod(20);
+    leftLeader.getEncoder().setAverageDepth(1);
+    rightLeader.getEncoder().setAverageDepth(1);
 
     leftLeader.setIdleMode(IdleMode.kBrake);
     leftFollower.setIdleMode(IdleMode.kBrake);
@@ -132,11 +149,13 @@ public class Drivetrain extends SubsystemBase {
   public void setLeftMotorsVoltage(double voltage) {
     leftLeader.setVoltage(voltage);
     SmartDashboard.putNumber("Left Motor Voltage", voltage);
+    leftVoltageEntry.append(voltage);
   }
 
   public void setRightMotorsVoltage(double voltage) {
     rightLeader.setVoltage(voltage);
     SmartDashboard.putNumber("Right Motor Voltage", voltage);
+    rightVoltageEntry.append(voltage);
   }
 
   public DifferentialDrive m_drive = new DifferentialDrive(leftLeader, rightLeader);
@@ -176,7 +195,7 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
     m_odometry.simulationPeriodic();
-    m_simulation.setInputs(leftLeader.get() * RobotController.getInputVoltage(), rightLeader.get() * RobotController.getInputVoltage());
+    m_simulation.setInputs(leftLeader.get() * RobotController.getBatteryVoltage(), rightLeader.get() * RobotController.getBatteryVoltage());
     m_simulation.update(0.02);
   }
 

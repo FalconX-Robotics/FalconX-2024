@@ -16,7 +16,13 @@ import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystems.OdometrySubsystem;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.concurrent.TimeUnit;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -68,7 +74,11 @@ public class RobotContainer {
 
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
+
+    LocalDateTime startTime = LocalDateTime.now();
+    Util.setStartTime(startTime);
     DataLogManager.start();
+    
     DriverStation.startDataLog(DataLogManager.getLog());
     // Configure the trigger bindings
     configureBindings();
@@ -99,6 +109,8 @@ public class RobotContainer {
     
     m_drivetrain.setDefaultCommand(m_curvatureDrive);
   }
+
+
   
 
   /**
@@ -109,4 +121,6 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();
   }
+
+  
 }
