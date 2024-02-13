@@ -6,12 +6,20 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.SparkPIDControllerSim;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Settings;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.BaseUnits;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.Constants.MotorConstants;
 
 public class Shooter extends SubsystemBase {
@@ -29,7 +37,11 @@ public class Shooter extends SubsystemBase {
   }
 
   public SparkPIDController getShooterPidController () {
-    return shooterSparkMax.getPIDController();
+    if (Robot.isSimulation()) {
+      return m_pidControllerSim;
+    } else {
+      return shooterSparkMax.getPIDController();
+    }
   }
 
   public double getShooterArmEncoderRotation() {
@@ -43,6 +55,7 @@ public class Shooter extends SubsystemBase {
   }
 
   /** Creates a new Shooter. */
+
   public Shooter(Settings settings) {
     m_settings = settings;
     shooterArmSparkMax.getEncoder().setPositionConversionFactor(1.);
@@ -50,11 +63,10 @@ public class Shooter extends SubsystemBase {
     shooterArmSparkMax.setInverted(false);
     // TODO: Change position conversion factor as needed
     shooterArmSparkMax.getEncoder().setPosition(0); // resets position of encoder
-    shooterArmSparkMax.set(
-      limitArmViaEncoder(
-        m_settings.noteController.getArmJoystickValue()
-      )
-    );
+    
+    if (Robot.isSimulation()) {
+      m_pidControllerSim = new SparkPIDControllerSim(shooterSparkMax);
+    }
   }
 
   /**
@@ -80,6 +92,7 @@ public class Shooter extends SubsystemBase {
   public void setMotors(double speed){
     shooterSparkMax.set(speed);
     shooterFollowerSparkMax.set(speed);
+
   }
 
   @Override
@@ -93,5 +106,28 @@ public class Shooter extends SubsystemBase {
       );
     }
     // This method will be called once per scheduler run
+  }
+
+  // Moment of inertia for uniform cylinder = 1/2 * m * r^2.
+  FlywheelSim shooterSim = new FlywheelSim(DCMotor.getNEO(2), 1, 
+      0.5 * BaseUnits.Mass.convertFrom(8, Units.Pounds) *
+      Math.pow(BaseUnits.Distance.convertFrom(2, Units.Inches), 2));
+  SparkPIDControllerSim m_pidControllerSim;
+
+  @Override
+  public void simulationPeriodic() {
+    SparkPIDControllerSim pidSim = (SparkPIDControllerSim) getShooterPidController();
+    // Simulate every 1ms to match PID controller implementation on Spark MAX
+    for (int i = 0; i < 20; i++) {
+      // Set the input to the physics simulation to the output of the simulated PID controller
+      shooterSim.setInputVoltage(pidSim.getVoltageOutput());
+      shooterSim.update(0.001);
+
+      // Update the velocity input to the PID controller using the physics sim
+      pidSim.setVelocity(shooterSim.getAngularVelocityRPM());
+      pidSim.update(0.001);
+    }
+    SmartDashboard.putNumber("Sim Shooter Voltage", pidSim.getVoltageOutput());
+    SmartDashboard.putNumber("Sim Shooter RPM", shooterSim.getAngularVelocityRPM());
   }
 }
