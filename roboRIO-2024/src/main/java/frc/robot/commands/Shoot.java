@@ -68,7 +68,7 @@ public class Shoot extends Command {
       SmartDashboard.getNumber("Shooter Max Output", 0)
     );
     // TODO: fix later
-    // m_shooter.setShooterReference(m_pidController, m_shooter.getShooterPidController().);
+    m_shooter.setShooterReference(2700);
 
   }
 }

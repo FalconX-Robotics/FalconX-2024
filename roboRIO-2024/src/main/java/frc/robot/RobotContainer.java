@@ -10,6 +10,7 @@ import frc.robot.commands.CurvatureDrive;
 import frc.robot.commands.PathfindToPose;
 import frc.robot.commands.RunIndex;
 import frc.robot.commands.RunIntake;
+import frc.robot.commands.Shoot;
 import frc.robot.commands.SimpleShoot;
 import frc.robot.commands.TankDrive;
 import frc.robot.commands.TurboMode;
@@ -101,6 +102,7 @@ public class RobotContainer {
     simpleShootTrigger.whileTrue(new SimpleShoot(m_shooter));
 
     m_drivetrain.setDefaultCommand(m_curvatureDrive);
+    m_shooter.setDefaultCommand(new Shoot(m_shooter, m_intake, m_settings));//temp del later :)
   }
   
 

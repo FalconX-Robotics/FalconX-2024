@@ -85,8 +85,8 @@ public class Shooter extends SubsystemBase {
     return input;
   }
 
-  public void setShooterReference(SparkPIDController pidController, double setPoint) {
-    pidController.setReference(setPoint, CANSparkMax.ControlType.kVelocity);
+  public void setShooterReference(double setPoint) {
+    getShooterPidController().setReference(setPoint, CANSparkMax.ControlType.kVelocity);
   }
 
   public void setMotors(double speed){
