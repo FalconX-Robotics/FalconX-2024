@@ -38,11 +38,11 @@ public final class Constants {
     public static final int backLeft = 3;
     public static final int backRight = 4;
 
-    public static final int bottomIntake = 115; //TODO set bottomIntake to 7
-    public static final int topIntake = 7; // bodie says we need 1 for intake
+    public static final int index = 115;
+    public static final int intake = 7;
     public static final int shooter = 116; 
     public static final int shooterFollower = 117;
-    public static final int shooterArm = 118; //we might need another for arm
+    public static final int shooterArm = 118;
   }
   public static final int gyroId = 42;
 }

@@ -17,7 +17,8 @@ import frc.robot.Constants.MotorConstants;
 public class Shooter extends SubsystemBase {
   CANSparkMax shooterArmSparkMax = new CANSparkMax(MotorConstants.shooterArm, MotorType.kBrushless);
   CANSparkMax shooterFollowerSparkMax = new CANSparkMax(MotorConstants.shooterFollower, MotorType.kBrushless);
-  CANSparkMax shooterSparkMax = new CANSparkMax(MotorConstants.shooter, MotorType.kBrushless);  
+  CANSparkMax shooterSparkMax = new CANSparkMax(MotorConstants.shooter, MotorType.kBrushless);
+  Settings m_settings;
 
   public void setArmSpark(double volt){
     shooterArmSparkMax.set(volt);
@@ -41,15 +42,19 @@ public class Shooter extends SubsystemBase {
     // shooterArmSparkMax.set();
   }
 
-  Settings m_settings;
   /** Creates a new Shooter. */
   public Shooter(Settings settings) {
     m_settings = settings;
     shooterArmSparkMax.getEncoder().setPositionConversionFactor(1.);
     shooterArmSparkMax.getEncoder().setPosition(0);
-    // TODO: Change position conversion factor if necessary
-    // TODO: Set inverted if applicable
-    
+    shooterArmSparkMax.setInverted(false);
+    // TODO: Change position conversion factor as needed
+    shooterArmSparkMax.getEncoder().setPosition(0); // resets position of encoder
+    shooterArmSparkMax.set(
+      limitArmViaEncoder(
+        m_settings.noteController.getArmJoystickValue()
+      )
+    );
   }
 
   /**
@@ -79,12 +84,14 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    shooterArmSparkMax.getEncoder().setPosition(0); // resets position of encoder
-    shooterArmSparkMax.set(
-      limitArmViaEncoder(
-        m_settings.noteController.getArmJoystickValue()
-      )
-    );
+    // If no current command, set arm via joystick value.
+    if(this.getCurrentCommand() == null) {
+      shooterArmSparkMax.set(
+        limitArmViaEncoder(
+          m_settings.noteController.getArmJoystickValue()
+        )
+      );
+    }
     // This method will be called once per scheduler run
   }
 }

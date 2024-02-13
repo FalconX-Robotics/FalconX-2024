@@ -8,11 +8,13 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.CurvatureDrive;
 import frc.robot.commands.PathfindToPose;
+import frc.robot.commands.RunIndex;
 import frc.robot.commands.RunIntake;
-import frc.robot.commands.SimpleShootAndIntake;
+import frc.robot.commands.SimpleShoot;
 import frc.robot.commands.TankDrive;
 import frc.robot.commands.TurboMode;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Index;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Shooter;
@@ -50,17 +52,16 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   // final Settings m_settings = new Settings(driveController, noteController);
 
-  public final Drivetrain m_drivetrain = new Drivetrain(m_settings);
-  public final TankDrive m_tankDrive = new TankDrive(m_drivetrain, driveController);
+  final Drivetrain m_drivetrain = new Drivetrain(m_settings);
+  final TankDrive m_tankDrive = new TankDrive(m_drivetrain, driveController);
   final ArcadeDrive m_arcadeDrive = new ArcadeDrive(m_drivetrain, m_settings);
   final CurvatureDrive m_curvatureDrive = new CurvatureDrive(m_drivetrain, m_settings);
 
-  public final LEDs m_leds = new LEDs();
+  final LEDs m_leds = new LEDs();
   
   final Shooter m_shooter = new Shooter(m_settings);
   final Intake m_intake = new Intake();
-
-  final SimpleShootAndIntake m_simpleShootAndIntake = new SimpleShootAndIntake(m_shooter, m_intake, m_settings);
+  final Index m_index = new Index();
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -88,15 +89,18 @@ public class RobotContainer {
   private void configureBindings() {
 
     Trigger turboModeTrigger = new JoystickButton(driveController, XboxController.Button.kRightBumper.value);
-    // Trigger turboMode = m_settings.getTurboModeButton();
     turboModeTrigger.whileTrue(new TurboMode(m_drivetrain));
 
-    m_drivetrain.setDefaultCommand(m_curvatureDrive);
-
     Trigger intakeTrigger = new JoystickButton(noteController, XboxController.Button.kA.value);
-    intakeTrigger.whileTrue(m_simpleShootAndIntake);
-    Trigger backIntakeTrigger = new JoystickButton(noteController, XboxController.Button.kB.value);
-    backIntakeTrigger.whileTrue(new RunIntake(m_intake, m_settings, -.5));
+    intakeTrigger.whileTrue(new RunIntake(m_intake, 1));
+
+    Trigger indexTrigger = new JoystickButton(noteController, XboxController.Button.kB.value);
+    indexTrigger.whileTrue(new RunIndex(m_index, .5));
+
+    Trigger simpleShootTrigger = new JoystickButton(noteController, XboxController.Button.kX.value);
+    simpleShootTrigger.whileTrue(new SimpleShoot(m_shooter));
+
+    m_drivetrain.setDefaultCommand(m_curvatureDrive);
   }
   
 

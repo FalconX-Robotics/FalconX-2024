@@ -4,24 +4,21 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MotorConstants;
 
-public class Intake extends SubsystemBase {
-  CANSparkMax intakeSparkMax = new CANSparkMax(MotorConstants.intake, MotorType.kBrushless);
-  
-  /** Creates a new Intake. */
-  public Intake() {
-    intakeSparkMax.setInverted(true);
-    // TODO: Set inverted here if necessary
+public class Index extends SubsystemBase {
+  CANSparkMax indexSparkMax = new CANSparkMax(MotorConstants.index, MotorType.kBrushless);
+  /** Creates a new Index. */
+  public Index() {
+    indexSparkMax.setInverted(false); // change later if necessary
   }
 
-  public void setMotors(double speed){
-    System.out.println("setting intake to "+speed);
-    intakeSparkMax.set(speed);
+  public void setIndexMotor(double velocity) {
+    indexSparkMax.set(velocity);
   }
 
   @Override
