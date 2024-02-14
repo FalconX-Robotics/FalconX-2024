@@ -105,7 +105,7 @@ public class RobotContainer {
     simpleShootTrigger.whileTrue(new SimpleShoot(m_shooter));
 
     m_drivetrain.setDefaultCommand(m_curvatureDrive);
-    m_shooter.setDefaultCommand(new Shoot(m_shooter, m_intake, m_settings));//temp del later :)
+    m_shooter.setDefaultCommand(new Shoot(m_shooter, m_intake));//TODO: delete later :)
   }
   
 
