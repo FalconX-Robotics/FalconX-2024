@@ -17,14 +17,14 @@ public class Settings {
     public class DriveController {
         public boolean getTurnInPlaceButtonValue () { return m_driveController.getAButton();}
         public double getSpeedJoystickValue () { return MathUtil.applyDeadband(
-            -m_driveController.getLeftY(), deadband);
+            m_driveController.getLeftY(), deadband);
         }
         public double getRotationJoystickValue () { return MathUtil.applyDeadband( 
-            -m_driveController.getRightX(), deadband);
+            m_driveController.getRightX(), deadband);
         }
         public double deadband = 0.1;
 
-        public double normalSpeed = 0.5;
+        public double normalSpeed = 0.3;
         public double turboSpeed = 1.;
     }
     /** Configurations for controller centered around note manipulation */

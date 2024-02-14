@@ -93,10 +93,13 @@ public class RobotContainer {
     turboModeTrigger.whileTrue(new TurboMode(m_drivetrain));
 
     Trigger intakeTrigger = new JoystickButton(noteController, XboxController.Button.kA.value);
-    intakeTrigger.whileTrue(new RunIntake(m_intake, 1));
+    intakeTrigger.whileTrue(new RunIntake(m_intake, .5));
+    
+    Trigger UNintakeTrigger = new JoystickButton(noteController, XboxController.Button.kRightBumper.value);
+    UNintakeTrigger.whileTrue(new RunIntake(m_intake, -.7));
 
     Trigger indexTrigger = new JoystickButton(noteController, XboxController.Button.kB.value);
-    indexTrigger.whileTrue(new RunIndex(m_index, .5));
+    indexTrigger.whileTrue(new RunIndex(m_index, .25));
 
     Trigger simpleShootTrigger = new JoystickButton(noteController, XboxController.Button.kX.value);
     simpleShootTrigger.whileTrue(new SimpleShoot(m_shooter));
