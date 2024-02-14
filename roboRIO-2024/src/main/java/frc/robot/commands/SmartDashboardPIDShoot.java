@@ -9,18 +9,17 @@ import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 
-public class Shoot extends Command {
+public class SmartDashboardPIDShoot extends Command {
   private Shooter m_shooter;
   private SparkPIDController m_pidController;
   public double kP, kI, kD, kIz, kFF, kMinOutput, kMaxOutput, maxRPM;
 
   /** Creates a new Shoot. */
-  public Shoot(Shooter shooter, Intake intake) {
+  public SmartDashboardPIDShoot(Shooter shooter) {
     m_shooter = shooter;
-    addRequirements(shooter, intake);
+    addRequirements(shooter);
     m_pidController = m_shooter.getShooterPidController();
     setPID(6e-5, 0, 0, 0, 0.000173, -1, 1);
 

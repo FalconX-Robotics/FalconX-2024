@@ -1,10 +1,10 @@
 package frc.robot.commands;
 
+// TODO: Remove this?? What even is this??
 import com.fasterxml.jackson.databind.deser.DataFormatReaders.Match;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Robot;
 import frc.robot.subsystems.Shooter;
 
 public class AmpShoot extends Command {

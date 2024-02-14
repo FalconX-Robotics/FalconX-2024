@@ -27,6 +27,7 @@ public class Shooter extends SubsystemBase {
   CANSparkMax shooterFollowerSparkMax = new CANSparkMax(MotorConstants.shooterFollower, MotorType.kBrushless);
   CANSparkMax shooterSparkMax = new CANSparkMax(MotorConstants.shooter, MotorType.kBrushless);
   Settings m_settings;
+  ArmFeedforward armFeedforward = new ArmFeedforward(1., 1., 1.);
 
   public void setArmSpark(double volt){
     shooterArmSparkMax.set(volt);
@@ -46,12 +47,6 @@ public class Shooter extends SubsystemBase {
 
   public double getShooterArmEncoderRotation() {
     return shooterArmSparkMax.getEncoder().getPosition();
-  }
-
-  public void setFeedForward (double idk){
-    // new ArmFeedforward(idk, idk, idk);
-    //TODO: figure it out.
-    // shooterArmSparkMax.set();
   }
 
   /** Creates a new Shooter. */
@@ -83,6 +78,9 @@ public class Shooter extends SubsystemBase {
       return 0.;
     }
     return input;
+  }
+  private double feedforward (double input) {
+    return armFeedforward.calculate(Math.toDegrees(getShooterArmEncoderRotation()), 0, 0);
   }
 
   public void setShooterReference(double setPoint) {

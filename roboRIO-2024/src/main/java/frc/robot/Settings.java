@@ -10,8 +10,11 @@ public class Settings {
         m_driveController = driveController;
         m_noteController = noteController;
     }
+
+    // Do not remove. or else
     public DriveController driveController = new DriveController();
     public NoteController noteController = new NoteController();
+    public FeedForwardValues feedForwardValues = new FeedForwardValues();
 
     /** Configurations for controller centered around drivetrain repositioning */
     public class DriveController {
@@ -35,5 +38,13 @@ public class Settings {
             m_noteController.getLeftY(), deadband);
         }
         public double deadband = 0.1;
+    }
+    /** To be changed later; change values based on the weight, offset, etc of the arm */
+    public class FeedForwardValues {
+        /** In radians, the offset of the arm */
+        public final double offset = 10.;
+        public final double staticGain = 1.;
+        public final double gravityGain = 1.;
+        public final double velocityGain = 1.;
     }
 }

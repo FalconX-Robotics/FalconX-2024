@@ -21,7 +21,7 @@ public final class Constants {
   public static final double NESSIE_WHEEL_DIAMETER = 6.;
 
   //FIX THIS WHEN PIGEON IS ADDED
-  public static final int PIGEON_PORT = 0;
+  public static final int PIGEON_PORT = 42;
 
   public static final int LED_PORT = 0;
 
