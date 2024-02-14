@@ -21,13 +21,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.Constants.MotorConstants;
+import frc.robot.Settings.FeedForwardValues;
 
 public class Shooter extends SubsystemBase {
   CANSparkMax shooterArmSparkMax = new CANSparkMax(MotorConstants.shooterArm, MotorType.kBrushless);
   CANSparkMax shooterFollowerSparkMax = new CANSparkMax(MotorConstants.shooterFollower, MotorType.kBrushless);
   CANSparkMax shooterSparkMax = new CANSparkMax(MotorConstants.shooter, MotorType.kBrushless);
   Settings m_settings;
-  ArmFeedforward armFeedforward = new ArmFeedforward(1., 1., 1.);
+  ArmFeedforward armFeedforward = new ArmFeedforward(
+      m_settings.feedForwardValues.staticGain,
+      m_settings.feedForwardValues.gravityGain,
+      m_settings.feedForwardValues.velocityGain
+    );
 
   public void setArmSpark(double volt){
     shooterArmSparkMax.set(volt);
