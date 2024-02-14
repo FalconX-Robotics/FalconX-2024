@@ -15,7 +15,7 @@ public class Settings {
 
     /** Configurations for controller centered around drivetrain repositioning */
     public class DriveController {
-        public boolean getTurnInPlaceButtonValue () { return m_driveController.getAButton();}
+        public boolean getTurnInPlaceButtonValue () { return m_driveController.getLeftBumper();}
         public double getSpeedJoystickValue () { return MathUtil.applyDeadband(
             m_driveController.getLeftY(), deadband);
         }

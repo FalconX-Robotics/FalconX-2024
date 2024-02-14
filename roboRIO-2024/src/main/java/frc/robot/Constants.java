@@ -33,10 +33,10 @@ public final class Constants {
     // 0 is reserved for RIO
     // 1 is reserved for PDP
 
-    public static final int frontLeft = 5;
-    public static final int frontRight = 2;
-    public static final int backLeft = 3;
-    public static final int backRight = 4;
+    public static final int frontLeft = 5; //5
+    public static final int frontRight = 9;//2
+    public static final int backLeft = 3;  //3
+    public static final int backRight = 4; //4 motor ports on donatello
 
     public static final int index = 115;
     public static final int intake = 7;
