@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.RelativeEncoder;
@@ -48,9 +50,9 @@ public class OdometrySubsystem {
   DoubleLogEntry rightEncoderPositionEntry = new DoubleLogEntry(log, "/odometry/rightPosition");
   DoubleLogEntry leftEncoderVelocityEntry = new DoubleLogEntry(log, "/odometry/leftVelocity");
   DoubleLogEntry rightEncoderVelocityEntry = new DoubleLogEntry(log, "/odometry/rightVelocity"); 
-  DoubleLogEntry rightTargetPosition;
-  DoubleLogEntry leftTargetPosition;
-  DoubleLogEntry rotationTarget;
+  DoubleLogEntry targetX = new DoubleLogEntry(log, "/odometry/targetX");
+  DoubleLogEntry targetY = new DoubleLogEntry(log, "/odometry/targetY");
+  DoubleLogEntry targetRotationDegrees = new DoubleLogEntry(log, "/odometry/targetRotationDegrees");
   
 
   PIDController leftController = new PIDController(0.4, 0.0, 0.3);
@@ -96,10 +98,13 @@ public class OdometrySubsystem {
           m_leftEncoder = new RelativeEncoderSim();
           m_rightEncoder = new RelativeEncoderSim();
         }
+
         resetPose(new Pose2d(1, 7, new Rotation2d()));
         
         PathPlannerLogging.setLogTargetPoseCallback((pose) -> {
-          
+          targetX.append(pose.getX());
+          targetY.append(pose.getY());
+          targetRotationDegrees.append(pose.getRotation().getDegrees());
         });
     }
 
