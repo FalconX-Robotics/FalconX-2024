@@ -140,6 +140,9 @@ public class OdometrySubsystem {
           m_leftEncoder.getPosition(), m_rightEncoder.getPosition(),
           newPose);
     pose = m_odometry.getPoseMeters();
+    if (Robot.isSimulation()) {
+      drivetrain.getSimulation().setPose(pose);
+    }
   }
 
 //   public void resetPose(Pose2d pose) {
@@ -183,7 +186,7 @@ public class OdometrySubsystem {
   private Rotation2d getRotation() {
     if (Robot.isSimulation()) return simulationGyro;
 
-    return gyro.getRotation2d();
+    return gyro.getRotation2d().unaryMinus();
   }
   //kitbot 4 inches wheels
   //nessie 6 inches wheels
