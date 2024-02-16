@@ -148,6 +148,13 @@ public class OdometrySubsystem {
     if (Robot.isSimulation()) {
       drivetrain.getSimulation().setPose(pose);
     }
+
+    SmartDashboard.putNumber("Rotation via pose at reset", pose.getRotation().getDegrees());
+    SmartDashboard.putNumber("Left Encoder Position at reset", m_leftEncoder.getPosition());
+    SmartDashboard.putNumber("Right Encoder Position at reset", m_rightEncoder.getPosition());
+    SmartDashboard.putNumber("Pose x at reset", pose.getX());
+    SmartDashboard.putNumber("Pose y at reset", pose.getY());
+    SmartDashboard.putNumber("Gyro rotation at reset", getRotation().getDegrees());
   }
 
 //   public void resetPose(Pose2d pose) {
