@@ -84,11 +84,6 @@ public class Drivetrain extends SubsystemBase {
     rightVoltageEntry.append(rightLeader.get() * RobotController.getBatteryVoltage());
   }
 
-  public void voltageDrive (Measure<Voltage> voltageMeasure) {
-    setLeftMotorsVoltage(voltageMeasure.in(Units.Volts));
-    setRightMotorsVoltage(voltageMeasure.in(Units.Volts));
-  }
-
   public void logMotors(SysIdRoutineLog log) {
     log.recordState(state);
   }
@@ -98,10 +93,10 @@ public class Drivetrain extends SubsystemBase {
     leftFollower.follow(leftLeader);
     rightFollower.follow(rightLeader);
 
-    leftLeader.setInverted(true);
-    leftFollower.setInverted(true);
-    rightLeader.setInverted(false);
-    rightFollower.setInverted(false);
+    leftLeader.setInverted(false);
+    leftFollower.setInverted(false);
+    rightLeader.setInverted(true);
+    rightFollower.setInverted(true);
     leftLeader.getEncoder().setMeasurementPeriod(20);
     rightLeader.getEncoder().setMeasurementPeriod(20);
     leftLeader.getEncoder().setAverageDepth(1);

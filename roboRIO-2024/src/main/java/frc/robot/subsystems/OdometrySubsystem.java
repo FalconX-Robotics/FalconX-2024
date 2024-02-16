@@ -6,6 +6,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
+import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -55,8 +56,8 @@ public class OdometrySubsystem {
   DoubleLogEntry targetRotationDegrees = new DoubleLogEntry(log, "/odometry/targetRotationDegrees");
   
 
-  PIDController leftController = new PIDController(0.4, 0.0, 0.3);
-  PIDController rightController = new PIDController(0.4, 0.0, 0.3); //this sorta works (maybe? (i dont know))
+  PIDController leftController = new PIDController(0., 0.0, 0.0);
+  PIDController rightController = new PIDController(0., 0.0, 0.); //this sorta works (maybe? (i dont know))
   
   private static final double   kTrackWidth = 0.457; // meters, this is the defauklt from wpilib
                                                        // change this later
@@ -110,7 +111,7 @@ public class OdometrySubsystem {
 
   DifferentialDriveOdometry m_odometry;
 
-  public void  periodic() {
+  public void periodic() {
     pose = m_odometry.update(getRotation(),
     m_leftEncoder.getPosition(),
     m_rightEncoder.getPosition());
@@ -133,11 +134,15 @@ public class OdometrySubsystem {
   
   public void resetPose(Pose2d newPose) {
     gyro.reset();
-    m_leftEncoder.setPosition(0);
-    m_rightEncoder.setPosition(0);
+    REVLibError errorLeft = m_leftEncoder.setPosition(0);
+    REVLibError errorRight = m_rightEncoder.setPosition(0);
+
+    SmartDashboard.putString("Left errror", errorLeft.toString());
+    SmartDashboard.putString("Right errror", errorRight.toString());
+
     m_odometry = new DifferentialDriveOdometry(
           getRotation(),
-          m_leftEncoder.getPosition(), m_rightEncoder.getPosition(),
+          0, 0,
           newPose);
     pose = m_odometry.getPoseMeters();
     if (Robot.isSimulation()) {
@@ -171,12 +176,8 @@ public class OdometrySubsystem {
         rightController.calculate(m_rightEncoder.getVelocity(), speeds.rightMetersPerSecond);
     SmartDashboard.putNumber("right pid output", rightOutput);
     SmartDashboard.putNumber("left pid output", leftOutput);
-    if (Robot.isSimulation()) {
-      drivetrain.setMotorVoltage(leftOutput + leftFeedforward, rightOutput + rightFeedforward);
-    } else {
-      drivetrain.setMotorVoltage((leftOutput + leftFeedforward), (rightOutput + rightFeedforward));
-    }
-        
+    
+    drivetrain.setMotorVoltage(leftOutput + leftFeedforward, rightOutput + rightFeedforward);    
   }
 
   public void driveChassisSpeeds(ChassisSpeeds chassisSpeeds) {
@@ -186,7 +187,7 @@ public class OdometrySubsystem {
   private Rotation2d getRotation() {
     if (Robot.isSimulation()) return simulationGyro;
 
-    return gyro.getRotation2d().unaryMinus();
+    return gyro.getRotation2d();
   }
   //kitbot 4 inches wheels
   //nessie 6 inches wheels
