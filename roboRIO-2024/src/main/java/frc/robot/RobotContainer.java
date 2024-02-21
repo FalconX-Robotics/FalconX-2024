@@ -16,19 +16,27 @@ import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystems.OdometrySubsystem;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.concurrent.TimeUnit;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -53,7 +61,7 @@ public class RobotContainer {
   final ArcadeDrive m_arcadeDrive = new ArcadeDrive(m_drivetrain, m_settings);
   final CurvatureDrive m_curvatureDrive = new CurvatureDrive(m_drivetrain, m_settings);
 
-  public final LEDs m_leds = new LEDs();
+  // public final LEDs m_leds = new LEDs();
   
   final Shooter m_shooter = new Shooter();
   final Intake m_intake = new Intake();  
@@ -66,7 +74,11 @@ public class RobotContainer {
 
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
+
+    LocalDateTime startTime = LocalDateTime.now();
+    Util.setStartTime(startTime);
     DataLogManager.start();
+    
     DriverStation.startDataLog(DataLogManager.getLog());
     // Configure the trigger bindings
     configureBindings();
@@ -85,9 +97,20 @@ public class RobotContainer {
 
     Trigger rightBumper = new JoystickButton(driveController, XboxController.Button.kRightBumper.value);
     rightBumper.whileTrue(new TurboMode(m_drivetrain));
-
+    
+    // Trigger aButtonTrigger = new Trigger(() -> {return driveController.getAButton();});
+    // aButtonTrigger.whileTrue(new Command() {
+    //   @Override
+    //   public void execute() {
+    //       m_drivetrain.sysIdDynamic(SysIdRoutine.Direction.kForward);
+    //       System.out.println("a button");
+    //   }
+    // });
+    
     m_drivetrain.setDefaultCommand(m_curvatureDrive);
   }
+
+
   
 
   /**
@@ -98,4 +121,6 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();
   }
+
+  
 }

@@ -23,7 +23,7 @@ public final class Constants {
   //FIX THIS WHEN PIGEON IS ADDED
   public static final int PIGEON_PORT = 42;
 
-  public static final int LED_PORT = -1;
+  public static final int LED_PORT = 0;
 
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
@@ -32,7 +32,7 @@ public final class Constants {
   public static class MotorConstants {
     public static final int frontLeft = 5;
     public static final int frontRight = 9;
-    public static final int backLeft = 100;
+    public static final int backLeft = 100; //change these on ne robot
     public static final int backRight = 101;
 
     public static final int bottomIntake = 102;
