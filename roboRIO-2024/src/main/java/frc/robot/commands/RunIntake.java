@@ -21,12 +21,12 @@ public class RunIntake extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_intake.setMotors(velocity);
+    m_intake.setMotor(velocity);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_intake.setMotors(0);
+    m_intake.setMotor(0);
   }
 }

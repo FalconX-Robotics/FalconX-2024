@@ -15,11 +15,14 @@ public class Intake extends SubsystemBase {
   
   /** Creates a new Intake. */
   public Intake() {
+    intakeSparkMax.restoreFactoryDefaults();
+    intakeSparkMax.setSmartCurrentLimit(40);
     intakeSparkMax.setInverted(true);
+    intakeSparkMax.burnFlash();
     // TODO: Set inverted here if necessary
   }
 
-  public void setMotors(double speed){
+  public void setMotor(double speed){
     System.out.println("setting intake to "+speed);
     intakeSparkMax.set(speed);
   }

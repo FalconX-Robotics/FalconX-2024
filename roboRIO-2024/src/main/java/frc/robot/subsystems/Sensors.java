@@ -12,4 +12,7 @@ public class Sensors extends SubsystemBase {
         SmartDashboard.putBoolean("sensor on", input.get());
         System.out.println(input.get());
     }
+    public boolean getNoteSensed() {
+        return input.get();
+    }
 }

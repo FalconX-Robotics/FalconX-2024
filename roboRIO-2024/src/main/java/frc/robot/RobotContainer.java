@@ -4,9 +4,11 @@
 
 package frc.robot;
 
+import frc.robot.Constants.MotorConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.CurvatureDrive;
+import frc.robot.commands.PIDShoot;
 import frc.robot.commands.PathfindToPose;
 import frc.robot.commands.RunIndex;
 import frc.robot.commands.RunIntake;
@@ -22,6 +24,7 @@ import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.subsystems.OdometrySubsystem;
+import frc.robot.subsystems.Sensors;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -42,7 +45,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-
   private final SendableChooser<Command> autoChooser;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -50,8 +52,6 @@ public class RobotContainer {
   private final XboxController noteController = new XboxController(OperatorConstants.kShooterControllerPort);
 
   private final Settings m_settings = new Settings(driveController, noteController);
-  // The robot's subsystems and commands are defined here...
-  // final Settings m_settings = new Settings(driveController, noteController);
 
   final Drivetrain m_drivetrain = new Drivetrain(m_settings);
   final TankDrive m_tankDrive = new TankDrive(m_drivetrain, driveController);
@@ -63,14 +63,14 @@ public class RobotContainer {
   final Shooter m_shooter = new Shooter(m_settings);
   final Intake m_intake = new Intake();
   final Index m_index = new Index();
-
+  final Sensors m_sensor = new Sensors();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-
+    // MotorConstants.initializeConstants();
+    
     autoChooser = AutoBuilder.buildAutoChooser();
-
-
+    
     SmartDashboard.putData("Auto Chooser", autoChooser);
     DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());
@@ -93,16 +93,21 @@ public class RobotContainer {
     turboModeTrigger.whileTrue(new TurboMode(m_drivetrain));
 
     Trigger intakeTrigger = new JoystickButton(noteController, XboxController.Button.kA.value);
-    intakeTrigger.whileTrue(new RunIntake(m_intake, .5));
+    intakeTrigger.whileTrue(new RunIntake(m_intake, 1.)
+    // .until(() -> {return m_sensor.getNoteSensed();})
+    );
     
     Trigger UNintakeTrigger = new JoystickButton(noteController, XboxController.Button.kRightBumper.value);
     UNintakeTrigger.whileTrue(new RunIntake(m_intake, -.7));
 
-    Trigger indexTrigger = new JoystickButton(noteController, XboxController.Button.kB.value);
-    indexTrigger.whileTrue(new RunIndex(m_index, .25));
+    Trigger indexTrigger = new JoystickButton(noteController, XboxController.Button.kA.value);
+    indexTrigger.whileTrue(new RunIndex(m_index, 1.));
+
+    Trigger UNindexTrigger = new JoystickButton(noteController, XboxController.Button.kLeftBumper.value);
+    UNindexTrigger.whileTrue(new RunIndex(m_index, -.5));
 
     Trigger simpleShootTrigger = new JoystickButton(noteController, XboxController.Button.kX.value);
-    simpleShootTrigger.whileTrue(new SimpleShoot(m_shooter));
+    simpleShootTrigger.whileTrue(new PIDShoot(m_shooter));
 
     m_drivetrain.setDefaultCommand(m_curvatureDrive);
     // m_shooter.setDefaultCommand(new SmartDashboardShoot(m_shooter, m_intake));//TODO: delete later :)

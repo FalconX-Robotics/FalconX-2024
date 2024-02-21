@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.SparkPIDControllerSim;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
@@ -21,21 +22,21 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.Constants.MotorConstants;
+import frc.robot.Constants.RatioConstants;
 import frc.robot.Settings.FeedForwardValues;
 
 public class Shooter extends SubsystemBase {
-  CANSparkMax shooterArmSparkMax = new CANSparkMax(MotorConstants.shooterArm, MotorType.kBrushless);
-  CANSparkMax shooterFollowerSparkMax = new CANSparkMax(MotorConstants.shooterFollower, MotorType.kBrushless);
+  CANSparkMax armSparkMax = new CANSparkMax(MotorConstants.arm, MotorType.kBrushless);
+  CANSparkMax armFollowerSparkMax = new CANSparkMax(MotorConstants.armFollower, MotorType.kBrushless);
+  
   CANSparkMax shooterSparkMax = new CANSparkMax(MotorConstants.shooter, MotorType.kBrushless);
+  CANSparkMax shooterFollowerSparkMax = new CANSparkMax(MotorConstants.shooterFollower, MotorType.kBrushless);
+
   Settings m_settings;
-  ArmFeedforward armFeedforward = new ArmFeedforward(
-      m_settings.feedForwardValues.staticGain,
-      m_settings.feedForwardValues.gravityGain,
-      m_settings.feedForwardValues.velocityGain
-    );
+  ArmFeedforward armFeedforward;
 
   public void setArmSpark(double volt){
-    shooterArmSparkMax.set(volt);
+    armSparkMax.set(volt);
   }
 
   public void setShooterSpark(double volt){
@@ -51,18 +52,47 @@ public class Shooter extends SubsystemBase {
   }
 
   public double getShooterArmEncoderRotation() {
-    return shooterArmSparkMax.getEncoder().getPosition();
+    return armSparkMax.getEncoder().getPosition();
   }
 
   /** Creates a new Shooter. */
 
   public Shooter(Settings settings) {
     m_settings = settings;
-    shooterArmSparkMax.getEncoder().setPositionConversionFactor(1.);
-    shooterArmSparkMax.getEncoder().setPosition(0);
-    shooterArmSparkMax.setInverted(false);
+    armFeedforward = new ArmFeedforward(
+      m_settings.feedForwardValues.staticGain,
+      m_settings.feedForwardValues.gravityGain,
+      m_settings.feedForwardValues.velocityGain
+    );
+    shooterSparkMax.restoreFactoryDefaults();
+    shooterFollowerSparkMax.restoreFactoryDefaults();
+    armSparkMax.restoreFactoryDefaults();
+    armFollowerSparkMax.restoreFactoryDefaults();
+
+    shooterFollowerSparkMax.follow(shooterSparkMax, true);
+    armFollowerSparkMax.follow(armSparkMax, true);
+    
+    armFollowerSparkMax.setIdleMode(IdleMode.kBrake);
+    armFollowerSparkMax.getEncoder().setPositionConversionFactor(RatioConstants.ArmGearRatio);
+    armFollowerSparkMax.getEncoder().setPosition(0);
+    armFollowerSparkMax.setInverted(true);
+    armFollowerSparkMax.burnFlash();
+
+    armSparkMax.setIdleMode(IdleMode.kBrake);
+    armSparkMax.getEncoder().setPositionConversionFactor(RatioConstants.ArmGearRatio);
+    armSparkMax.getEncoder().setPosition(0);
+    armSparkMax.setInverted(false);
+    armSparkMax.burnFlash();
+
+    shooterSparkMax.setIdleMode(IdleMode.kCoast);
+    shooterSparkMax.setInverted(false);
+    shooterSparkMax.burnFlash();
+
+    shooterFollowerSparkMax.setIdleMode(IdleMode.kCoast);
+    shooterFollowerSparkMax.setInverted(true);
+    shooterFollowerSparkMax.burnFlash();
+
     // TODO: Change position conversion factor as needed
-    shooterArmSparkMax.getEncoder().setPosition(0); // resets position of encoder
     
     if (Robot.isSimulation()) {
       m_pidControllerSim = new SparkPIDControllerSim(shooterSparkMax);
@@ -76,10 +106,10 @@ public class Shooter extends SubsystemBase {
    */
   private double limitArmViaEncoder (double input){
     // TODO: set the position temporary values under this line.
-    if (shooterArmSparkMax.getEncoder().getPosition() >= 1000. && input >= 0.) {
+    if (armSparkMax.getEncoder().getPosition() >= 1000. && input >= 0.) {
       return 0.;
     }
-    if (shooterArmSparkMax.getEncoder().getPosition() <= -1000. && input <= 0.) {
+    if (armSparkMax.getEncoder().getPosition() <= -1000. && input <= 0.) {
       return 0.;
     }
     return input;
@@ -102,13 +132,14 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     // If no current command, set arm via joystick value.
     if(this.getCurrentCommand() == null) {
-      shooterArmSparkMax.set(
+      armSparkMax.set(
         limitArmViaEncoder(
           m_settings.noteController.getArmJoystickValue()
         )
       );
     }
-    // This method will be called once per scheduler run
+    
+    SmartDashboard.putNumber("Shooter Speed", shooterSparkMax.getEncoder().getVelocity());
   }
 
   // Moment of inertia for uniform cylinder = 1/2 * m * r^2.

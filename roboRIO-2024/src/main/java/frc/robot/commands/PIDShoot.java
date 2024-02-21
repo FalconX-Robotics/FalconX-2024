@@ -22,6 +22,9 @@ public class PIDShoot extends Command {
   }
 
   public PIDShoot (Shooter shooter, double kP, double kI, double kD, double kIz, double kFF, double kMinOutput, double kMaxOutput) {
+    m_shooter = shooter;
+    m_pidController = m_shooter.getShooterPidController();
+    addRequirements(shooter);
     setPID(kP, kI, kD, kIz, kFF, kMinOutput, kMaxOutput);
     SmartDashboard.putNumber("Shooter P Gain", kP);
     SmartDashboard.putNumber("Shooter I Gain", kI);
@@ -30,10 +33,7 @@ public class PIDShoot extends Command {
     SmartDashboard.putNumber("Shooter Feed Forward", kFF);
     SmartDashboard.putNumber("Shooter Max Output", kMinOutput);
     SmartDashboard.putNumber("Shooter Min Output", kMaxOutput);
-
-    m_shooter = shooter;
-    addRequirements(shooter);
-    m_pidController = m_shooter.getShooterPidController();
+    SmartDashboard.putNumber("PID Shooter RPM in", 2700.);
   }
 
   public void setPID (double kP, double kI, double kD, double kIz, double kFF, double kMinOutput, double kMaxOutput) {
@@ -58,10 +58,11 @@ public class PIDShoot extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_shooter.setShooterReference(2700);
+    m_shooter.setShooterReference(SmartDashboard.getNumber("PID Shooter RPM in", 2700.));
   }
   @Override
   public void end (boolean interrupted) {
+    m_shooter.setMotors(0.);
     System.out.println("Note firing completed.");
   }
 }

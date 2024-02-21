@@ -21,15 +21,16 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.Settings;
 import frc.robot.Constants.MotorConstants;
+import frc.robot.Constants.RatioConstants;
 
 public class Drivetrain extends SubsystemBase {
   // There is a different system used than previous years because MotorControlGroup is deprecated :(.
   // We set a motor to a leader, and make followers follow the leader in the constructor.  
   // Front wheels are leaders for no reason because its redundant
-  private CANSparkMax leftLeader = new CANSparkMax(MotorConstants.frontLeft, MotorType.kBrushless);
-  private CANSparkMax rightLeader = new CANSparkMax(MotorConstants.frontRight, MotorType.kBrushless);
-  private CANSparkMax leftFollower = new CANSparkMax(MotorConstants.backLeft, MotorType.kBrushless);
-  private CANSparkMax rightFollower = new CANSparkMax(MotorConstants.backRight, MotorType.kBrushless);
+  private CANSparkMax leftLeader = new CANSparkMax(MotorConstants.drivetrain.frontLeft.value, MotorType.kBrushless);
+  private CANSparkMax rightLeader = new CANSparkMax(MotorConstants.drivetrain.frontRight.value, MotorType.kBrushless);
+  private CANSparkMax leftFollower = new CANSparkMax(MotorConstants.drivetrain.backLeft.value, MotorType.kBrushless);
+  private CANSparkMax rightFollower = new CANSparkMax(MotorConstants.drivetrain.backRight.value, MotorType.kBrushless);
 
   private WPI_PigeonIMU gyro = new WPI_PigeonIMU(Constants.PIGEON_PORT);
 
@@ -62,15 +63,15 @@ public class Drivetrain extends SubsystemBase {
     m_odometry = new OdometrySubsystem(this);
   }
   private void setMotorConversionFactors() {
-    leftLeader.getEncoder().setVelocityConversionFactor(4. * Constants.NESSIE_GEAR_RATIO);
-    leftFollower.getEncoder().setVelocityConversionFactor(4. * Constants.NESSIE_GEAR_RATIO);
-    rightLeader.getEncoder().setVelocityConversionFactor(4. * Constants.NESSIE_GEAR_RATIO);
-    rightFollower.getEncoder().setVelocityConversionFactor(4. * Constants.NESSIE_GEAR_RATIO);
+    leftLeader.getEncoder().setVelocityConversionFactor(4. * RatioConstants.NESSIE_GEAR_RATIO);
+    leftFollower.getEncoder().setVelocityConversionFactor(4. * RatioConstants.NESSIE_GEAR_RATIO);
+    rightLeader.getEncoder().setVelocityConversionFactor(4. * RatioConstants.NESSIE_GEAR_RATIO);
+    rightFollower.getEncoder().setVelocityConversionFactor(4. * RatioConstants.NESSIE_GEAR_RATIO);
     
-    leftLeader.getEncoder().setPositionConversionFactor(4. * Constants.NESSIE_GEAR_RATIO);
-    leftFollower.getEncoder().setPositionConversionFactor(4. * Constants.NESSIE_GEAR_RATIO);
-    rightLeader.getEncoder().setPositionConversionFactor(4. * Constants.NESSIE_GEAR_RATIO);
-    rightFollower.getEncoder().setPositionConversionFactor(4. * Constants.NESSIE_GEAR_RATIO); // m/s
+    leftLeader.getEncoder().setPositionConversionFactor(4. * RatioConstants.NESSIE_GEAR_RATIO);
+    leftFollower.getEncoder().setPositionConversionFactor(4. * RatioConstants.NESSIE_GEAR_RATIO);
+    rightLeader.getEncoder().setPositionConversionFactor(4. * RatioConstants.NESSIE_GEAR_RATIO);
+    rightFollower.getEncoder().setPositionConversionFactor(4. * RatioConstants.NESSIE_GEAR_RATIO); // m/s
   }
 
   // runs the motors
@@ -136,7 +137,7 @@ public class Drivetrain extends SubsystemBase {
 
 
   DifferentialDrivetrainSim m_simulation = 
-  new DifferentialDrivetrainSim(DCMotor.getNEO(2), Constants.NESSIE_GEAR_RATIO, 5, 
+  new DifferentialDrivetrainSim(DCMotor.getNEO(2), RatioConstants.NESSIE_GEAR_RATIO, 5, 
   BaseUnits.Mass.convertFrom(120, Units.Pounds), BaseUnits.Distance.convertFrom(3, Units.Inches), 
   BaseUnits.Distance.convertFrom(18, Units.Inches), null);
   
