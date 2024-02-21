@@ -15,6 +15,7 @@ import frc.robot.commands.SmartDashboardPIDShoot;
 import frc.robot.commands.SimpleShoot;
 import frc.robot.commands.TankDrive;
 import frc.robot.commands.TurboMode;
+import frc.robot.commands.TurnInPlace;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Index;
 import frc.robot.subsystems.Intake;
@@ -89,9 +90,11 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-
     Trigger turboModeTrigger = new JoystickButton(driveController, m_settings.driveController.getTurnInPlaceButton().value);
     turboModeTrigger.whileTrue(new TurboMode(m_drivetrain));
+
+    Trigger turnInPlaceTrigger = new JoystickButton(driveController, m_settings.driveController.getTurnInPlaceButton().value);
+    turnInPlaceTrigger.onTrue(new TurnInPlace(m_drivetrain));
 
     Trigger shooterTrigger = new JoystickButton(noteController, m_settings.noteController.getShooterButton().value);
     shooterTrigger.whileTrue(new PIDShoot(m_shooter));

@@ -36,7 +36,8 @@ public class Drivetrain extends SubsystemBase {
 
   private OdometrySubsystem m_odometry;
 
-  public boolean turboModeOn = false;
+  private boolean turboModeOn = false;
+  private boolean turnInPlace = false;
 
   public void setLeftMotors (double volt) {
     leftLeader.set(volt);
@@ -111,11 +112,11 @@ public class Drivetrain extends SubsystemBase {
     );
   }
 
-  public void curvatureDrive (double speed, double rotation, boolean allowTurnInPlace){
+  public void curvatureDrive (double speed, double rotation){
     m_drive.curvatureDrive(
       speed * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed),
       rotation * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed),
-      allowTurnInPlace);
+      turnInPlace);
   }
   @Override
   public void periodic() {
@@ -135,6 +136,18 @@ public class Drivetrain extends SubsystemBase {
     return leftLeader.getEncoder();
   }
 
+  public void setTurnInPlace (boolean newTurnInPlace) {
+    turnInPlace = newTurnInPlace;
+  }
+  public boolean getTurnInPlace () {
+    return turnInPlace;
+  }
+  public void setTurboMode (boolean newTurboMode) {
+    turboModeOn = newTurboMode;
+  }
+  public boolean getTurboMode () {
+    return turboModeOn;
+  }
 
   DifferentialDrivetrainSim m_simulation = 
   new DifferentialDrivetrainSim(DCMotor.getNEO(2), RatioConstants.NESSIE_GEAR_RATIO, 5, 
