@@ -11,9 +11,21 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MotorConstants;
 
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class Shooter extends SubsystemBase {
   CANSparkMax shooterArmSparkMax = new CANSparkMax(MotorConstants.shooterArm, MotorType.kBrushless);
-  CANSparkMax shooterSparkMax = new CANSparkMax(MotorConstants.shooter, MotorType.kBrushless);  
+  CANSparkMax shooterSparkMax = new CANSparkMax(MotorConstants.shooter, MotorType.kBrushless);
+  
+  DataLog log = DataLogManager.getLog();
+
+  DoubleLogEntry shooterArmEncoderPositionEntry = new DoubleLogEntry(log, "/shooter/shooter_arm_position");
+  DoubleLogEntry shooterEncoderPositionEntry = new DoubleLogEntry(log, "/shooter/shooter_position");
+  DoubleLogEntry shooterArmEncoderVelocityEntry = new DoubleLogEntry(log, "/shooter/shooter_arm_velocity");
+  DoubleLogEntry shooterEncoderVelocityEntry = new DoubleLogEntry(log, "/shooter/shooter_velocity");
 
   public void setArmSpark(double volt){
     shooterArmSparkMax.set(volt);
@@ -43,5 +55,15 @@ public class Shooter extends SubsystemBase {
 
     // TODO: set position conversion factor if necessary
     // This method will be called once per scheduler run
+    
+    SmartDashboard.putNumber("Shooter Arm Encoder Position", shooterArmSparkMax.getEncoder.getPosition());
+    SmartDashboard.putNumber("Shooter Encoder Position", shooterSparkMax.getEncoder.getPosition());
+    SmartDashboard.putNumber("Shooter Arm Encoder Velocity", shooterArmSparkMax.getEncoder.getVelocity());
+    SmartDashboard.putNumber("Shooter Encoder Velocity", shooterSparkMax.getEncoder.getVelocity());
+
+    shooterArmEncoderPositionEntry.append(shooterArmSparkMax.getEncoder.getPosition());
+    shooterEncoderPositionEntry.append(shooterSparkMax.getEncoder.getPosition());
+    shooterArmEncoderVelocityEntry.append(shooterArmSparkMax.getEncoder.getVelocity());
+    shooterEncoderVelocityEntry.append(shooterSparkMax.getEncoder.getVelocity());
   }
 }
