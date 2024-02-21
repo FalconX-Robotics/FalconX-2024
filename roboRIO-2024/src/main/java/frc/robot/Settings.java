@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.XboxController.Button;
  
 public class Settings {
     // Access Controllers
@@ -18,22 +19,25 @@ public class Settings {
 
     /** Configurations for controller centered around drivetrain repositioning */
     public class DriveController {
-        public boolean getTurnInPlaceButtonValue () { return m_driveController.getLeftBumper();}
         public double getSpeedJoystickValue () { return MathUtil.applyDeadband(
             m_driveController.getLeftY(), deadband);
         }
         public double getRotationJoystickValue () { return MathUtil.applyDeadband( 
             m_driveController.getRightX(), deadband);
         }
-        public double deadband = 0.1;
+        public Button getTurnInPlaceButton () {return XboxController.Button.kLeftBumper;}
 
+        public double deadband = 0.1;
         public double normalSpeed = 0.3;
         public double turboSpeed = 1.;
     }
     /** Configurations for controller centered around note manipulation */
     public class NoteController {
-        public boolean getShooterButtonValue () {return m_noteController.getAButton();}
-        public boolean getIntakeButtonValue () {return m_noteController.getBButton();}
+        public Button getShooterButton () {return XboxController.Button.kA;}
+        public Button getIntakeButton  () {return XboxController.Button.kB;}
+        public Button getIndexButton   () {return XboxController.Button.kA;}
+        public Button getReverseButton () {return XboxController.Button.kRightBumper;}
+
         public double getArmJoystickValue () {return MathUtil.applyDeadband( 
             m_noteController.getLeftY(), deadband);
         }

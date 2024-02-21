@@ -33,7 +33,12 @@ public class Shooter extends SubsystemBase {
   CANSparkMax shooterFollowerSparkMax = new CANSparkMax(MotorConstants.shooterFollower, MotorType.kBrushless);
 
   Settings m_settings;
-  ArmFeedforward armFeedforward;
+
+  ArmFeedforward armFeedforward = new ArmFeedforward(
+    m_settings.feedForwardValues.staticGain,
+    m_settings.feedForwardValues.gravityGain,
+    m_settings.feedForwardValues.velocityGain
+  );
 
   public void setArmSpark(double volt){
     armSparkMax.set(volt);
@@ -114,7 +119,8 @@ public class Shooter extends SubsystemBase {
     }
     return input;
   }
-  private double feedforward (double input) {
+
+  private double feedforward () {
     return armFeedforward.calculate(Math.toDegrees(getShooterArmEncoderRotation()), 0, 0);
   }
 
@@ -128,18 +134,20 @@ public class Shooter extends SubsystemBase {
 
   }
 
+  public boolean armJoystickActive () {
+    return Math.abs(m_settings.noteController.getArmJoystickValue()) > 0;
+  }
+
   @Override
   public void periodic() {
     // If no current command, set arm via joystick value.
     if(this.getCurrentCommand() == null) {
-      armSparkMax.set(
-        limitArmViaEncoder(
-          m_settings.noteController.getArmJoystickValue()
-        )
-      );
+      if (armJoystickActive()) {
+        armSparkMax.set(limitArmViaEncoder(m_settings.noteController.getArmJoystickValue())); return;
+      }
+      //TODO does this work lol
+      armSparkMax.set(feedforward());
     }
-    
-    SmartDashboard.putNumber("Shooter Speed", shooterSparkMax.getEncoder().getVelocity());
   }
 
   // Moment of inertia for uniform cylinder = 1/2 * m * r^2.
@@ -161,6 +169,7 @@ public class Shooter extends SubsystemBase {
       pidSim.setVelocity(shooterSim.getAngularVelocityRPM());
       pidSim.update(0.001);
     }
+    
     SmartDashboard.putNumber("Sim Shooter Voltage", pidSim.getVoltageOutput());
     SmartDashboard.putNumber("Sim Shooter RPM", shooterSim.getAngularVelocityRPM());
   }
