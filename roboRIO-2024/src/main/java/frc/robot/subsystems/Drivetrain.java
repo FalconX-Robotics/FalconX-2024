@@ -6,21 +6,14 @@ package frc.robot.subsystems;
 
 import java.util.function.Consumer;
 
-import com.ctre.phoenix.sensors.PigeonIMU;
+import java.util.function.Consumer;
+
 import com.ctre.phoenix.sensors.WPI_PigeonIMU;
-import com.ctre.phoenix6.hardware.Pigeon2;
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
-import edu.wpi.first.math.kinematics.Kinematics;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.BaseUnits;
 import edu.wpi.first.units.Distance;
@@ -43,8 +36,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.Settings;
 import frc.robot.Constants.MotorConstants;
-import frc.robot.simulation.RelativeEncoderSim;
 
 public class Drivetrain extends SubsystemBase {
   // There is a different system used than previous years because MotorControlGroup is deprecated :(.
@@ -80,16 +73,12 @@ public class Drivetrain extends SubsystemBase {
   }
   public void setRightMotors (double volt) {
     rightLeader.set(volt);
-    SmartDashboard.putNumber("Right Motors Set", volt);
-    rightVoltageEntry.append(rightLeader.get() * RobotController.getBatteryVoltage());
-  }
-
-  public void logMotors(SysIdRoutineLog log) {
-    log.recordState(state);
   }
 
   /** Creates a new Drivetrain. */
-  public Drivetrain() {
+  public Drivetrain(Settings settings) {
+    m_settings = settings;
+
     leftFollower.follow(leftLeader);
     rightFollower.follow(rightLeader);
 
@@ -156,11 +145,17 @@ public class Drivetrain extends SubsystemBase {
   public DifferentialDrive m_drive = new DifferentialDrive(leftLeader, rightLeader);
 
   public void arcadeDrive (double speed, double rotation){
-    m_drive.arcadeDrive(speed * (turboModeOn ? 1 : (1./2.)), rotation * (turboModeOn ? 1 : (1./2.)));
+    m_drive.arcadeDrive(
+      speed * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed),
+      rotation * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed)
+    );
   }
 
   public void curvatureDrive (double speed, double rotation, boolean allowTurnInPlace){
-    m_drive.curvatureDrive(speed * (turboModeOn ? 1 : (1./2.)), rotation, allowTurnInPlace);
+    m_drive.curvatureDrive(
+      speed * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed),
+      rotation * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed),
+      allowTurnInPlace);
   }
   @Override
   public void periodic() {

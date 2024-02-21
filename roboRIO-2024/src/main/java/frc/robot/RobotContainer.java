@@ -56,7 +56,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   // final Settings m_settings = new Settings(driveController, noteController);
 
-  public final Drivetrain m_drivetrain = new Drivetrain();
+  public final Drivetrain m_drivetrain = new Drivetrain(m_settings);
   public final TankDrive m_tankDrive = new TankDrive(m_drivetrain, driveController);
   final ArcadeDrive m_arcadeDrive = new ArcadeDrive(m_drivetrain, m_settings);
   final CurvatureDrive m_curvatureDrive = new CurvatureDrive(m_drivetrain, m_settings);
