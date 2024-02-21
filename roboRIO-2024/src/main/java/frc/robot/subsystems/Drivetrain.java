@@ -59,7 +59,7 @@ public class Drivetrain extends SubsystemBase {
   private OdometrySubsystem m_odometry;
   private State state;
 
-
+  private Settings m_settings;
   
 
   public boolean turboModeOn = false;
