@@ -41,8 +41,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
 
   private final SendableChooser<Command> autoChooser;
-  
-  private PhotonCamera camera = new PhotonCamera("photonvision");
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final XboxController driveController = new XboxController(OperatorConstants.kDriverControllerPort);

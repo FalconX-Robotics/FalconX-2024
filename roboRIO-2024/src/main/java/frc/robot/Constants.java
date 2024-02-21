@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -39,6 +42,16 @@ public final class Constants {
     public static final int topIntake = 5; // bodie says we need 1 for intake
     public static final int shooter = 6; 
     public static final int shooterArm = 7; //we might need another for arm
+  }
+
+  // Vision constants, current placeholder values
+  public static class VisionConstants {
+    public static final double CAMERA_HEIGHT_METERS = 0.0;
+    public static final double TARGET_HEIGHT_METERS = 0.0;
+    public static final double CAMERA_PITCH_RADIANS = 0.0;
+    public static final Transform3d BLUE_SPEAKER_TRANSFORM = new Transform3d(0, 5.25, 2, new Rotation3d());
+    // TODO Fix this
+    public static final Transform3d RED_SPEAKER_TRANSFORM = new Transform3d(16.5, 5.25, 2, new Rotation3d());
   }
   public static final int gyroId = 42;
 }
