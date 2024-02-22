@@ -9,6 +9,8 @@ import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -131,7 +133,7 @@ public class OdometrySubsystem {
     rightEncoderVelocityEntry.append(m_rightEncoder.getVelocity());
 
   }
-  
+
   public void resetPose(Pose2d newPose) {
     gyro.reset();
     REVLibError errorLeft = m_leftEncoder.setPosition(0);
@@ -141,13 +143,12 @@ public class OdometrySubsystem {
     SmartDashboard.putString("Right errror", errorRight.toString());
 
     m_odometry = new DifferentialDriveOdometry(
-          getRotation(),
+          new Rotation2d(),
           0, 0,
           newPose);
     pose = m_odometry.getPoseMeters();
-    if (Robot.isSimulation()) {
-      drivetrain.getSimulation().setPose(pose);
-    }
+
+
 
     SmartDashboard.putNumber("Rotation via pose at reset", pose.getRotation().getDegrees());
     SmartDashboard.putNumber("Left Encoder Position at reset", m_leftEncoder.getPosition());
@@ -155,6 +156,12 @@ public class OdometrySubsystem {
     SmartDashboard.putNumber("Pose x at reset", pose.getX());
     SmartDashboard.putNumber("Pose y at reset", pose.getY());
     SmartDashboard.putNumber("Gyro rotation at reset", getRotation().getDegrees());
+
+    if (Robot.isSimulation()) {
+      drivetrain.getSimulation().setPose(pose);
+      // set enocder positions/velocity to 0
+      drivetrain.getSimulation().setState(new Matrix<>(Nat.N7(), Nat.N1()));
+    }
   }
 
 //   public void resetPose(Pose2d pose) {
