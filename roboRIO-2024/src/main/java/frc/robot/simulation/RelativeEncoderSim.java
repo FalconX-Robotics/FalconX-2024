@@ -30,7 +30,7 @@ public class RelativeEncoderSim implements RelativeEncoder {
     }
 
     public void setSimulationPositionMeters(double position) {
-        m_simulationPostion = position;
+        m_simulationPostion = position + m_offset;
     }
     
     public void zeroSimulationPostion() {
