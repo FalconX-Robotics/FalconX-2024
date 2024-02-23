@@ -14,11 +14,10 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Vision;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.subsystems.OdometrySubsystem;
-
-import org.photonvision.PhotonCamera;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -41,8 +40,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
 
   private final SendableChooser<Command> autoChooser;
-  
-  private PhotonCamera camera = new PhotonCamera("photonvision");
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final XboxController driveController = new XboxController(OperatorConstants.kDriverControllerPort);
@@ -61,6 +58,12 @@ public class RobotContainer {
   
   final Shooter m_shooter = new Shooter();
   final Intake m_intake = new Intake();  
+  final Vision m_vision = new Vision();
+
+  public void periodic() {
+    m_vision.getAngletoTarget();
+    SmartDashboard.putNumber("PV Angle", m_vision.getAngleToTarget());
+  }
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
