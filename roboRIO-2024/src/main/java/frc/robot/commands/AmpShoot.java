@@ -18,7 +18,7 @@ public class AmpShoot extends Command {
 
     @Override
     public void execute() {
-        m_shooter.setShooterSpark(0.1);
+        m_shooter.setShooterSparks(0.1);
     }
 
     @Override

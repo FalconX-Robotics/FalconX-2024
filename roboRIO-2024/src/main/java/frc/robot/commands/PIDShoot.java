@@ -5,27 +5,34 @@
 package frc.robot.commands;
 
 import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkMax;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.Index;
 import frc.robot.subsystems.Shooter;
 
 public class PIDShoot extends Command {
+  private Index m_index;
   private Shooter m_shooter;
   private SparkPIDController m_pidController;
-  public double kP, kI, kD, kIz, kFF, kMinOutput, kMaxOutput, maxRPM;
+  private double RPMin, leniency, initialTimestamp;
 
   /** Creates a new Shoot. */
-  public PIDShoot(Shooter shooter) {
-    this(shooter, 6e-5, 0, 0, 0, 0.000173, -1, 1);
+  public PIDShoot(Index index, Shooter shooter) {
+    this(index, shooter, 35., 2700.);
   }
 
-  public PIDShoot (Shooter shooter, double kP, double kI, double kD, double kIz, double kFF, double kMinOutput, double kMaxOutput) {
+  public PIDShoot(Index index, Shooter shooter, double leniency, double RPMin) {
+    this(index, shooter, 6e-5, 0, 0, 0, 0.000173, -1, 1, RPMin);
+  }
+
+  public PIDShoot (Index index, Shooter shooter, double kP, double kI, double kD, double kIz, double kFF, double kMinOutput, double kMaxOutput, double RPMin) {
+    m_index = index;
     m_shooter = shooter;
     m_pidController = m_shooter.getShooterPidController();
-    addRequirements(shooter);
-    setPID(kP, kI, kD, kIz, kFF, kMinOutput, kMaxOutput);
+    addRequirements(index, shooter);
+    setPID(kP, kI, kD, kIz, kFF, kMinOutput, kMaxOutput, RPMin);
     SmartDashboard.putNumber("Shooter P Gain", kP);
     SmartDashboard.putNumber("Shooter I Gain", kI);
     SmartDashboard.putNumber("Shooter D Gain", kD);
@@ -33,13 +40,11 @@ public class PIDShoot extends Command {
     SmartDashboard.putNumber("Shooter Feed Forward", kFF);
     SmartDashboard.putNumber("Shooter Max Output", kMinOutput);
     SmartDashboard.putNumber("Shooter Min Output", kMaxOutput);
-    SmartDashboard.putNumber("PID Shooter RPM in", 2700.);
+    SmartDashboard.putNumber("PID Shooter RPM in", RPMin);
   }
 
-  public void setPID (double kP, double kI, double kD, double kIz, double kFF, double kMinOutput, double kMaxOutput) {
-    this.kP = kP; this.kI = kI; this.kD = kD;
-    this.kIz = kIz; this.kFF = kFF;
-    this.kMinOutput = kMinOutput; this.kMaxOutput = kMaxOutput;
+  public void setPID (double kP, double kI, double kD, double kIz, double kFF, double kMinOutput, double kMaxOutput, double RPMin) {
+    this.RPMin = RPMin;
     // Set PID Values
     m_pidController.setP(kP);
     m_pidController.setI(kI);
@@ -55,14 +60,24 @@ public class PIDShoot extends Command {
     System.out.println("Note Fired!");
   }
 
+  public boolean velocityIsInRange () {
+    return (m_shooter.getShooterEncoderVelocity() >= RPMin - leniency
+         && m_shooter.getShooterEncoderVelocity() <= RPMin + leniency);
+  }
+
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_shooter.setShooterReference(SmartDashboard.getNumber("PID Shooter RPM in", 2700.));
+    m_shooter.setShooterReference(RPMin);
+    if (velocityIsInRange()){
+      initialTimestamp = Timer.getFPGATimestamp();
+      new RunIndex(m_index, 1.).until(() -> {return Timer.getFPGATimestamp() >= initialTimestamp + 100;});
+    }
   }
+  
   @Override
   public void end (boolean interrupted) {
-    m_shooter.setMotors(0.);
+    m_shooter.setShooterSparks(0.);
     System.out.println("Note firing completed.");
   }
 }

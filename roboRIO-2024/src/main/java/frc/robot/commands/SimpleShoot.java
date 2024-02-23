@@ -18,11 +18,11 @@ public class SimpleShoot extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_shooter.setMotors(.25);
+    m_shooter.setShooterSparks(.25);
   }
 
   @Override
   public void end(boolean interrupted) {
-    m_shooter.setMotors(0.);
+    m_shooter.setShooterSparks(0.);
   }
 }

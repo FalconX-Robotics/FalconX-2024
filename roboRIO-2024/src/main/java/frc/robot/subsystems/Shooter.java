@@ -28,35 +28,34 @@ public class Shooter extends SubsystemBase {
   CANSparkMax armSparkMax = new CANSparkMax(MotorConstants.arm, MotorType.kBrushless);
   CANSparkMax armFollowerSparkMax = new CANSparkMax(MotorConstants.armFollower, MotorType.kBrushless);
   
-  CANSparkMax shooterSparkMax = new CANSparkMax(MotorConstants.shooter, MotorType.kBrushless);
+  CANSparkMax shooterLeaderSparkMax = new CANSparkMax(MotorConstants.shooter, MotorType.kBrushless);
   CANSparkMax shooterFollowerSparkMax = new CANSparkMax(MotorConstants.shooterFollower, MotorType.kBrushless);
 
   Settings m_settings;
 
-  ArmFeedforward armFeedforward = new ArmFeedforward(
-    m_settings.feedForwardValues.staticGain,
-    m_settings.feedForwardValues.gravityGain,
-    m_settings.feedForwardValues.velocityGain
-  );
+  ArmFeedforward armFeedforward;
 
   public void setArmSpark(double volt){
     armSparkMax.set(volt);
   }
 
-  public void setShooterSpark(double volt){
-    shooterSparkMax.set(volt);
+  public void setShooterSparks(double volt){
+    shooterLeaderSparkMax.set(volt);
   }
 
   public SparkPIDController getShooterPidController () {
     if (Robot.isSimulation()) {
       return m_pidControllerSim;
     } else {
-      return shooterSparkMax.getPIDController();
+      return shooterLeaderSparkMax.getPIDController();
     }
   }
 
   public double getShooterArmEncoderRotation() {
     return armSparkMax.getEncoder().getPosition();
+  }
+  public double getShooterEncoderVelocity () {
+    return shooterLeaderSparkMax.getEncoder().getVelocity();
   }
 
   /** Creates a new Shooter. */
@@ -68,12 +67,12 @@ public class Shooter extends SubsystemBase {
       m_settings.feedForwardValues.gravityGain,
       m_settings.feedForwardValues.velocityGain
     );
-    shooterSparkMax.restoreFactoryDefaults();
+    shooterLeaderSparkMax.restoreFactoryDefaults();
     shooterFollowerSparkMax.restoreFactoryDefaults();
     armSparkMax.restoreFactoryDefaults();
     armFollowerSparkMax.restoreFactoryDefaults();
 
-    shooterFollowerSparkMax.follow(shooterSparkMax, true);
+    shooterFollowerSparkMax.follow(shooterLeaderSparkMax, true);
     armFollowerSparkMax.follow(armSparkMax, true);
     
     armFollowerSparkMax.setIdleMode(IdleMode.kBrake);
@@ -88,9 +87,9 @@ public class Shooter extends SubsystemBase {
     armSparkMax.setInverted(false);
     armSparkMax.burnFlash();
 
-    shooterSparkMax.setIdleMode(IdleMode.kCoast);
-    shooterSparkMax.setInverted(false);
-    shooterSparkMax.burnFlash();
+    shooterLeaderSparkMax.setIdleMode(IdleMode.kCoast);
+    shooterLeaderSparkMax.setInverted(false);
+    shooterLeaderSparkMax.burnFlash();
 
     shooterFollowerSparkMax.setIdleMode(IdleMode.kCoast);
     shooterFollowerSparkMax.setInverted(true);
@@ -99,7 +98,7 @@ public class Shooter extends SubsystemBase {
     // TODO: Change position conversion factor as needed
     
     if (Robot.isSimulation()) {
-      m_pidControllerSim = new SparkPIDControllerSim(shooterSparkMax);
+      m_pidControllerSim = new SparkPIDControllerSim(shooterLeaderSparkMax);
     }
   }
 
@@ -127,12 +126,6 @@ public class Shooter extends SubsystemBase {
     getShooterPidController().setReference(setPoint, CANSparkMax.ControlType.kVelocity);
   }
 
-  public void setMotors(double speed){
-    shooterSparkMax.set(speed);
-    shooterFollowerSparkMax.set(speed);
-
-  }
-
   public boolean armJoystickActive () {
     return Math.abs(m_settings.noteController.getArmJoystickValue()) > 0;
   }
@@ -142,10 +135,10 @@ public class Shooter extends SubsystemBase {
     // If no current command, set arm via joystick value.
     if(this.getCurrentCommand() == null) {
       if (armJoystickActive()) {
-        armSparkMax.set(limitArmViaEncoder(m_settings.noteController.getArmJoystickValue())); return;
+        // armSparkMax.set(limitArmViaEncoder(m_settings.noteController.getArmJoystickValue())); return;
       }
       //TODO does this work lol
-      armSparkMax.set(feedforward());
+      // armSparkMax.set(feedforward());
     }
   }
 

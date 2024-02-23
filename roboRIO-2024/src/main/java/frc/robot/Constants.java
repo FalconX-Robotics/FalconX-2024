@@ -23,7 +23,7 @@ public final class Constants {
   public static final int LED_PORT = 0;
 
   // Sensor is in DIO and thus doesn't need a unique value unless there are other things in DIO..
-  public static final int SENSOR_PORT = 0;
+  public static final int SENSOR_PORT = 9;
 
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
@@ -58,7 +58,7 @@ public final class Constants {
     }
     public static final int index = 10;
     public static final int intake = 11;
-    public static final int shooter = 12; 
+    public static final int shooter = 12;
     public static final int shooterFollower = 13;
     public static final int arm = 20;
     public static final int armFollower = 21;

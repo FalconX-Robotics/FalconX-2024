@@ -25,6 +25,7 @@ public class Settings {
         public double getRotationJoystickValue () { return MathUtil.applyDeadband( 
             m_driveController.getRightX(), deadband);
         }
+        public Button getTurboButton () {return XboxController.Button.kRightBumper;}
         public Button getTurnInPlaceButton () {return XboxController.Button.kLeftBumper;}
 
         public double deadband = 0.1;
@@ -35,7 +36,7 @@ public class Settings {
     public class NoteController {
         public Button getShooterButton () {return XboxController.Button.kA;}
         public Button getIntakeButton  () {return XboxController.Button.kB;}
-        public Button getIndexButton   () {return XboxController.Button.kA;}
+        public Button getIndexButton   () {return XboxController.Button.kB;}
         public Button getReverseButton () {return XboxController.Button.kRightBumper;}
 
         public double getArmJoystickValue () {return MathUtil.applyDeadband( 
