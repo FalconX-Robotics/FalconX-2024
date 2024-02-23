@@ -58,6 +58,7 @@ public class PIDShoot extends Command {
   @Override
   public void initialize() {
     System.out.println("Note Fired!");
+    initialTimestamp = Timer.getFPGATimestamp();
   }
 
   public boolean velocityIsInRange () {
@@ -69,10 +70,14 @@ public class PIDShoot extends Command {
   @Override
   public void execute() {
     m_shooter.setShooterReference(RPMin);
-    if (velocityIsInRange()){
-      initialTimestamp = Timer.getFPGATimestamp();
-      new RunIndex(m_index, 1.).until(() -> {return Timer.getFPGATimestamp() >= initialTimestamp + 100;});
-    }
+    // if (velocityIsInRange()){
+      if (Timer.getFPGATimestamp() >= 1 + initialTimestamp){
+        new RunIndex(m_index, 1.).until(() -> {return Timer.getFPGATimestamp() >= initialTimestamp + 3;});
+      }
+      // }
+    SmartDashboard.putNumber("Timestamp", Timer.getFPGATimestamp());
+    SmartDashboard.putNumber("Timestamp inital", initialTimestamp);
+    
   }
   
   @Override

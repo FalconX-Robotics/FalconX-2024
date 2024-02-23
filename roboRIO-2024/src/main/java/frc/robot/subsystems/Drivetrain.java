@@ -115,7 +115,7 @@ public class Drivetrain extends SubsystemBase {
   public void curvatureDrive (double speed, double rotation){
     m_drive.curvatureDrive(
       speed * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed),
-      rotation * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed),
+      rotation,
       turnInPlace);
   }
   @Override

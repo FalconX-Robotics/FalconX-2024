@@ -67,10 +67,10 @@ public class Shooter extends SubsystemBase {
       m_settings.feedForwardValues.gravityGain,
       m_settings.feedForwardValues.velocityGain
     );
-    shooterLeaderSparkMax.restoreFactoryDefaults();
-    shooterFollowerSparkMax.restoreFactoryDefaults();
-    armSparkMax.restoreFactoryDefaults();
-    armFollowerSparkMax.restoreFactoryDefaults();
+    // shooterLeaderSparkMax.restoreFactoryDefaults();
+    // shooterFollowerSparkMax.restoreFactoryDefaults();
+    // armSparkMax.restoreFactoryDefaults();
+    // armFollowerSparkMax.restoreFactoryDefaults();
 
     shooterFollowerSparkMax.follow(shooterLeaderSparkMax, true);
     armFollowerSparkMax.follow(armSparkMax, true);

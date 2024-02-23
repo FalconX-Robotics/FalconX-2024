@@ -104,6 +104,9 @@ public class RobotContainer {
     Trigger intakeTrigger = new JoystickButton(noteController, m_settings.noteController.getIntakeButton().value);
     intakeTrigger.whileTrue(new RunIntake(m_intake, 1.).until(() -> {return !m_sensor.getNoteSensed();}));
 
+    Trigger temporaryTrigger = new JoystickButton(noteController, XboxController.Button.kY.value);
+    temporaryTrigger.whileTrue(new RunIndex(m_index, 1.));
+
     Trigger reverseTrigger = new JoystickButton(noteController, m_settings.noteController.getReverseButton().value);
     reverseTrigger.whileTrue(new RunIndex(m_index, -.5)).whileTrue(new RunIntake(m_intake, -1.));
 
