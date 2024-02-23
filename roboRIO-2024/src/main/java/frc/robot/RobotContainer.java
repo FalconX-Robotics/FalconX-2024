@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.DashboardHelper.LogLevel;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.CurvatureDrive;
 import frc.robot.commands.PathfindToPose;
@@ -18,6 +19,7 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystems.OdometrySubsystem;
+import frc.robot.DashboardHelper;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -47,6 +49,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 public class RobotContainer {
 
   private final SendableChooser<Command> autoChooser;
+  private final SendableChooser<LogLevel> logLevelChooser = new SendableChooser<LogLevel>();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final XboxController driveController = new XboxController(OperatorConstants.kDriverControllerPort);
@@ -66,14 +69,18 @@ public class RobotContainer {
   final Shooter m_shooter = new Shooter();
   final Intake m_intake = new Intake();  
 
-
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
     autoChooser = AutoBuilder.buildAutoChooser();
 
+    logLevelChooser.setDefaultOption("Important", DashboardHelper.LogLevel.Important);
+    logLevelChooser.addOption("Info", DashboardHelper.LogLevel.Info);
+    logLevelChooser.addOption("Debug", DashboardHelper.LogLevel.Debug);
+    logLevelChooser.addOption("Verbose", DashboardHelper.LogLevel.Verbose);
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
+    SmartDashboard.putData("LogLevel Choices", logLevelChooser);
 
     LocalDateTime startTime = LocalDateTime.now();
     Util.setStartTime(startTime);
@@ -122,5 +129,8 @@ public class RobotContainer {
     return autoChooser.getSelected();
   }
 
+  public LogLevel getSelectedLogLevel(){
+    return logLevelChooser.getSelected();
+  }
   
 }
