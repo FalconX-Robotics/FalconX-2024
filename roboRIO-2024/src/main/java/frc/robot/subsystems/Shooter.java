@@ -24,7 +24,13 @@ import frc.robot.Constants.MotorConstants;
 import frc.robot.Constants.RatioConstants;
 import frc.robot.Settings.FeedForwardValues;
 
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class Shooter extends SubsystemBase {
+
   CANSparkMax armSparkMax = new CANSparkMax(MotorConstants.arm, MotorType.kBrushless);
   CANSparkMax armFollowerSparkMax = new CANSparkMax(MotorConstants.armFollower, MotorType.kBrushless);
   
@@ -35,6 +41,13 @@ public class Shooter extends SubsystemBase {
 
   ArmFeedforward armFeedforward;
 
+  DataLog log = DataLogManager.getLog();
+
+  DoubleLogEntry shooterArmEncoderPositionEntry = new DoubleLogEntry(log, "/shooter/shooter_arm_position");
+  DoubleLogEntry shooterEncoderPositionEntry = new DoubleLogEntry(log, "/shooter/shooter_position");
+  DoubleLogEntry shooterArmEncoderVelocityEntry = new DoubleLogEntry(log, "/shooter/shooter_arm_velocity");
+  DoubleLogEntry shooterEncoderVelocityEntry = new DoubleLogEntry(log, "/shooter/shooter_velocity");
+  
   public void setArmSpark(double volt){
     armSparkMax.set(volt);
   }
@@ -140,6 +153,16 @@ public class Shooter extends SubsystemBase {
       //TODO does this work lol
       // armSparkMax.set(feedforward());
     }
+
+    SmartDashboard.putNumber("Shooter Arm Encoder Position", shooterArmSparkMax.getEncoder.getPosition());
+    SmartDashboard.putNumber("Shooter Encoder Position", shooterSparkMax.getEncoder.getPosition());
+    SmartDashboard.putNumber("Shooter Arm Encoder Velocity", shooterArmSparkMax.getEncoder.getVelocity());
+    SmartDashboard.putNumber("Shooter Encoder Velocity", shooterSparkMax.getEncoder.getVelocity());
+
+    shooterArmEncoderPositionEntry.append(shooterArmSparkMax.getEncoder.getPosition());
+    shooterEncoderPositionEntry.append(shooterSparkMax.getEncoder.getPosition());
+    shooterArmEncoderVelocityEntry.append(shooterArmSparkMax.getEncoder.getVelocity());
+    shooterEncoderVelocityEntry.append(shooterSparkMax.getEncoder.getVelocity());
   }
 
   // Moment of inertia for uniform cylinder = 1/2 * m * r^2.
@@ -164,5 +187,6 @@ public class Shooter extends SubsystemBase {
     
     SmartDashboard.putNumber("Sim Shooter Voltage", pidSim.getVoltageOutput());
     SmartDashboard.putNumber("Sim Shooter RPM", shooterSim.getAngularVelocityRPM());
+
   }
 }
