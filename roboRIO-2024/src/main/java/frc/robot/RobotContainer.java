@@ -27,17 +27,24 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystems.OdometrySubsystem;
 import frc.robot.subsystems.Sensor;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.concurrent.TimeUnit;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -73,7 +80,11 @@ public class RobotContainer {
 
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
+
+    LocalDateTime startTime = LocalDateTime.now();
+    Util.setStartTime(startTime);
     DataLogManager.start();
+    
     DriverStation.startDataLog(DataLogManager.getLog());
     // Configure the trigger bindings
     configureBindings();
