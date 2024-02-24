@@ -9,7 +9,7 @@ import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.BooleanLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 
-public class Sensors extends SubsystemBase { 
+public class Sensor extends SubsystemBase { 
     DigitalInput input = new DigitalInput(Constants.SENSOR_PORT);
 
     DataLog log = DataLogManager.getLog();

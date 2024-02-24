@@ -104,7 +104,7 @@ public class Drivetrain extends SubsystemBase {
     m_odometry = new OdometrySubsystem(this);
   }
   private void setMotorConversionFactors() {
-    double conversionFactor = 1./(Constants.NESSIE_GEAR_RATIO) * BaseUnits.Distance.convertFrom(6 * Math.PI, Units.Inches);
+    double conversionFactor = 1./(RatioConstants.NESSIE_GEAR_RATIO) * BaseUnits.Distance.convertFrom(6 * Math.PI, Units.Inches);
     leftLeader.getEncoder().setVelocityConversionFactor(conversionFactor/60);
     leftFollower.getEncoder().setVelocityConversionFactor(conversionFactor/60);
     rightLeader.getEncoder().setVelocityConversionFactor(conversionFactor/60);
