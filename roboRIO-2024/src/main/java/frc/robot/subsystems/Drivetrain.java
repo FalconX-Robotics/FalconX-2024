@@ -25,8 +25,10 @@ import edu.wpi.first.units.Voltage;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
@@ -38,15 +40,17 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.Settings;
 import frc.robot.Constants.MotorConstants;
+import frc.robot.Constants.RatioConstants;
+import frc.robot.Constants.MotorConstants.drivetrain;
 
 public class Drivetrain extends SubsystemBase {
   // There is a different system used than previous years because MotorControlGroup is deprecated :(.
   // We set a motor to a leader, and make followers follow the leader in the constructor.  
   // Front wheels are leaders for no reason because its redundant
-  private CANSparkMax leftLeader = new CANSparkMax(MotorConstants.frontLeft, MotorType.kBrushless);
-  private CANSparkMax rightLeader = new CANSparkMax(MotorConstants.frontRight, MotorType.kBrushless);
-  private CANSparkMax leftFollower = new CANSparkMax(MotorConstants.backLeft, MotorType.kBrushless);
-  private CANSparkMax rightFollower = new CANSparkMax(MotorConstants.backRight, MotorType.kBrushless);
+  private CANSparkMax leftLeader = new CANSparkMax(MotorConstants.drivetrain.frontLeft.value, MotorType.kBrushless);
+  private CANSparkMax rightLeader = new CANSparkMax(MotorConstants.drivetrain.frontRight.value, MotorType.kBrushless);
+  private CANSparkMax leftFollower = new CANSparkMax(MotorConstants.drivetrain.backLeft.value, MotorType.kBrushless);
+  private CANSparkMax rightFollower = new CANSparkMax(MotorConstants.drivetrain.backRight.value, MotorType.kBrushless);
 
   private DataLog log = DataLogManager.getLog();
   
@@ -62,7 +66,8 @@ public class Drivetrain extends SubsystemBase {
   private Settings m_settings;
   
 
-  public boolean turboModeOn = false;
+  private boolean turboModeOn = false;
+  private boolean turnInPlace = false;
 
   public void setLeftMotors (double volt) {
     leftLeader.set(volt);
@@ -101,7 +106,7 @@ public class Drivetrain extends SubsystemBase {
     m_odometry = new OdometrySubsystem(this);
   }
   private void setMotorConversionFactors() {
-    double conversionFactor = 1./(Constants.NESSIE_GEAR_RATIO) * BaseUnits.Distance.convertFrom(6 * Math.PI, Units.Inches);
+    double conversionFactor = 1./(RatioConstants.NESSIE_GEAR_RATIO) * BaseUnits.Distance.convertFrom(6 * Math.PI, Units.Inches);
     leftLeader.getEncoder().setVelocityConversionFactor(conversionFactor/60);
     leftFollower.getEncoder().setVelocityConversionFactor(conversionFactor/60);
     rightLeader.getEncoder().setVelocityConversionFactor(conversionFactor/60);
@@ -151,15 +156,21 @@ public class Drivetrain extends SubsystemBase {
     );
   }
 
-  public void curvatureDrive (double speed, double rotation, boolean allowTurnInPlace){
-    m_drive.curvatureDrive(
-      speed * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed),
-      rotation * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed),
-      allowTurnInPlace);
+  public void curvatureDrive (double speed, double rotation){
+    // WheelSpeeds wheelSpeeds = DifferentialDrive.curvatureDriveIK(speed * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed),
+    // rotation, turnInPlace);
+    // wheelSpeeds.left += 0.05 * Math.signum(wheelSpeeds.left);
+    // wheelSpeeds.right += 0.05 * Math.signum(wheelSpeeds.right);
+
+    // setLeftMotors(wheelSpeeds.left);
+    // setRightMotors(wheelSpeeds.right);
+
+    m_drive.curvatureDrive(speed * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed), rotation, turnInPlace);
   }
   @Override
   public void periodic() {
     m_odometry.periodic();
+    SmartDashboard.putBoolean("turnInPlace", turnInPlace);
   }
 
   public WPI_PigeonIMU getGyro() {
@@ -175,8 +186,22 @@ public class Drivetrain extends SubsystemBase {
     return leftLeader.getEncoder();
   }
 
+  public void setTurnInPlace (boolean newTurnInPlace) {
+    turnInPlace = newTurnInPlace;
+  }
+  public boolean getTurnInPlace () {
+    return turnInPlace;
+  }
+  public void setTurboMode (boolean newTurboMode) {
+    turboModeOn = newTurboMode;
+  }
+  public boolean getTurboMode () {
+    return turboModeOn;
+  }
 
   DifferentialDrivetrainSim m_simulation = 
+  new DifferentialDrivetrainSim(DCMotor.getNEO(2), RatioConstants.NESSIE_GEAR_RATIO, 5, 
+  BaseUnits.Mass.convertFrom(120, Units.Pounds), BaseUnits.Distance.convertFrom(3, Units.Inches), 
   new DifferentialDrivetrainSim(DCMotor.getNEO(2), Constants.KITBOT_GEAR_RATIO, 5, 
   BaseUnits.Mass.convertFrom(95, Units.Pounds), BaseUnits.Distance.convertFrom(2, Units.Inches), 
   BaseUnits.Distance.convertFrom(18, Units.Inches), null);
@@ -184,9 +209,11 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void simulationPeriodic() {
-    m_odometry.simulationPeriodic();
-    m_simulation.setInputs(leftLeader.get() * RobotController.getBatteryVoltage(), rightLeader.get() * RobotController.getBatteryVoltage());
-    m_simulation.update(0.02);
+    if (!DriverStation.isDisabled()) {
+      m_odometry.simulationPeriodic();
+      m_simulation.setInputs(leftLeader.get() * RobotController.getBatteryVoltage(), rightLeader.get() * RobotController.getBatteryVoltage());
+      m_simulation.update(0.02);
+    }
   }
 
   DifferentialDrivetrainSim getSimulation() {
