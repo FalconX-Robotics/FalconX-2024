@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -22,14 +21,14 @@ public class SmartDashboardPIDShoot extends Command {
     addRequirements(shooter);
     m_pidController = m_shooter.getShooterPidController();
     setPID(6e-5, 0, 0, 0, 0.000173, -1, 1);
-
+    
+    SmartDashboard.putNumber("Shooter P Gain", 0);
     SmartDashboard.putNumber("Shooter I Gain", 0);
     SmartDashboard.putNumber("Shooter D Gain", 0);
     SmartDashboard.putNumber("Shooter I Zone", 0);
     SmartDashboard.putNumber("Shooter Feed Forward", 0);
     SmartDashboard.putNumber("Shooter Max Output", 0);
     SmartDashboard.putNumber("Shooter Min Output", 0);
-    SmartDashboard.putNumber("Shooter P Gain", 0); 
   }
 
   public void setPID (double kP, double kI, double kD, double kIz, double kFF, double kMinOutput, double kMaxOutput) {

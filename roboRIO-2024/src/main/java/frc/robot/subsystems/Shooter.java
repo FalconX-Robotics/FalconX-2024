@@ -21,8 +21,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.Constants.MotorConstants;
-import frc.robot.Constants.RatioConstants;
-import frc.robot.Settings.FeedForwardValues;
 
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
@@ -30,27 +28,15 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Shooter extends SubsystemBase {
-
-  CANSparkMax armSparkMax = new CANSparkMax(MotorConstants.arm, MotorType.kBrushless);
-  CANSparkMax armFollowerSparkMax = new CANSparkMax(MotorConstants.armFollower, MotorType.kBrushless);
-  
   CANSparkMax shooterLeaderSparkMax = new CANSparkMax(MotorConstants.shooter, MotorType.kBrushless);
   CANSparkMax shooterFollowerSparkMax = new CANSparkMax(MotorConstants.shooterFollower, MotorType.kBrushless);
 
   Settings m_settings;
 
-  ArmFeedforward armFeedforward;
-
   DataLog log = DataLogManager.getLog();
 
-  DoubleLogEntry shooterArmEncoderPositionEntry = new DoubleLogEntry(log, "/shooter/shooter_arm_position");
   DoubleLogEntry shooterEncoderPositionEntry = new DoubleLogEntry(log, "/shooter/shooter_position");
-  DoubleLogEntry shooterArmEncoderVelocityEntry = new DoubleLogEntry(log, "/shooter/shooter_arm_velocity");
   DoubleLogEntry shooterEncoderVelocityEntry = new DoubleLogEntry(log, "/shooter/shooter_velocity");
-  
-  public void setArmSpark(double volt){
-    armSparkMax.set(volt);
-  }
 
   public void setShooterSparks(double volt){
     shooterLeaderSparkMax.set(volt);
@@ -64,9 +50,6 @@ public class Shooter extends SubsystemBase {
     }
   }
 
-  public double getShooterArmEncoderRotation() {
-    return armSparkMax.getEncoder().getPosition();
-  }
   public double getShooterEncoderVelocity () {
     return shooterLeaderSparkMax.getEncoder().getVelocity();
   }
@@ -75,30 +58,13 @@ public class Shooter extends SubsystemBase {
 
   public Shooter(Settings settings) {
     m_settings = settings;
-    armFeedforward = new ArmFeedforward(
-      m_settings.feedForwardValues.staticGain,
-      m_settings.feedForwardValues.gravityGain,
-      m_settings.feedForwardValues.velocityGain
-    );
+    
     // shooterLeaderSparkMax.restoreFactoryDefaults();
     // shooterFollowerSparkMax.restoreFactoryDefaults();
     // armSparkMax.restoreFactoryDefaults();
     // armFollowerSparkMax.restoreFactoryDefaults();
 
     shooterFollowerSparkMax.follow(shooterLeaderSparkMax, true);
-    armFollowerSparkMax.follow(armSparkMax, true);
-    
-    armFollowerSparkMax.setIdleMode(IdleMode.kBrake);
-    armFollowerSparkMax.getEncoder().setPositionConversionFactor(RatioConstants.ArmGearRatio);
-    armFollowerSparkMax.getEncoder().setPosition(0);
-    armFollowerSparkMax.setInverted(true);
-    armFollowerSparkMax.burnFlash();
-
-    armSparkMax.setIdleMode(IdleMode.kBrake);
-    armSparkMax.getEncoder().setPositionConversionFactor(RatioConstants.ArmGearRatio);
-    armSparkMax.getEncoder().setPosition(0);
-    armSparkMax.setInverted(false);
-    armSparkMax.burnFlash();
 
     shooterLeaderSparkMax.setIdleMode(IdleMode.kCoast);
     shooterLeaderSparkMax.setInverted(false);
@@ -107,32 +73,10 @@ public class Shooter extends SubsystemBase {
     shooterFollowerSparkMax.setIdleMode(IdleMode.kCoast);
     shooterFollowerSparkMax.setInverted(true);
     shooterFollowerSparkMax.burnFlash();
-
-    // TODO: Change position conversion factor as needed
     
     if (Robot.isSimulation()) {
       m_pidControllerSim = new SparkPIDControllerSim(shooterLeaderSparkMax);
     }
-  }
-
-  /**
-   * A method to block the arm from moving too far.
-   * @param input A double from -1 to 1. Put joystick value here
-   * @return The same double, unless moved too far.
-   */
-  private double limitArmViaEncoder (double input){
-    // TODO: set the position temporary values under this line.
-    if (armSparkMax.getEncoder().getPosition() >= 1000. && input >= 0.) {
-      return 0.;
-    }
-    if (armSparkMax.getEncoder().getPosition() <= -1000. && input <= 0.) {
-      return 0.;
-    }
-    return input;
-  }
-
-  private double feedforward () {
-    return armFeedforward.calculate(Math.toDegrees(getShooterArmEncoderRotation()), 0, 0);
   }
 
   public void setShooterReference(double setPoint) {
@@ -145,26 +89,10 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // If no current command, set arm via joystick value.
-    // if(this.getCurrentCommand() == null) {
-    //   if (armJoystickActive()) {
-    //     // armSparkMax.set(limitArmViaEncoder(m_settings.noteController.getArmJoystickValue())); return;
-    //   }
-      //TODO does this work lol
-      // armSparkMax.set(feedforward());
-    armSparkMax.set(m_settings.noteController.getArmJoystickValue() * .3);
-    // }
-
-    // This method will be called once per scheduler run
-    
-    SmartDashboard.putNumber("Shooter Arm Encoder Position", armSparkMax.getEncoder().getPosition());
     SmartDashboard.putNumber("Shooter Encoder Position", shooterLeaderSparkMax.getEncoder().getPosition());
-    SmartDashboard.putNumber("Shooter Arm Encoder Velocity", armSparkMax.getEncoder().getVelocity());
     SmartDashboard.putNumber("Shooter Encoder Velocity", shooterLeaderSparkMax.getEncoder().getVelocity());
 
-    shooterArmEncoderPositionEntry.append(armSparkMax.getEncoder().getPosition());
     shooterEncoderPositionEntry.append(shooterLeaderSparkMax.getEncoder().getPosition());
-    shooterArmEncoderVelocityEntry.append(armSparkMax.getEncoder().getVelocity());
     shooterEncoderVelocityEntry.append(shooterLeaderSparkMax.getEncoder().getVelocity());
   }
 

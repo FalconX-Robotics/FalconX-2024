@@ -6,8 +6,6 @@ package frc.robot.subsystems;
 
 import java.util.function.Consumer;
 
-import java.util.function.Consumer;
-
 import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
