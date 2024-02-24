@@ -64,10 +64,6 @@ public class Drivetrain extends SubsystemBase {
   private State state;
 
   private Settings m_settings;
-  
-
-  private boolean turboModeOn = false;
-  private boolean turnInPlace = false;
 
   public void setLeftMotors (double volt) {
     leftLeader.set(volt);
@@ -149,14 +145,14 @@ public class Drivetrain extends SubsystemBase {
 
   public DifferentialDrive m_drive = new DifferentialDrive(leftLeader, rightLeader);
 
-  public void arcadeDrive (double speed, double rotation){
+  public void arcadeDrive (double speed, double rotation, boolean turboModeOn){
     m_drive.arcadeDrive(
       speed * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed),
       rotation * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed)
     );
   }
 
-  public void curvatureDrive (double speed, double rotation){
+  public void curvatureDrive (double speed, double rotation, boolean turnInPlace, boolean turboModeOn){
     // WheelSpeeds wheelSpeeds = DifferentialDrive.curvatureDriveIK(speed * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed),
     // rotation, turnInPlace);
     // wheelSpeeds.left += 0.05 * Math.signum(wheelSpeeds.left);
@@ -170,7 +166,7 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     m_odometry.periodic();
-    SmartDashboard.putBoolean("turnInPlace", turnInPlace);
+    // SmartDashboard.putBoolean("turnInPlace", turnInPlace);
   }
 
   public WPI_PigeonIMU getGyro() {
@@ -186,18 +182,18 @@ public class Drivetrain extends SubsystemBase {
     return leftLeader.getEncoder();
   }
 
-  public void setTurnInPlace (boolean newTurnInPlace) {
-    turnInPlace = newTurnInPlace;
-  }
-  public boolean getTurnInPlace () {
-    return turnInPlace;
-  }
-  public void setTurboMode (boolean newTurboMode) {
-    turboModeOn = newTurboMode;
-  }
-  public boolean getTurboMode () {
-    return turboModeOn;
-  }
+  // public void setTurnInPlace (boolean newTurnInPlace) {
+  //   // turnInPlace = newTurnInPlace;
+  // }
+  // public boolean getTurnInPlace () {
+  //   // return turnInPlace;
+  // }
+  // public void setTurboMode (boolean newTurboMode) {
+  //   // turboModeOn = newTurboMode;
+  // }
+  // public boolean getTurboMode () {
+  //   // return turboModeOn;
+  // }
 
   DifferentialDrivetrainSim m_simulation = 
   new DifferentialDrivetrainSim(DCMotor.getNEO(2), Constants.RatioConstants.KITBOT_GEAR_RATIO, 5, 

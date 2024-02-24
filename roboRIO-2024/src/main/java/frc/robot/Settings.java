@@ -4,6 +4,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  
 public class Settings {
     // Access Controllers
@@ -27,21 +28,16 @@ public class Settings {
 
     /** Configurations for controller centered around drivetrain repositioning */
     public class DriveController {
-        public boolean getTurnInPlaceButtonValue () { 
-                        m_driveController.setRumble(RumbleType.kBothRumble, 10);
-return m_driveController.getAButtonPressed();}
         public double getSpeedJoystickValue () { 
-            m_driveController.setRumble(RumbleType.kBothRumble, 10);
             return MathUtil.applyDeadband(
             -m_driveController.getLeftY(), deadband);
         }
         public double getRotationJoystickValue () {
-                        m_driveController.setRumble(RumbleType.kBothRumble, 1);
  return MathUtil.applyDeadband( 
             m_driveController.getRightX(), deadband);
         }
-        public Button getTurboButton () {return XboxController.Button.kRightBumper;}
-        public Button getTurnInPlaceButton () {return XboxController.Button.kLeftBumper;}
+        public boolean getTurboButton () {return m_driveController.getRightBumper();}
+        public boolean getTurnInPlaceButton () {return m_driveController.getLeftBumper();}
 
         public double deadband = 0.1;
         public double normalSpeed = 0.3;
