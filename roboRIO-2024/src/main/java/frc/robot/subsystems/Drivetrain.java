@@ -14,6 +14,7 @@ import edu.wpi.first.units.BaseUnits;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -22,6 +23,7 @@ import frc.robot.Robot;
 import frc.robot.Settings;
 import frc.robot.Constants.MotorConstants;
 import frc.robot.Constants.RatioConstants;
+import frc.robot.Constants.MotorConstants.drivetrain;
 
 public class Drivetrain extends SubsystemBase {
   // There is a different system used than previous years because MotorControlGroup is deprecated :(.
@@ -113,10 +115,15 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void curvatureDrive (double speed, double rotation){
-    m_drive.curvatureDrive(
-      speed * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed),
-      rotation,
-      turnInPlace);
+    // WheelSpeeds wheelSpeeds = DifferentialDrive.curvatureDriveIK(speed * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed),
+    // rotation, turnInPlace);
+    // wheelSpeeds.left += 0.05 * Math.signum(wheelSpeeds.left);
+    // wheelSpeeds.right += 0.05 * Math.signum(wheelSpeeds.right);
+
+    // setLeftMotors(wheelSpeeds.left);
+    // setRightMotors(wheelSpeeds.right);
+
+    m_drive.curvatureDrive(speed * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed), rotation, turnInPlace);
   }
   @Override
   public void periodic() {

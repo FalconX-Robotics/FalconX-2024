@@ -102,7 +102,7 @@ public class RobotContainer {
     indexTrigger.whileTrue(new RunIndex(m_index, .5).until(() -> {return !m_sensor.getNoteSensed();}));
 
     Trigger intakeTrigger = new JoystickButton(noteController, m_settings.noteController.getIntakeButton().value);
-    intakeTrigger.whileTrue(new RunIntake(m_intake, 1.).until(() -> {return !m_sensor.getNoteSensed();}));
+    intakeTrigger.whileTrue(new RunIntake(m_intake, .8).until(() -> {return !m_sensor.getNoteSensed();}));
 
     Trigger temporaryTrigger = new JoystickButton(noteController, XboxController.Button.kY.value);
     temporaryTrigger.whileTrue(new RunIndex(m_index, 1.));

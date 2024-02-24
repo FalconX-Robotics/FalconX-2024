@@ -133,13 +133,14 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     // If no current command, set arm via joystick value.
-    if(this.getCurrentCommand() == null) {
-      if (armJoystickActive()) {
-        // armSparkMax.set(limitArmViaEncoder(m_settings.noteController.getArmJoystickValue())); return;
-      }
+    // if(this.getCurrentCommand() == null) {
+    //   if (armJoystickActive()) {
+    //     // armSparkMax.set(limitArmViaEncoder(m_settings.noteController.getArmJoystickValue())); return;
+    //   }
       //TODO does this work lol
       // armSparkMax.set(feedforward());
-    }
+    armSparkMax.set(m_settings.noteController.getArmJoystickValue() * .3);
+    // }
   }
 
   // Moment of inertia for uniform cylinder = 1/2 * m * r^2.
