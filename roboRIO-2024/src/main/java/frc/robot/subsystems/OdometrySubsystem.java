@@ -57,8 +57,8 @@ public class OdometrySubsystem {
   DoubleLogEntry targetRotationDegrees = new DoubleLogEntry(log, "/odometry/targetRotationDegrees");
   
 
-  PIDController leftController = new PIDController(0., 0.0, 0.0);
-  PIDController rightController = new PIDController(0., 0.0, 0.); //this sorta works (maybe? (i dont know))
+  PIDController leftController = new PIDController(1., 0.0, 0.0);
+  PIDController rightController = new PIDController(1., 0.0, 0.); //this sorta works (maybe? (i dont know))
   
   private static final double   kTrackWidth = 0.457; // meters, this is the defauklt from wpilib
                                                        // change this later
@@ -67,7 +67,7 @@ public class OdometrySubsystem {
     new DifferentialDriveKinematics(kTrackWidth);
 
     
-  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.52, 2.4, 0.7);
+  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.52, 2.4, 1.5);
     
     // constructor so i can find in in the wall of code
   public OdometrySubsystem (Drivetrain drivetrain) {

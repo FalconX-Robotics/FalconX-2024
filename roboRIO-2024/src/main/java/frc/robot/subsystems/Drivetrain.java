@@ -87,17 +87,17 @@ public class Drivetrain extends SubsystemBase {
     applyToAllMotors((motor) -> {
       motor.setSmartCurrentLimit(Constants.DRIVETRAIN_CURRENT_LIMIT);
       motor.setIdleMode(IdleMode.kBrake);
-      motor.setOpenLoopRampRate(Constants.DRIVETRAIN_RAMP_RATE); //not sure the right number
+      motor.setOpenLoopRampRate(Constants.DRIVETRAIN_RAMP_RATE);
     });
 
     leftLeader.setInverted(false);
     leftFollower.setInverted(false);
     rightLeader.setInverted(true);
     rightFollower.setInverted(true);
-    leftLeader.getEncoder().setMeasurementPeriod(20);
-    rightLeader.getEncoder().setMeasurementPeriod(20);
-    leftLeader.getEncoder().setAverageDepth(1);
-    rightLeader.getEncoder().setAverageDepth(1);
+    leftLeader.getEncoder().setMeasurementPeriod(8);
+    rightLeader.getEncoder().setMeasurementPeriod(8);
+    leftLeader.getEncoder().setAverageDepth(4);
+    rightLeader.getEncoder().setAverageDepth(4);
 
     setMotorConversionFactors();
 
@@ -114,8 +114,8 @@ public class Drivetrain extends SubsystemBase {
   private void setMotorConversionFactors() {
     double conversionFactor = 1./(RatioConstants.NESSIE_GEAR_RATIO) * BaseUnits.Distance.convertFrom(6 * Math.PI, Units.Inches);
     applyToAllMotors((motor) -> {
-      motor.getEncoder().setVelocityConversionFactor(conversionFactor/60);
-      motor.getEncoder().setPositionConversionFactor(conversionFactor);
+      motor.getEncoder().setVelocityConversionFactor(conversionFactor/60); //meters per second
+      motor.getEncoder().setPositionConversionFactor(conversionFactor); //meters
     });
 
   }
@@ -206,7 +206,7 @@ public class Drivetrain extends SubsystemBase {
   DifferentialDrivetrainSim m_simulation = 
   new DifferentialDrivetrainSim(DCMotor.getNEO(2), Constants.RatioConstants.KITBOT_GEAR_RATIO, 5, 
   BaseUnits.Mass.convertFrom(95, Units.Pounds), BaseUnits.Distance.convertFrom(2, Units.Inches), 
-  BaseUnits.Distance.convertFrom(18, Units.Inches), null);
+  BaseUnits.Distance.convertFrom(23, Units.Inches), null);
   
 
   @Override
