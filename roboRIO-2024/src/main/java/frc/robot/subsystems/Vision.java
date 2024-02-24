@@ -7,14 +7,15 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import java.util.Optional;
+
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
-
 import frc.robot.Constants.VisionConstants;
 
 public class Vision {
 
-    public double getAngleToTarget() {
+    public Optional<Double> getAngleToTarget() {
 
         PhotonCamera camera = new PhotonCamera("photonvision");
 
@@ -31,7 +32,7 @@ public class Vision {
             SmartDashboard.putNumber("PV TargetZ", targetToCamera.getZ());
 
             Rotation3d m_rotation = targetToCamera.getRotation();
-            return m_rotation.getZ();
+            return Optional.of(m_rotation.getZ());
 
             /* double range =
             PhotonUtils.calculateDistanceToTargetMeters(
@@ -40,10 +41,11 @@ public class Vision {
                 VisionConstants.CAMERA_PITCH_RADIANS,
                 Units.degreesToRadians(result.MultitagResult())); */
         }
+
+        return Optional.empty();
     }
 
     public Transform3d GetTargetToField() {
-
         Transform3d result = new Transform3d(new Translation3d(0, 5.5, 2), new Rotation3d());
 
         return result;

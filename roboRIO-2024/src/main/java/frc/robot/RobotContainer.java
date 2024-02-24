@@ -61,8 +61,8 @@ public class RobotContainer {
   final Vision m_vision = new Vision();
 
   public void periodic() {
-    m_vision.getAngletoTarget();
-    SmartDashboard.putNumber("PV Angle", m_vision.getAngleToTarget());
+    m_vision.getAngleToTarget();
+    SmartDashboard.putNumber("PV Angle", m_vision.getAngleToTarget().orElse(0.));
   }
 
 
