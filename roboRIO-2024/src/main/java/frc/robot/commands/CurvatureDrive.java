@@ -29,8 +29,7 @@ public class CurvatureDrive extends Command {
   public void execute() {
     m_drivetrain.curvatureDrive(
       Settings.curveInput(m_settings.driveController.getSpeedJoystickValue()),
-      m_settings.driveController.getRotationJoystickValue(),
-      m_settings.driveController.getTurnInPlaceButtonValue()
+      m_settings.driveController.getRotationJoystickValue()
     );
   }
 

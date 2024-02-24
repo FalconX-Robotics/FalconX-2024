@@ -200,9 +200,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   DifferentialDrivetrainSim m_simulation = 
-  new DifferentialDrivetrainSim(DCMotor.getNEO(2), RatioConstants.NESSIE_GEAR_RATIO, 5, 
-  BaseUnits.Mass.convertFrom(120, Units.Pounds), BaseUnits.Distance.convertFrom(3, Units.Inches), 
-  new DifferentialDrivetrainSim(DCMotor.getNEO(2), Constants.KITBOT_GEAR_RATIO, 5, 
+  new DifferentialDrivetrainSim(DCMotor.getNEO(2), Constants.RatioConstants.KITBOT_GEAR_RATIO, 5, 
   BaseUnits.Mass.convertFrom(95, Units.Pounds), BaseUnits.Distance.convertFrom(2, Units.Inches), 
   BaseUnits.Distance.convertFrom(18, Units.Inches), null);
   
