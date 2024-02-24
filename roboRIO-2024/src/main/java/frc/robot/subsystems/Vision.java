@@ -15,11 +15,14 @@ import frc.robot.Constants.VisionConstants;
 
 public class Vision {
 
+    PhotonCamera m_camera = new PhotonCamera("Shelldon");
+
     public Optional<Double> getAngleToTarget() {
 
-        PhotonCamera camera = new PhotonCamera("photonvision");
+    var result = m_camera.getLatestResult();
 
-        var result = camera.getLatestResult();
+    SmartDashboard.putBoolean("estimated pose is present", result.getMultiTagResult().estimatedPose.isPresent);
+    SmartDashboard.putNumberArray("detected ids", result.getMultiTagResult().fiducialIDsUsed.toArray(new Double[0]));
 
         // Find distance between targets and camera
         if (result.getMultiTagResult().estimatedPose.isPresent) {
