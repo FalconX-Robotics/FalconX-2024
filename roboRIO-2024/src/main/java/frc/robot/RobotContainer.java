@@ -8,10 +8,17 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.DashboardHelper.LogLevel;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.CurvatureDrive;
+import frc.robot.commands.PIDShoot;
 import frc.robot.commands.PathfindToPose;
+import frc.robot.commands.RunIndex;
+import frc.robot.commands.RunIntake;
+import frc.robot.commands.SmartDashboardPIDShoot;
+import frc.robot.commands.SimpleShoot;
 import frc.robot.commands.TankDrive;
 import frc.robot.commands.TurboMode;
+import frc.robot.commands.TurnInPlace;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Index;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Shooter;
@@ -20,6 +27,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystems.OdometrySubsystem;
 import frc.robot.DashboardHelper;
+import frc.robot.subsystems.Sensor;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -47,27 +55,25 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-
   private final SendableChooser<Command> autoChooser;
   private final SendableChooser<LogLevel> logLevelChooser = new SendableChooser<LogLevel>();
 
-  // Replace with CommandPS4Controller or CommandJoystick if needed
   private final XboxController driveController = new XboxController(OperatorConstants.kDriverControllerPort);
   private final XboxController noteController = new XboxController(OperatorConstants.kShooterControllerPort);
 
   private final Settings m_settings = new Settings(driveController, noteController);
-  // The robot's subsystems and commands are defined here...
-  // final Settings m_settings = new Settings(driveController, noteController);
 
-  public final Drivetrain m_drivetrain = new Drivetrain(m_settings);
-  public final TankDrive m_tankDrive = new TankDrive(m_drivetrain, driveController);
-  final ArcadeDrive m_arcadeDrive = new ArcadeDrive(m_drivetrain, m_settings);
-  final CurvatureDrive m_curvatureDrive = new CurvatureDrive(m_drivetrain, m_settings);
+  private final Drivetrain m_drivetrain = new Drivetrain(m_settings);
+  private final TankDrive m_tankDrive = new TankDrive(m_drivetrain, driveController);
+  private final ArcadeDrive m_arcadeDrive = new ArcadeDrive(m_drivetrain, m_settings);
+  private final CurvatureDrive m_curvatureDrive = new CurvatureDrive(m_drivetrain, m_settings);
 
-  // public final LEDs m_leds = new LEDs();
-  
-  final Shooter m_shooter = new Shooter();
-  final Intake m_intake = new Intake();  
+  private final LEDs m_leds = new LEDs();
+  private final Sensor m_sensor = new Sensor();
+
+  private final Shooter m_shooter = new Shooter(m_settings);
+  private final Intake m_intake = new Intake();
+  private final Index m_index = new Index();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -101,24 +107,30 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    Trigger turboModeTrigger = new JoystickButton(driveController, m_settings.driveController.getTurboButton().value);
+    turboModeTrigger.whileTrue(new TurboMode(m_drivetrain));
 
-    Trigger rightBumper = new JoystickButton(driveController, XboxController.Button.kRightBumper.value);
-    rightBumper.whileTrue(new TurboMode(m_drivetrain));
-    
-    // Trigger aButtonTrigger = new Trigger(() -> {return driveController.getAButton();});
-    // aButtonTrigger.whileTrue(new Command() {
-    //   @Override
-    //   public void execute() {
-    //       m_drivetrain.sysIdDynamic(SysIdRoutine.Direction.kForward);
-    //       System.out.println("a button");
-    //   }
-    // });
-    
+    Trigger turnInPlaceTrigger = new JoystickButton(driveController, m_settings.driveController.getTurnInPlaceButton().value);
+    turnInPlaceTrigger.whileTrue(new TurnInPlace(m_drivetrain));
+
+    Trigger shooterTrigger = new JoystickButton(noteController, m_settings.noteController.getShooterButton().value);
+    shooterTrigger.whileTrue(new PIDShoot(m_index, m_shooter));
+
+    Trigger indexTrigger = new JoystickButton(noteController, m_settings.noteController.getIndexButton().value);
+    indexTrigger.whileTrue(new RunIndex(m_index, .5).until(() -> {return !m_sensor.getNoteSensed();}));
+
+    Trigger intakeTrigger = new JoystickButton(noteController, m_settings.noteController.getIntakeButton().value);
+    intakeTrigger.whileTrue(new RunIntake(m_intake, 1.).until(() -> {return !m_sensor.getNoteSensed();}));
+
+    Trigger temporaryTrigger = new JoystickButton(noteController, XboxController.Button.kY.value);
+    temporaryTrigger.whileTrue(new RunIndex(m_index, 1.));
+
+    Trigger reverseTrigger = new JoystickButton(noteController, m_settings.noteController.getReverseButton().value);
+    reverseTrigger.whileTrue(new RunIndex(m_index, -.5)).whileTrue(new RunIntake(m_intake, -1.));
+
     m_drivetrain.setDefaultCommand(m_curvatureDrive);
+    // m_shooter.setDefaultCommand(new SmartDashboardShoot(m_shooter, m_intake));//TODO: delete later :)
   }
-
-
-  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

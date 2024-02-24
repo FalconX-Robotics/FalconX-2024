@@ -5,28 +5,27 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Index;
 
-public class RunIntake extends Command {
-  Intake m_intake;
+public class RunIndex extends Command {
+  Index m_index;
   double velocity;
-
-  /** Creates a new RunIntake. */
-  public RunIntake(Intake intake, double velocity) {
-    m_intake = intake;
+  /** Creates a new RunIndex. */
+  public RunIndex(Index index, double velocity) {
+    m_index = index;
     this.velocity = velocity;
-    addRequirements(intake);
+    addRequirements(m_index);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_intake.setMotor(velocity);
+    m_index.setIndexMotor(velocity);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_intake.setMotor(0);
+    m_index.setIndexMotor(0.);
   }
 }

@@ -19,9 +19,6 @@ public class TankDrive extends Command {
     addRequirements(m_drivetrain);
   }
 
-  // logan what this
-  // public 
-
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {}
