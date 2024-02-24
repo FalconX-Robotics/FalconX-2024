@@ -17,7 +17,6 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.BaseUnits;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.Constants.MotorConstants;
@@ -27,7 +26,7 @@ import frc.robot.Settings.FeedForwardValues;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.DashboardHelper;
 
 public class Shooter extends SubsystemBase {
 
@@ -157,10 +156,10 @@ public class Shooter extends SubsystemBase {
 
     // This method will be called once per scheduler run
     
-    SmartDashboard.putNumber("Shooter Arm Encoder Position", armSparkMax.getEncoder().getPosition());
-    SmartDashboard.putNumber("Shooter Encoder Position", shooterLeaderSparkMax.getEncoder().getPosition());
-    SmartDashboard.putNumber("Shooter Arm Encoder Velocity", armSparkMax.getEncoder().getVelocity());
-    SmartDashboard.putNumber("Shooter Encoder Velocity", shooterLeaderSparkMax.getEncoder().getVelocity());
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Shooter Arm Encoder Position", armSparkMax.getEncoder().getPosition());
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Shooter Encoder Position", shooterLeaderSparkMax.getEncoder().getPosition());
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Shooter Arm Encoder Velocity", armSparkMax.getEncoder().getVelocity());
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Shooter Encoder Velocity", shooterLeaderSparkMax.getEncoder().getVelocity());
 
     shooterArmEncoderPositionEntry.append(armSparkMax.getEncoder().getPosition());
     shooterEncoderPositionEntry.append(shooterLeaderSparkMax.getEncoder().getPosition());
@@ -188,8 +187,8 @@ public class Shooter extends SubsystemBase {
       pidSim.update(0.001);
     }
     
-    SmartDashboard.putNumber("Sim Shooter Voltage", pidSim.getVoltageOutput());
-    SmartDashboard.putNumber("Sim Shooter RPM", shooterSim.getAngularVelocityRPM());
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Sim Shooter Voltage", pidSim.getVoltageOutput());
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Sim Shooter RPM", shooterSim.getAngularVelocityRPM());
 
   }
 }

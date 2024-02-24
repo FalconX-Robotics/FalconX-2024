@@ -4,7 +4,7 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DashboardHelper {
-    public static LogLevel curLevel;
+    public static LogLevel curLevel = LogLevel.Info;
 
     //1 - Important. Printed every time
     //2 - Info. Useful and Important info
@@ -29,7 +29,6 @@ public class DashboardHelper {
 
    public static void setLogLevel(LogLevel level){
         curLevel = level;
-        
    }
 
    public static void putNumber(LogLevel level, String key, double value){
