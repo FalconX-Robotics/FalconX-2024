@@ -28,6 +28,8 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
     public static final int kShooterControllerPort = 1;
+
+    public static final double INPUT_CURVE_AMOUNT = 2;
   }
   public static class RatioConstants {
     public static final double KITBOT_GEAR_RATIO = 8.45;

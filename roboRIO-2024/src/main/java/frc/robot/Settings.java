@@ -21,16 +21,18 @@ public class Settings {
     public NoteController noteController = new NoteController();
 
     public static double curveInput(double input) {
-        
-            return Math.pow(input, 2) * Math.signum(input);
+            return Math.abs(Math.pow(input, Constants.OperatorConstants.INPUT_CURVE_AMOUNT)) * Math.signum(input);
     }
+
     public FeedForwardValues feedForwardValues = new FeedForwardValues();
 
     /** Configurations for controller centered around drivetrain repositioning */
     public class DriveController {
         public double getSpeedJoystickValue () { 
-            return MathUtil.applyDeadband(
-            -m_driveController.getLeftY(), deadband);
+            double output = -m_driveController.getLeftY();
+            output = MathUtil.applyDeadband(output, deadband);
+            output = curveInput(output);
+            return output;
         }
         public double getRotationJoystickValue () {
  return MathUtil.applyDeadband( 
