@@ -146,15 +146,15 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     // If no current command, set arm via joystick value.
-    if(this.getCurrentCommand() == null) {
-      if (armJoystickActive()) {
-        // armSparkMax.set(limitArmViaEncoder(m_settings.noteController.getArmJoystickValue())); return;
-      }
+    // if(this.getCurrentCommand() == null) {
+    //   if (armJoystickActive()) {
+    //     // armSparkMax.set(limitArmViaEncoder(m_settings.noteController.getArmJoystickValue())); return;
+    //   }
       //TODO does this work lol
       // armSparkMax.set(feedforward());
-    }
+    armSparkMax.set(m_settings.noteController.getArmJoystickValue() * .3);
+    // }
 
-    // TODO: set position conversion factor if necessary
     // This method will be called once per scheduler run
     
     SmartDashboard.putNumber("Shooter Arm Encoder Position", armSparkMax.getEncoder().getPosition());

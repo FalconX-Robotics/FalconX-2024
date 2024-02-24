@@ -77,6 +77,9 @@ public class PIDShoot extends Command {
       // }
     SmartDashboard.putNumber("Timestamp", Timer.getFPGATimestamp());
     SmartDashboard.putNumber("Timestamp inital", initialTimestamp);
+
+    SmartDashboard.putNumber("Target Shooter Speed", RPMin);
+    SmartDashboard.putNumber("Actual Shooter Speed", m_shooter.getShooterEncoderVelocity());
     
   }
   
