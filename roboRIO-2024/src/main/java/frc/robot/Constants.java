@@ -16,6 +16,11 @@ public final class Constants {
   public static final double KITBOT_WHEEL_DIAMETER = 4.;
   public static final double NESSIE_WHEEL_DIAMETER = 6.;
 
+  public static final double LEFT_FRICTION_OFFSET = 0.05;
+  public static final double RIGHT_FRICTION_OFFSET = LEFT_FRICTION_OFFSET;
+  public static final int DRIVETRAIN_CURRENT_LIMIT = 60;
+  public static final double DRIVETRAIN_RAMP_RATE = 0.5;
+
   //FIX THIS WHEN PIGEON IS ADDED
   public static final int PIGEON_PORT = 42;
 

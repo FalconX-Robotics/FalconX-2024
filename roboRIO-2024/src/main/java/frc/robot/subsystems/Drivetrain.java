@@ -14,6 +14,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.BaseUnits;
 import edu.wpi.first.units.Distance;
@@ -83,6 +84,12 @@ public class Drivetrain extends SubsystemBase {
     leftFollower.follow(leftLeader);
     rightFollower.follow(rightLeader);
 
+    applyToAllMotors((motor) -> {
+      motor.setSmartCurrentLimit(Constants.DRIVETRAIN_CURRENT_LIMIT);
+      motor.setIdleMode(IdleMode.kBrake);
+      motor.setOpenLoopRampRate(Constants.DRIVETRAIN_RAMP_RATE); //not sure the right number
+    });
+
     leftLeader.setInverted(false);
     leftFollower.setInverted(false);
     rightLeader.setInverted(true);
@@ -92,26 +99,25 @@ public class Drivetrain extends SubsystemBase {
     leftLeader.getEncoder().setAverageDepth(1);
     rightLeader.getEncoder().setAverageDepth(1);
 
-    leftLeader.setIdleMode(IdleMode.kBrake);
-    leftFollower.setIdleMode(IdleMode.kBrake);
-    rightLeader.setIdleMode(IdleMode.kBrake);
-    rightFollower.setIdleMode(IdleMode.kBrake);
-
     setMotorConversionFactors();
 
     m_odometry = new OdometrySubsystem(this);
   }
+
+  private void applyToAllMotors(Consumer<CANSparkMax> motorConsumer) {
+    motorConsumer.accept(leftLeader);
+    motorConsumer.accept(leftFollower);
+    motorConsumer.accept(rightLeader);
+    motorConsumer.accept(rightFollower);
+  }
+
   private void setMotorConversionFactors() {
     double conversionFactor = 1./(RatioConstants.NESSIE_GEAR_RATIO) * BaseUnits.Distance.convertFrom(6 * Math.PI, Units.Inches);
-    leftLeader.getEncoder().setVelocityConversionFactor(conversionFactor/60);
-    leftFollower.getEncoder().setVelocityConversionFactor(conversionFactor/60);
-    rightLeader.getEncoder().setVelocityConversionFactor(conversionFactor/60);
-    rightFollower.getEncoder().setVelocityConversionFactor(conversionFactor/60);
-    
-    leftLeader.getEncoder().setPositionConversionFactor(conversionFactor);
-    leftFollower.getEncoder().setPositionConversionFactor(conversionFactor);
-    rightLeader.getEncoder().setPositionConversionFactor(conversionFactor);
-    rightFollower.getEncoder().setPositionConversionFactor(conversionFactor); // m/s
+    applyToAllMotors((motor) -> {
+      motor.getEncoder().setVelocityConversionFactor(conversionFactor/60);
+      motor.getEncoder().setPositionConversionFactor(conversionFactor);
+    });
+
   }
 
   // runs the motors
@@ -153,15 +159,17 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void curvatureDrive (double speed, double rotation, boolean turnInPlace, boolean turboModeOn){
-    // WheelSpeeds wheelSpeeds = DifferentialDrive.curvatureDriveIK(speed * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed),
-    // rotation, turnInPlace);
-    // wheelSpeeds.left += 0.05 * Math.signum(wheelSpeeds.left);
-    // wheelSpeeds.right += 0.05 * Math.signum(wheelSpeeds.right);
+    WheelSpeeds wheelSpeeds = DifferentialDrive.curvatureDriveIK(speed * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed),
+    rotation, turnInPlace);
+    if (Math.abs(wheelSpeeds.left) < 0.0001) wheelSpeeds.left = 0;
+    if (Math.abs(wheelSpeeds.right) < 0.0001) wheelSpeeds.right = 0;
+    wheelSpeeds.left += Constants.LEFT_FRICTION_OFFSET * Math.signum(wheelSpeeds.left);
+    wheelSpeeds.right += Constants.RIGHT_FRICTION_OFFSET * Math.signum(wheelSpeeds.right);
 
-    // setLeftMotors(wheelSpeeds.left);
-    // setRightMotors(wheelSpeeds.right);
+    setLeftMotors(wheelSpeeds.left);
+    setRightMotors(wheelSpeeds.right);
 
-    m_drive.curvatureDrive(speed * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed), rotation, turnInPlace);
+    // m_drive.curvatureDrive(speed * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed), rotation, turnInPlace);
   }
   @Override
   public void periodic() {
