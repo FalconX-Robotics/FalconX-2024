@@ -154,15 +154,18 @@ public class Shooter extends SubsystemBase {
       // armSparkMax.set(feedforward());
     }
 
-    SmartDashboard.putNumber("Shooter Arm Encoder Position", shooterArmSparkMax.getEncoder.getPosition());
-    SmartDashboard.putNumber("Shooter Encoder Position", shooterSparkMax.getEncoder.getPosition());
-    SmartDashboard.putNumber("Shooter Arm Encoder Velocity", shooterArmSparkMax.getEncoder.getVelocity());
-    SmartDashboard.putNumber("Shooter Encoder Velocity", shooterSparkMax.getEncoder.getVelocity());
+    // TODO: set position conversion factor if necessary
+    // This method will be called once per scheduler run
+    
+    SmartDashboard.putNumber("Shooter Arm Encoder Position", shooterArmSparkMax.getEncoder().getPosition());
+    SmartDashboard.putNumber("Shooter Encoder Position", shooterSparkMax.getEncoder().getPosition());
+    SmartDashboard.putNumber("Shooter Arm Encoder Velocity", shooterArmSparkMax.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Shooter Encoder Velocity", shooterSparkMax.getEncoder().getVelocity());
 
-    shooterArmEncoderPositionEntry.append(shooterArmSparkMax.getEncoder.getPosition());
-    shooterEncoderPositionEntry.append(shooterSparkMax.getEncoder.getPosition());
-    shooterArmEncoderVelocityEntry.append(shooterArmSparkMax.getEncoder.getVelocity());
-    shooterEncoderVelocityEntry.append(shooterSparkMax.getEncoder.getVelocity());
+    shooterArmEncoderPositionEntry.append(shooterArmSparkMax.getEncoder().getPosition());
+    shooterEncoderPositionEntry.append(shooterSparkMax.getEncoder().getPosition());
+    shooterArmEncoderVelocityEntry.append(shooterArmSparkMax.getEncoder().getVelocity());
+    shooterEncoderVelocityEntry.append(shooterSparkMax.getEncoder().getVelocity());
   }
 
   // Moment of inertia for uniform cylinder = 1/2 * m * r^2.
