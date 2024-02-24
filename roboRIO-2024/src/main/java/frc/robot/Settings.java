@@ -4,6 +4,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  
 public class Settings {
@@ -21,7 +22,8 @@ public class Settings {
     public NoteController noteController = new NoteController();
 
     public static double curveInput(double input) {
-            return Math.abs(Math.pow(input, Constants.OperatorConstants.INPUT_CURVE_AMOUNT)) * Math.signum(input);
+        // double curveAmount = SmartDashboard.getNumber("Input Curve Amount", Constants.OperatorConstants.INPUT_CURVE_AMOUNT);
+        return Math.abs(Math.pow(input, Constants.OperatorConstants.INPUT_CURVE_AMOUNT)) * Math.signum(input);
     }
 
     public FeedForwardValues feedForwardValues = new FeedForwardValues();
