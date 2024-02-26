@@ -30,7 +30,6 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog.State;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -42,6 +41,7 @@ import frc.robot.Settings;
 import frc.robot.Constants.MotorConstants;
 import frc.robot.Constants.RatioConstants;
 import frc.robot.Constants.MotorConstants.drivetrain;
+import frc.robot.DashboardHelper;
 
 public class Drivetrain extends SubsystemBase {
   // There is a different system used than previous years because MotorControlGroup is deprecated :(.
@@ -71,13 +71,16 @@ public class Drivetrain extends SubsystemBase {
 
   public void setLeftMotors (double volt) {
     leftLeader.set(volt);
-    SmartDashboard.putNumber("Left Motors Set", volt);
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Left Motors Set", volt);
     
     leftVoltageEntry.append(leftLeader.get() * RobotController.getBatteryVoltage());
     
   }
   public void setRightMotors (double volt) {
     rightLeader.set(volt);
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Right Motors Set", volt);
+
+    rightVoltageEntry.append(rightLeader.get() * RobotController.getBatteryVoltage());
   }
 
   /** Creates a new Drivetrain. */
@@ -137,13 +140,13 @@ public class Drivetrain extends SubsystemBase {
 
   public void setLeftMotorsVoltage(double voltage) {
     leftLeader.setVoltage(voltage);
-    SmartDashboard.putNumber("Left Motor Voltage", voltage);
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Left Motor Voltage", voltage);
     leftVoltageEntry.append(voltage);
   }
 
   public void setRightMotorsVoltage(double voltage) {
     rightLeader.setVoltage(voltage);
-    SmartDashboard.putNumber("Right Motor Voltage", voltage);
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Right Motor Voltage", voltage);
     rightVoltageEntry.append(voltage);
   }
 
@@ -170,7 +173,7 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     m_odometry.periodic();
-    SmartDashboard.putBoolean("turnInPlace", turnInPlace);
+    DashboardHelper.putBoolean(DashboardHelper.LogLevel.Info, "turnInPlace", turnInPlace);
   }
 
   public WPI_PigeonIMU getGyro() {

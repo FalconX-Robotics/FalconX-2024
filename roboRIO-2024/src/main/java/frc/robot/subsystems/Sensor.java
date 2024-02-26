@@ -1,13 +1,13 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.BooleanLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
+import frc.robot.DashboardHelper;
 
 public class Sensor extends SubsystemBase { 
     DigitalInput input = new DigitalInput(Constants.SENSOR_PORT);
@@ -17,7 +17,7 @@ public class Sensor extends SubsystemBase {
     
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("sensor on", input.get());
+        DashboardHelper.putBoolean(DashboardHelper.LogLevel.Info, "sensor on", input.get());
         // System.out.println(input.get());
     }
     public boolean getNoteSensed() {

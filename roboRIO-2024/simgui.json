@@ -10,7 +10,8 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Auto Chooser": "String Chooser",
-      "/SmartDashboard/Field": "Field2d"
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/LogLevel Choices": "String Chooser"
     },
     "windows": {
       "/SmartDashboard/Auto Chooser": {
@@ -41,6 +42,12 @@
         }
       },
       "SmartDashboard": {
+        "LogLevel Choices": {
+          "open": true,
+          "string[]##v_/SmartDashboard/LogLevel Choices/options": {
+            "open": true
+          }
+        },
         "open": true
       }
     }

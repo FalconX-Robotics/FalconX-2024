@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.DashboardHelper;
 import frc.robot.Robot;
 import frc.robot.simulation.RelativeEncoderSim;
 
@@ -60,8 +61,8 @@ public class OdometrySubsystem {
   PIDController leftController = new PIDController(0., 0.0, 0.0);
   PIDController rightController = new PIDController(0., 0.0, 0.); //this sorta works (maybe? (i dont know))
   
-  private static final double   kTrackWidth = 0.457; // meters, this is the defauklt from wpilib
-                                                       // change this later
+  private static final double kTrackWidth = 0.457; // meters, this is the defauklt from wpilib
+                                                   // change this later
 
   private final DifferentialDriveKinematics kinematics =
     new DifferentialDriveKinematics(kTrackWidth);
@@ -119,11 +120,11 @@ public class OdometrySubsystem {
 
     field2d.setRobotPose(pose);
 
-    SmartDashboard.putNumber("Left Encoder Position", m_leftEncoder.getPosition());
-    SmartDashboard.putNumber("Right Encoder Position", m_rightEncoder.getPosition());
-    SmartDashboard.putNumber("Left Encoder Velocity", m_leftEncoder.getVelocity());
-    SmartDashboard.putNumber("Right Encoder Velocity", m_rightEncoder.getVelocity());
-    SmartDashboard.putNumber("gyro", getRotation().getDegrees());
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Left Encoder Position", m_leftEncoder.getPosition());
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Right Encoder Position", m_rightEncoder.getPosition());
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Left Encoder Velocity", m_leftEncoder.getVelocity());
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Right Encoder Velocity", m_rightEncoder.getVelocity());
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "gyro", getRotation().getDegrees());
 
     gyroEntry.append(getRotation().getDegrees());
     leftEncoderPositionEntry.append(m_leftEncoder.getPosition());
@@ -138,8 +139,8 @@ public class OdometrySubsystem {
     REVLibError errorLeft = m_leftEncoder.setPosition(0);
     REVLibError errorRight = m_rightEncoder.setPosition(0);
 
-    SmartDashboard.putString("Left errror", errorLeft.toString());
-    SmartDashboard.putString("Right errror", errorRight.toString());
+    DashboardHelper.putString(DashboardHelper.LogLevel.Debug, "Left errror", errorLeft.toString());
+    DashboardHelper.putString(DashboardHelper.LogLevel.Debug, "Right errror", errorRight.toString());
 
     m_odometry = new DifferentialDriveOdometry(
           new Rotation2d(),
@@ -149,12 +150,12 @@ public class OdometrySubsystem {
 
 
 
-    SmartDashboard.putNumber("Rotation via pose at reset", pose.getRotation().getDegrees());
-    SmartDashboard.putNumber("Left Encoder Position at reset", m_leftEncoder.getPosition());
-    SmartDashboard.putNumber("Right Encoder Position at reset", m_rightEncoder.getPosition());
-    SmartDashboard.putNumber("Pose x at reset", pose.getX());
-    SmartDashboard.putNumber("Pose y at reset", pose.getY());
-    SmartDashboard.putNumber("Gyro rotation at reset", getRotation().getDegrees());
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Rotation via pose at reset", pose.getRotation().getDegrees());
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Left Encoder Position at reset", m_leftEncoder.getPosition());
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Right Encoder Position at reset", m_rightEncoder.getPosition());
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Pose x at reset", pose.getX());
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Pose y at reset", pose.getY());
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Gyro rotation at reset", getRotation().getDegrees());
 
     if (Robot.isSimulation()) {
       drivetrain.getSimulation().setPose(pose);
@@ -177,8 +178,8 @@ public class OdometrySubsystem {
   }
   
   public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
-    SmartDashboard.putNumber("left m/s", speeds.leftMetersPerSecond);
-    SmartDashboard.putNumber("right m/s", speeds.rightMetersPerSecond);
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Important, "left m/s", speeds.leftMetersPerSecond);
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Important, "right m/s", speeds.rightMetersPerSecond);
     final double leftFeedforward = feedforward.calculate(speeds.leftMetersPerSecond);
     final double rightFeedforward = feedforward.calculate(speeds.rightMetersPerSecond);
     // final double leftFeedforward = 0;
@@ -187,8 +188,8 @@ public class OdometrySubsystem {
         leftController.calculate(m_leftEncoder.getVelocity(), speeds.leftMetersPerSecond);
     final double rightOutput =
         rightController.calculate(m_rightEncoder.getVelocity(), speeds.rightMetersPerSecond);
-    SmartDashboard.putNumber("right pid output", rightOutput);
-    SmartDashboard.putNumber("left pid output", leftOutput);
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Important, "right pid output", rightOutput);
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Important, "left pid output", leftOutput);
     
     drivetrain.setMotorVoltage(leftOutput + leftFeedforward, rightOutput + rightFeedforward);    
   }
@@ -210,6 +211,7 @@ public class OdometrySubsystem {
   Rotation2d simulationGyro = new Rotation2d();
 
   public void simulationPeriodic() {
+    //DashboardHelper.putData(1, "Simulation Field", field2d);
     SmartDashboard.putData(field2d);
 
     DifferentialDrivetrainSim simulation = drivetrain.getSimulation();
