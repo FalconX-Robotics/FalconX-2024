@@ -8,6 +8,7 @@ import frc.robot.Constants;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.BooleanLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
+import frc.robot.DashboardHelper;
 
 public class Sensor extends SubsystemBase { 
     DigitalInput input = new DigitalInput(Constants.SENSOR_PORT);
@@ -18,10 +19,11 @@ public class Sensor extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putBoolean("sensor on", !input.get());
+        DashboardHelper.putBoolean(DashboardHelper.LogLevel.Info, "sensor on", !input.get());
         // System.out.println(input.get());
     }
     public boolean getNoteSensed() {
-        sensorOnLog.append(input.get());
+        sensorOnLog.append(!input.get());
         return !input.get();
     }
 }

@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.DashboardHelper.LogLevel;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.CurvatureDrive;
 import frc.robot.commands.PIDShoot;
@@ -25,6 +26,7 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystems.OdometrySubsystem;
+import frc.robot.DashboardHelper;
 import frc.robot.subsystems.Sensor;
 
 import java.time.LocalDateTime;
@@ -39,7 +41,6 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -54,6 +55,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
  */
 public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
+  private final SendableChooser<LogLevel> logLevelChooser = new SendableChooser<>();
 
   private final XboxController driveController = new XboxController(OperatorConstants.kDriverControllerPort);
   private final XboxController noteController = new XboxController(OperatorConstants.kShooterControllerPort);
@@ -72,20 +74,27 @@ public class RobotContainer {
   private final Intake m_intake = new Intake();
   private final Index m_index = new Index();
 
-
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
     autoChooser = AutoBuilder.buildAutoChooser();
 
+    logLevelChooser.setDefaultOption("Info", DashboardHelper.LogLevel.Info);
+    logLevelChooser.addOption("Important", DashboardHelper.LogLevel.Important);
+    logLevelChooser.addOption("Debug", DashboardHelper.LogLevel.Debug);
+    logLevelChooser.addOption("Verbose", DashboardHelper.LogLevel.Verbose);
 
-    SmartDashboard.putData("Auto Chooser", autoChooser);
+    DashboardHelper.putData(DashboardHelper.LogLevel.Info, "Auto Chooser", autoChooser);
+    DashboardHelper.putData(DashboardHelper.LogLevel.Info, "LogLevel Choices", logLevelChooser);
 
     LocalDateTime startTime = LocalDateTime.now();
     Util.setStartTime(startTime);
     DataLogManager.start();
     
     DriverStation.startDataLog(DataLogManager.getLog());
+    logLevelChooser.onChange((logLevel) -> {
+      DashboardHelper.setLogLevel(logLevel);
+    });
     // Configure the trigger bindings
     configureBindings();
   }
@@ -134,4 +143,9 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();
   }
+
+  public LogLevel getSelectedLogLevel(){
+    return logLevelChooser.getSelected();
+  }
+  
 }

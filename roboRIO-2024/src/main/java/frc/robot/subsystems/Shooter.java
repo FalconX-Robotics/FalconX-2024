@@ -10,7 +10,6 @@ import com.revrobotics.SparkPIDControllerSim;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Settings;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -24,7 +23,7 @@ import frc.robot.Constants.MotorConstants;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.DashboardHelper;
 
 public class Shooter extends SubsystemBase {
   CANSparkMax shooterLeaderSparkMax = new CANSparkMax(MotorConstants.shooter, MotorType.kBrushless);
@@ -125,8 +124,8 @@ public class Shooter extends SubsystemBase {
       pidSim.update(0.001);
     }
     
-    SmartDashboard.putNumber("Sim Shooter Voltage", pidSim.getVoltageOutput());
-    SmartDashboard.putNumber("Sim Shooter RPM", shooterSim.getAngularVelocityRPM());
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Sim Shooter Voltage", pidSim.getVoltageOutput());
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Sim Shooter RPM", shooterSim.getAngularVelocityRPM());
 
   }
 }

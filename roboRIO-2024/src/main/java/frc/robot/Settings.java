@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -13,20 +14,31 @@ public class Settings {
     Settings (XboxController driveController, XboxController noteController){
         m_driveController = driveController;
         m_noteController = noteController;
+                    m_driveController.setRumble(RumbleType.kBothRumble, 10);
+
     }
 
     // Do not remove. or else
     public DriveController driveController = new DriveController();
     public NoteController noteController = new NoteController();
 
+    public static double curveInput(double input) {
+        return Math.pow(input, 2) * Math.signum(input);
+    }
+
     /** Configurations for controller centered around drivetrain repositioning */
     public class DriveController {
-        // TODO replace this
-        public double getSpeedJoystickValue () { return MathUtil.applyDeadband(
-            m_driveController.getLeftY(), deadband);
+        public double getSpeedJoystickValue () { 
+            // m_driveController.setRumble(RumbleType.kBothRumble, 10); //?
+            return MathUtil.applyDeadband(
+                -m_driveController.getLeftY(), deadband
+            );
         }
-        public double getRotationJoystickValue () { return MathUtil.applyDeadband( 
-            m_driveController.getRightX(), deadband);
+        public double getRotationJoystickValue () {
+            m_driveController.setRumble(RumbleType.kBothRumble, 1);
+            return MathUtil.applyDeadband( 
+                m_driveController.getRightX(), deadband
+            );
         }
 
         public Trigger turboModeTrigger   = new JoystickButton(m_driveController, Button.kRightBumper.value);
