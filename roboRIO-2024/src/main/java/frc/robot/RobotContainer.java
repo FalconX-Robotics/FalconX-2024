@@ -16,7 +16,6 @@ import frc.robot.commands.SmartDashboardPIDShoot;
 import frc.robot.commands.SimpleShoot;
 import frc.robot.commands.TankDrive;
 import frc.robot.commands.TurboMode;
-import frc.robot.commands.TurnInPlace;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Index;
 import frc.robot.subsystems.Intake;
@@ -111,9 +110,6 @@ public class RobotContainer {
   private void configureBindings() {
     m_settings.driveController.turboModeTrigger.whileTrue(
       new TurboMode(m_drivetrain)
-    );
-    m_settings.driveController.turnInPlaceTrigger.whileTrue(
-      new TurnInPlace(m_drivetrain)
     );
 
     m_settings.noteController.shooterChargeTrigger.whileTrue(

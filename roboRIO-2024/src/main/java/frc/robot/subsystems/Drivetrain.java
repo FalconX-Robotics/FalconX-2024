@@ -63,9 +63,7 @@ public class Drivetrain extends SubsystemBase {
 
   private Settings m_settings;
   
-
   private boolean turboModeOn = false;
-  private boolean turnInPlace = false;
 
   public void setLeftMotors (double volt) {
     leftLeader.set(volt);
@@ -166,12 +164,12 @@ public class Drivetrain extends SubsystemBase {
     // setLeftMotors(wheelSpeeds.left);
     // setRightMotors(wheelSpeeds.right);
 
-    m_drive.curvatureDrive(speed * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed), rotation, turnInPlace);
+    m_drive.curvatureDrive(speed * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed), rotation, m_settings.driveController.turnInPlaceTrigger.getAsBoolean());
   }
   @Override
   public void periodic() {
     m_odometry.periodic();
-    DashboardHelper.putBoolean(DashboardHelper.LogLevel.Info, "turnInPlace", turnInPlace);
+    DashboardHelper.putBoolean(DashboardHelper.LogLevel.Info, "turnInPlace", m_settings.driveController.turnInPlaceTrigger.getAsBoolean());
   }
 
   public WPI_PigeonIMU getGyro() {
@@ -187,12 +185,6 @@ public class Drivetrain extends SubsystemBase {
     return leftLeader.getEncoder();
   }
 
-  public void setTurnInPlace (boolean newTurnInPlace) {
-    turnInPlace = newTurnInPlace;
-  }
-  public boolean getTurnInPlace () {
-    return turnInPlace;
-  }
   public void setTurboMode (boolean newTurboMode) {
     turboModeOn = newTurboMode;
   }
