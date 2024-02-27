@@ -13,7 +13,6 @@ public class Settings {
     Settings (XboxController driveController, XboxController noteController){
         m_driveController = driveController;
         m_noteController = noteController;
-                    m_driveController.setRumble(RumbleType.kBothRumble, 10);
 
     }
 

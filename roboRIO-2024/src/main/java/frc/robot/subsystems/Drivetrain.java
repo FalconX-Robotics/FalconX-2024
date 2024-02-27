@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog.State;
@@ -169,6 +170,8 @@ public class Drivetrain extends SubsystemBase {
     setLeftMotors(wheelSpeeds.left);
     setRightMotors(wheelSpeeds.right);
 
+    m_drive.feed();
+
     // m_drive.curvatureDrive(speed * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed), rotation, turnInPlace);
   }
   @Override
@@ -204,7 +207,7 @@ public class Drivetrain extends SubsystemBase {
   // }
 
   DifferentialDrivetrainSim m_simulation = 
-  new DifferentialDrivetrainSim(DCMotor.getNEO(2), Constants.RatioConstants.KITBOT_GEAR_RATIO, 5, 
+  new DifferentialDrivetrainSim(DCMotor.getNEO(2), Constants.RatioConstants.NESSIE_GEAR_RATIO, 5, 
   BaseUnits.Mass.convertFrom(95, Units.Pounds), BaseUnits.Distance.convertFrom(2, Units.Inches), 
   BaseUnits.Distance.convertFrom(23, Units.Inches), null);
   

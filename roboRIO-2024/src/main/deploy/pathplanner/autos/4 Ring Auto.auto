@@ -1,0 +1,97 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.3880268362040489,
+      "y": 5.606599684377313
+    },
+    "rotation": 180.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Pickup 1st Ring"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Pickup"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Shoot 1st Ring"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Pickup 2nd Ring"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Pickup"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Shoot 2nd Ring"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Pickup 3rd Ring"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Pickup"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Shoot 3rd Ring"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

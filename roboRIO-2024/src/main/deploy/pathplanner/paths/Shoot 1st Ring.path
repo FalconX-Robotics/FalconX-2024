@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.0,
-        "y": 7.0
+        "x": 2.7048062116171225,
+        "y": 6.954241076409401
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.716336807081197,
-        "y": 7.00319125756735
+        "x": 2.5196341119499284,
+        "y": 6.22384001660234
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "1st Ring"
     },
     {
       "anchor": {
-        "x": 5.01,
-        "y": 7.0
+        "x": 1.3880268362040489,
+        "y": 5.606599684377313
       },
       "prevControl": {
-        "x": 3.161935640364171,
-        "y": 7.00319125756735
+        "x": 2.180151929226165,
+        "y": 5.853495817267323
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Shooting Point"
     }
   ],
   "rotationTargets": [],
@@ -43,7 +43,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "4 ring auto",
   "previewStartingState": null,
   "useDefaultConstraints": false
 }

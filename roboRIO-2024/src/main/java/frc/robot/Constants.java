@@ -13,7 +13,7 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static final double KITBOT_WHEEL_DIAMETER = 4.;
+  public static final double DONATELLO_WHEEL_DIAMETER = 4.;
   public static final double NESSIE_WHEEL_DIAMETER = 6.;
 
   public static final double LEFT_FRICTION_OFFSET = 0.05;
@@ -37,7 +37,7 @@ public final class Constants {
     public static final double INPUT_CURVE_AMOUNT = 2;
   }
   public static class RatioConstants {
-    public static final double KITBOT_GEAR_RATIO = 8.45;
+    public static final double DONATELLO_GEAR_RATIO = 8.45;
     public static final double NESSIE_GEAR_RATIO = 50.0/12.0 * 50.0/24.0;
     public static final double ArmGearRatio = 1.;
     // TODO: set to a reasonable value
@@ -46,7 +46,7 @@ public final class Constants {
     // 0 is reserved for RIO
     // 1 is reserved for PDP
 
-    public static final boolean donatello = true; // :)
+    public static final boolean donatello = false; // :)
 
     //TODO: This probably won't work. test and remove if not. -w
     public enum drivetrain {
