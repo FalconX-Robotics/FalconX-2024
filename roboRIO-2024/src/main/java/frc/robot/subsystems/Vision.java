@@ -10,7 +10,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.Optional;
 
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonUtils;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+
 import frc.robot.Constants.VisionConstants;
 
 public class Vision {
@@ -20,10 +23,11 @@ public class Vision {
     public Optional<Double> getAngleToTarget() {
 
     var result = m_camera.getLatestResult();
-
+    
+    SmartDashboard.putNumber("ambiguity", result.getMultiTagResult().estimatedPose.ambiguity);
     SmartDashboard.putBoolean("estimated pose is present", result.getMultiTagResult().estimatedPose.isPresent);
-    SmartDashboard.putNumberArray("detected ids", result.getMultiTagResult().fiducialIDsUsed.toArray(new Double[0]));
-
+    // SmartDashboard.putNumberArray("detected ids", result.getMultiTagResult().fiducialIDsUsed.toArray(new Double[result.getMultiTagResult().fiducialIDsUsed.size()]));
+    // result.getTargets().
         // Find distance between targets and camera
         if (result.getMultiTagResult().estimatedPose.isPresent) {
 
@@ -50,11 +54,14 @@ public class Vision {
 
     public Transform3d GetTargetToField() {
         Transform3d result = new Transform3d(new Translation3d(0, 5.5, 2), new Rotation3d());
+       
+        AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();  
 
-        return result;
+        PhotonPoseEstimator photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR
+        , m_camera, result);
 
-        /* AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();  
+        
 
-        Pose3d robotPose = PhotonUtils.estimateFieldToRobotAprilTag(target.getMultiTagResult(), aprilTagFieldLayout.getTagPose(target.getFiducialId()), cameraToRobot); */
+        /*Pose3d robotPose = PhotonUtils.estimateFieldToRobotAprilTag(target.getMultiTagResult(), aprilTagFieldLayout.getTagPose(target.getFiducialId()), cameraToRobot); */
     }
 }
