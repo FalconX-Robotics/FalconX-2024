@@ -100,29 +100,30 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    Trigger turboModeTrigger = new JoystickButton(driveController, m_settings.driveController.getTurboButton().value);
-    turboModeTrigger.whileTrue(new TurboMode(m_drivetrain));
+    m_settings.driveController.turboModeTrigger.whileTrue(
+      new TurboMode(m_drivetrain)
+    );
+    m_settings.driveController.turnInPlaceTrigger.whileTrue(
+      new TurnInPlace(m_drivetrain)
+    );
 
-    Trigger turnInPlaceTrigger = new JoystickButton(driveController, m_settings.driveController.getTurnInPlaceButton().value);
-    turnInPlaceTrigger.whileTrue(new TurnInPlace(m_drivetrain));
-
-    Trigger shooterTrigger = new JoystickButton(noteController, m_settings.noteController.getShooterButton().value);
-    shooterTrigger.whileTrue(new PIDShoot(m_index, m_shooter));
-
-    Trigger indexTrigger = new JoystickButton(noteController, m_settings.noteController.getIndexButton().value);
-    indexTrigger.whileTrue(new RunIndex(m_index, .5).until(() -> {return !m_sensor.getNoteSensed();}));
-
-    Trigger intakeTrigger = new JoystickButton(noteController, m_settings.noteController.getIntakeButton().value);
-    intakeTrigger.whileTrue(new RunIntake(m_intake, .8).until(() -> {return !m_sensor.getNoteSensed();}));
-
-    Trigger temporaryTrigger = new JoystickButton(noteController, XboxController.Button.kY.value);
-    temporaryTrigger.whileTrue(new RunIndex(m_index, 1.));
-
-    Trigger reverseTrigger = new JoystickButton(noteController, m_settings.noteController.getReverseButton().value);
-    reverseTrigger.whileTrue(new RunIndex(m_index, -.5)).whileTrue(new RunIntake(m_intake, -1.));
+    m_settings.noteController.shooterChargeTrigger.whileTrue(
+      new PIDShoot(m_index, m_shooter)
+    );
+    m_settings.noteController.shooterFireTrigger.whileTrue(
+      new RunIndex(m_index, 1.)
+      .onlyIf(() -> {return m_shooter.velocityIsWithinTarget();})
+    );
+    m_settings.noteController.intakeTrigger.whileTrue(
+      new RunIntake(m_intake, .8)
+      .until(() -> {return m_sensor.getNoteSensed();})
+    );
+    m_settings.noteController.reverseTrigger.whileTrue(
+      new RunIndex(m_index, -.5)
+      .alongWith(new RunIntake(m_intake, -1.))
+    );
 
     m_drivetrain.setDefaultCommand(m_curvatureDrive);
-    // m_shooter.setDefaultCommand(new SmartDashboardShoot(m_shooter, m_intake));//TODO: delete later :)
   }
 
   /**

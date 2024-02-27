@@ -18,7 +18,6 @@ import edu.wpi.first.units.BaseUnits;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.Constants.MotorConstants;
 
@@ -85,6 +84,16 @@ public class Shooter extends SubsystemBase {
 
   public boolean armJoystickActive () {
     return Math.abs(m_settings.noteController.getArmJoystickValue()) > 0;
+  }
+
+  public boolean velocityIsWithinTarget (double target, double leniency) {
+    return (getShooterEncoderVelocity() >= target - leniency
+         && getShooterEncoderVelocity() <= target + leniency);
+  }
+
+  public boolean velocityIsWithinTarget () {
+    return (getShooterEncoderVelocity() >= 2700. - 35.
+         && getShooterEncoderVelocity() <= 2700. + 35.);
   }
 
   @Override

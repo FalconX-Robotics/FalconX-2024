@@ -17,11 +17,11 @@ public class Sensor extends SubsystemBase {
     
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("sensor on", input.get());
+        SmartDashboard.putBoolean("sensor on", !input.get());
         // System.out.println(input.get());
     }
     public boolean getNoteSensed() {
         sensorOnLog.append(input.get());
-        return input.get();
+        return !input.get();
     }
 }
