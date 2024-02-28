@@ -38,7 +38,7 @@ public final class Constants {
   /** To be changed later; change values based on the weight, offset, etc of the arm */
   public static class ArmFeedForwardValues {
     public static final double maxVelocity = .25;
-    public static final double maxAccelasfklj = .5; // how do you spell accelleration
+    public static final double maxAcceleration = .5; // how do you spell accelleration
 
     /** In radians, the offset of the arm */
     public static final double offset = 2.;
@@ -53,17 +53,17 @@ public final class Constants {
     public static final boolean donatello = true; // :)
 
     //TODO: This probably won't work. test and remove if not. -w
-    public enum drivetrain {
+    public enum DrivetrainMotors {
       frontLeft  (5),
       frontRight (2, 9),
       backLeft   (3),
       backRight  (4);
 
       public int value;
-      private drivetrain(int donatelloValue, int nessieValue){
+      private DrivetrainMotors(int donatelloValue, int nessieValue){
         value = donatello ? donatelloValue:nessieValue;
       }
-      private drivetrain(int bothValue){
+      private DrivetrainMotors(int bothValue){
         value = bothValue;
       }
     }

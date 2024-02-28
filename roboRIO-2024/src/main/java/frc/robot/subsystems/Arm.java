@@ -10,6 +10,7 @@ import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
@@ -22,6 +23,8 @@ import frc.robot.Constants.MotorConstants;
 import frc.robot.Constants.RatioConstants;
 
 public class Arm extends SubsystemBase {
+  PIDController rotationPIDController = new PIDController(0, 0, 0);
+  PIDController velocityPIDController = new PIDController(0, 0, 0);
   ArmFeedforward armFeedforward;
   CANSparkMax armSparkMax = new CANSparkMax(MotorConstants.arm, MotorType.kBrushless);
   CANSparkMax armFollowerSparkMax = new CANSparkMax(MotorConstants.armFollower, MotorType.kBrushless);
@@ -29,8 +32,8 @@ public class Arm extends SubsystemBase {
   DataLog log = DataLogManager.getLog();
   DoubleLogEntry shooterArmEncoderVelocityEntry = new DoubleLogEntry(log, "/arm/shooter_arm_velocity");
   DoubleLogEntry shooterArmEncoderPositionEntry = new DoubleLogEntry(log, "/arm/shooter_arm_position");
-  double goalPositionRad = 0;
-  TrapezoidProfile trapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(ArmFeedForwardValues.maxVelocity, ArmFeedForwardValues.maxAccelasfklj));
+  double goalRotationRad = 0;
+  TrapezoidProfile trapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(ArmFeedForwardValues.maxVelocity, ArmFeedForwardValues.maxAcceleration));
 
   /** Creates a new Arm. */
   public Arm(Settings settings) {
@@ -64,25 +67,27 @@ public class Arm extends SubsystemBase {
     armSparkMax.setVoltage(volt);
   }
 
-  public double getArmEncoderRotation() {
+  public double getRotation() {
     return armSparkMax.getEncoder().getPosition();
   }
-  public double getArmEncoderVelocity() {
+  public double getVelocity() {
     return armSparkMax.getEncoder().getVelocity();
   }
 
-  public void setGoalPositionRadians(double position) {
-    goalPositionRad = position;
+  public void setGoalRotationRadians(double rotation) {
+    goalRotationRad = rotation;
   }
   
   public void goToGoalPosition() {
     TrapezoidProfile.State targetState = trapezoidProfile.calculate(
-      .02, 
-      new TrapezoidProfile.State(getArmEncoderRotation(), getArmEncoderVelocity()),
-      new TrapezoidProfile.State(goalPositionRad, 0)
+      .02, // 0.02 because each schedule takes 20ms
+      new TrapezoidProfile.State(getRotation(), getVelocity()),
+      new TrapezoidProfile.State(goalRotationRad, 0)
     );
     double voltageOutput = armFeedforward.calculate(targetState.position, targetState.velocity);
-    setSparksVoltage(MathUtil.clamp(voltageOutput, -12., 12.));
+    double positionPIDOutput = rotationPIDController.calculate(getRotation(), targetState.position);
+    double velocityPIDOutput = velocityPIDController.calculate(getVelocity(), targetState.velocity);
+    setSparksVoltage(MathUtil.clamp(voltageOutput + positionPIDOutput + velocityPIDOutput, -12., 12.));
   }
 
   @Override
@@ -94,7 +99,9 @@ public class Arm extends SubsystemBase {
     //   }
       //TODO make work
       // armSparkMax.set(feedforward());
-      armSparkMax.set(m_settings.noteController.getArmJoystickValue() * .3);
+      // }
+      // if (Math.abs(m_settings.noteController.getArmJoystickValue()) > 0.2){
+      //   armSparkMax.set(m_settings.noteController.getArmJoystickValue() * .3);
       // }
       
       goToGoalPosition();
