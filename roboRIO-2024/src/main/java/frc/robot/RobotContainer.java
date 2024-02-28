@@ -7,15 +7,15 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.DashboardHelper.LogLevel;
 import frc.robot.commands.ArcadeDrive;
+import frc.robot.commands.ArmGoToGoalRotation;
 import frc.robot.commands.CurvatureDrive;
 import frc.robot.commands.PIDShoot;
 import frc.robot.commands.PathfindToPose;
 import frc.robot.commands.RunIndex;
 import frc.robot.commands.RunIntake;
-import frc.robot.commands.SmartDashboardPIDShoot;
-import frc.robot.commands.SimpleShoot;
 import frc.robot.commands.TankDrive;
 import frc.robot.commands.TurboMode;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Index;
 import frc.robot.subsystems.Intake;
@@ -23,7 +23,6 @@ import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystems.OdometrySubsystem;
 import frc.robot.DashboardHelper;
 import frc.robot.subsystems.Sensor;
@@ -62,6 +61,11 @@ public class RobotContainer {
   private final Settings m_settings = new Settings(driveController, noteController);
 
   private final Drivetrain m_drivetrain = new Drivetrain(m_settings);
+  private final Arm m_arm = new Arm();
+  private final Shooter m_shooter = new Shooter(m_settings);
+  private final Intake m_intake = new Intake();
+  private final Index m_index = new Index();
+
   private final TankDrive m_tankDrive = new TankDrive(m_drivetrain, driveController);
   private final ArcadeDrive m_arcadeDrive = new ArcadeDrive(m_drivetrain, m_settings);
   private final CurvatureDrive m_curvatureDrive = new CurvatureDrive(m_drivetrain, m_settings);
@@ -69,9 +73,6 @@ public class RobotContainer {
   private final LEDs m_leds = new LEDs();
   private final Sensor m_sensor = new Sensor();
 
-  private final Shooter m_shooter = new Shooter(m_settings);
-  private final Intake m_intake = new Intake();
-  private final Index m_index = new Index();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -129,6 +130,7 @@ public class RobotContainer {
     );
 
     m_drivetrain.setDefaultCommand(m_curvatureDrive);
+    m_arm.setDefaultCommand(new ArmGoToGoalRotation(m_arm, 0.));
   }
 
   /**
