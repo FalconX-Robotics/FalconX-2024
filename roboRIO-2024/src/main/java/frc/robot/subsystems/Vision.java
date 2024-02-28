@@ -2,11 +2,16 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.photonvision.PhotonCamera;
@@ -32,12 +37,13 @@ public class Vision {
         if (result.getMultiTagResult().estimatedPose.isPresent) {
 
             Transform3d fieldToCamera = result.getMultiTagResult().estimatedPose.best;
-            Transform3d targetToCamera = GetTargetToField().plus(fieldToCamera);
+            Pose3d targetToCamera = getTargetsToField().get(0);
+
 
             SmartDashboard.putNumber("PV TargetX", targetToCamera.getX());
-            SmartDashboard.putNumber("PV TargetY", targetToCamera.getY());
-            SmartDashboard.putNumber("PV TargetZ", targetToCamera.getZ());
-
+            SmartDashboard.putNumber("PV TargetY", targetToCamera.getY()); 
+            SmartDashboard.putNumber("PV TargetZ", targetToCamera.getZ()); 
+                           
             Rotation3d m_rotation = targetToCamera.getRotation();
             return Optional.of(m_rotation.getZ());
 
@@ -52,16 +58,23 @@ public class Vision {
         return Optional.empty();
     }
 
-    public Transform3d GetTargetToField() {
+    public ArrayList<Pose3d> getTargetsToField() {
         Transform3d result = new Transform3d(new Translation3d(0, 5.5, 2), new Rotation3d());
-       
+        
         AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();  
+        ArrayList<Pose3d> pose3ds = new ArrayList<>();
+        m_camera.getLatestResult().targets.forEach((target) -> {
+            
+            pose3ds.add(aprilTagFieldLayout.getTagPose(target.getFiducialId()).get());
+        });
 
-        PhotonPoseEstimator photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR
-        , m_camera, result);
+        return pose3ds;
+
+        // PhotonPoseEstimator photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR
+        // , m_camera, result);
 
         
-
+        // return result;
         /*Pose3d robotPose = PhotonUtils.estimateFieldToRobotAprilTag(target.getMultiTagResult(), aprilTagFieldLayout.getTagPose(target.getFiducialId()), cameraToRobot); */
     }
 }
