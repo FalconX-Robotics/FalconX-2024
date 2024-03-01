@@ -40,6 +40,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -63,9 +64,11 @@ public class RobotContainer {
 
   private final Drivetrain m_drivetrain = new Drivetrain(m_settings);
   private final Arm m_arm = new Arm();
-  private final Shooter m_shooter = new Shooter(m_settings);
+  private final Shooter m_shooter = new Shooter();
   private final Intake m_intake = new Intake();
   private final Index m_index = new Index();
+  final Vision m_vision = new Vision();
+  final Sensor m_sensor = new Sensor();
 
   private final TankDrive m_tankDrive = new TankDrive(m_drivetrain, driveController);
   private final ArcadeDrive m_arcadeDrive = new ArcadeDrive(m_drivetrain, m_settings);
@@ -73,13 +76,10 @@ public class RobotContainer {
 
   public final LEDs m_leds = new LEDs();
   
-  final Shooter m_shooter = new Shooter();
-  final Intake m_intake = new Intake();  
-  final Vision m_vision = new Vision();
 
   public void periodic() {
     m_vision.getAngleToTarget();
-    SmartDashboard.putNumber("PV Angle", m_vision.getAngleToTarget().orElse(0.));
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "PV Angle", m_vision.getAngleToTarget().orElse(0.));
   }
 
 

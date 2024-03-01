@@ -11,7 +11,6 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Settings;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.BaseUnits;
 import edu.wpi.first.units.Units;
@@ -28,8 +27,6 @@ import frc.robot.DashboardHelper;
 public class Shooter extends SubsystemBase {
   CANSparkMax shooterLeaderSparkMax = new CANSparkMax(MotorConstants.shooter, MotorType.kBrushless);
   CANSparkMax shooterFollowerSparkMax = new CANSparkMax(MotorConstants.shooterFollower, MotorType.kBrushless);
-
-  Settings m_settings;
 
   DataLog log = DataLogManager.getLog();
 
@@ -54,9 +51,7 @@ public class Shooter extends SubsystemBase {
 
   /** Creates a new Shooter. */
 
-  public Shooter(Settings settings) {
-    m_settings = settings;
-    
+  public Shooter() {
     // shooterLeaderSparkMax.restoreFactoryDefaults();
     // shooterFollowerSparkMax.restoreFactoryDefaults();
     // armSparkMax.restoreFactoryDefaults();
@@ -81,9 +76,9 @@ public class Shooter extends SubsystemBase {
     getShooterPidController().setReference(setPoint, CANSparkMax.ControlType.kVelocity);
   }
 
-  public boolean armJoystickActive () {
-    return Math.abs(m_settings.noteController.getArmJoystickValue()) > 0;
-  }
+  // public boolean armJoystickActive () {
+  //   return Math.abs(m_settings.noteController.getArmJoystickValue()) > 0;
+  // }
 
   public boolean velocityIsWithinTarget (double target, double leniency) {
     return (getShooterEncoderVelocity() >= target - leniency
