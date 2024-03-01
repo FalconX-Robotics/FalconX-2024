@@ -51,4 +51,30 @@ public class DashboardHelper {
         SmartDashboard.putData(key, value);
     }
    }
+
+   public static double getNumber(LogLevel level, String key, double value){
+    if(level.getLevelInt() <= curLevel.getLevelInt()){
+        return SmartDashboard.getNumber(key, value);
+    }
+    return value;
+   }
+   public static boolean getBoolean(LogLevel level, String key, boolean value){
+    if(level.getLevelInt() <= curLevel.getLevelInt()){
+        return SmartDashboard.getBoolean(key, value);
+    }
+    return value;
+   }
+   public static String getString(LogLevel level, String key, String value){
+    if(level.getLevelInt() <= curLevel.getLevelInt()){
+        return SmartDashboard.getString(key, value);
+    }
+    return value;
+   }
+   public static Sendable getData(LogLevel level, String key, Sendable value){
+    if(level.getLevelInt() <= curLevel.getLevelInt()){
+        return SmartDashboard.getData(key);
+    }
+    return value;
+   }
 }
+

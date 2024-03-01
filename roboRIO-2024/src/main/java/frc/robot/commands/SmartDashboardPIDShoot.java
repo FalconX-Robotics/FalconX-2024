@@ -6,9 +6,10 @@ package frc.robot.commands;
 
 import com.revrobotics.SparkPIDController;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.DashboardHelper;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SmartDashboardPIDShoot extends Command {
   private Shooter m_shooter;
@@ -21,14 +22,14 @@ public class SmartDashboardPIDShoot extends Command {
     addRequirements(shooter);
     m_pidController = m_shooter.getShooterPidController();
     setPID(6e-5, 0, 0, 0, 0.000173, -1, 1);
-    
-    SmartDashboard.putNumber("Shooter P Gain", 0);
-    SmartDashboard.putNumber("Shooter I Gain", 0);
-    SmartDashboard.putNumber("Shooter D Gain", 0);
-    SmartDashboard.putNumber("Shooter I Zone", 0);
-    SmartDashboard.putNumber("Shooter Feed Forward", 0);
-    SmartDashboard.putNumber("Shooter Max Output", 0);
-    SmartDashboard.putNumber("Shooter Min Output", 0);
+
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Shooter I Gain", 0);
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Shooter D Gain", 0);
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Shooter I Zone", 0);
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Shooter Feed Forward", 0);
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Shooter Max Output", 0);
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Shooter Min Output", 0);
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Shooter P Gain", 0); 
   }
 
   public void setPID (double kP, double kI, double kD, double kIz, double kFF, double kMinOutput, double kMaxOutput) {
@@ -54,13 +55,13 @@ public class SmartDashboardPIDShoot extends Command {
   @Override
   public void execute() {
     setPID(
-      SmartDashboard.getNumber("Shooter P Gain", 0), 
-      SmartDashboard.getNumber("Shooter I Gain", 0), 
-      SmartDashboard.getNumber("Shooter D Gain", 0), 
-      SmartDashboard.getNumber("Shooter I Zone", 0), 
-      SmartDashboard.getNumber("Shooter Feed Forward", 0), 
-      SmartDashboard.getNumber("Shooter Min Output", 0), 
-      SmartDashboard.getNumber("Shooter Max Output", 0)
+      DashboardHelper.getNumber(DashboardHelper.LogLevel.Important, "Shooter P Gain", 0),
+      DashboardHelper.getNumber(DashboardHelper.LogLevel.Important, "Shooter I Gain", 0), 
+      DashboardHelper.getNumber(DashboardHelper.LogLevel.Important, "Shooter D Gain", 0), 
+      DashboardHelper.getNumber(DashboardHelper.LogLevel.Important, "Shooter I Zone", 0), 
+      DashboardHelper.getNumber(DashboardHelper.LogLevel.Important, "Shooter Feed Forward", 0), 
+      DashboardHelper.getNumber(DashboardHelper.LogLevel.Important, "Shooter Min Output", 0), 
+      DashboardHelper.getNumber(DashboardHelper.LogLevel.Important, "Shooter Max Output", 0)
     );
     m_shooter.setShooterReference(2700);
 

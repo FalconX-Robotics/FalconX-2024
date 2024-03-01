@@ -7,7 +7,7 @@ package frc.robot.commands;
 import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.DashboardHelper;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Index;
 import frc.robot.subsystems.Shooter;
@@ -33,14 +33,14 @@ public class PIDShoot extends Command {
     m_pidController = m_shooter.getShooterPidController();
     addRequirements(index, shooter);
     setPID(kP, kI, kD, kIz, kFF, kMinOutput, kMaxOutput, RPMin);
-    SmartDashboard.putNumber("Shooter P Gain", kP);
-    SmartDashboard.putNumber("Shooter I Gain", kI);
-    SmartDashboard.putNumber("Shooter D Gain", kD);
-    SmartDashboard.putNumber("Shooter I Zone", kIz);
-    SmartDashboard.putNumber("Shooter Feed Forward", kFF);
-    SmartDashboard.putNumber("Shooter Max Output", kMinOutput);
-    SmartDashboard.putNumber("Shooter Min Output", kMaxOutput);
-    SmartDashboard.putNumber("PID Shooter RPM in", RPMin);
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Shooter P Gain", kP);
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Shooter I Gain", kI);
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Shooter D Gain", kD);
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Shooter I Zone", kIz);
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Shooter Feed Forward", kFF);
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Shooter Max Output", kMinOutput);
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Shooter Min Output", kMaxOutput);
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "PID Shooter RPM in", RPMin);
   }
 
   public void setPID (double kP, double kI, double kD, double kIz, double kFF, double kMinOutput, double kMaxOutput, double RPMin) {
@@ -75,11 +75,11 @@ public class PIDShoot extends Command {
         new RunIndex(m_index, 1.).until(() -> {return Timer.getFPGATimestamp() >= initialTimestamp + 30;});
       }
       // }
-    SmartDashboard.putNumber("Timestamp", Timer.getFPGATimestamp());
-    SmartDashboard.putNumber("Timestamp inital", initialTimestamp);
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Timestamp", Timer.getFPGATimestamp());
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Timestamp inital", initialTimestamp);
 
-    SmartDashboard.putNumber("Target Shooter Speed", RPMin);
-    SmartDashboard.putNumber("Actual Shooter Speed", m_shooter.getShooterEncoderVelocity());
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Target Shooter Speed", RPMin);
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Actual Shooter Speed", m_shooter.getShooterEncoderVelocity());
     
   }
   

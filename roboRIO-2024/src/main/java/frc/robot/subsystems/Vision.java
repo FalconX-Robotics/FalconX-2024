@@ -8,7 +8,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.DashboardHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +29,8 @@ public class Vision {
 
     var result = m_camera.getLatestResult();
     
-    SmartDashboard.putNumber("ambiguity", result.getMultiTagResult().estimatedPose.ambiguity);
-    SmartDashboard.putBoolean("estimated pose is present", result.getMultiTagResult().estimatedPose.isPresent);
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "ambiguity", result.getMultiTagResult().estimatedPose.ambiguity);
+    DashboardHelper.putBoolean(DashboardHelper.LogLevel.Info, "estimated pose is present", result.getMultiTagResult().estimatedPose.isPresent);
     // SmartDashboard.putNumberArray("detected ids", result.getMultiTagResult().fiducialIDsUsed.toArray(new Double[result.getMultiTagResult().fiducialIDsUsed.size()]));
     // result.getTargets().
         // Find distance between targets and camera
@@ -40,9 +40,9 @@ public class Vision {
             Pose3d targetToCamera = getTargetsToField().get(0);
 
 
-            SmartDashboard.putNumber("PV TargetX", targetToCamera.getX());
-            SmartDashboard.putNumber("PV TargetY", targetToCamera.getY()); 
-            SmartDashboard.putNumber("PV TargetZ", targetToCamera.getZ()); 
+            DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "PV TargetX", targetToCamera.getX());
+            DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "PV TargetY", targetToCamera.getY()); 
+            DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "PV TargetZ", targetToCamera.getZ()); 
                            
             Rotation3d m_rotation = targetToCamera.getRotation();
             return Optional.of(m_rotation.getZ());
