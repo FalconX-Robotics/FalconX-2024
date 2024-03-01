@@ -42,6 +42,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -69,19 +70,17 @@ public class RobotContainer {
   private final CurvatureDrive m_curvatureDrive = new CurvatureDrive(m_drivetrain, m_settings);
 
   public final LEDs m_leds = new LEDs();
-  
-  final Shooter m_shooter = new Shooter();
-  final Intake m_intake = new Intake();  
-  final Vision m_vision = new Vision();
+
+  private final Shooter m_shooter = new Shooter(m_settings);
+  private final Intake m_intake = new Intake();
+  private final Index m_index = new Index();
+  private final Vision m_vision = new Vision();
+  private final Sensor m_sensor = new Sensor();
 
   public void periodic() {
     m_vision.getAngleToTarget();
     SmartDashboard.putNumber("PV Angle", m_vision.getAngleToTarget().orElse(0.));
   }
-
-  private final Shooter m_shooter = new Shooter(m_settings);
-  private final Intake m_intake = new Intake();
-  private final Index m_index = new Index();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -133,12 +132,12 @@ public class RobotContainer {
       .onlyIf(() -> {return m_shooter.velocityIsWithinTarget();})
     );
     m_settings.noteController.intakeTrigger.whileTrue(
-      new RunIntake(m_intake, .8)
+      new RunIntake(m_intake, -0.8)
       .until(() -> {return m_sensor.getNoteSensed();})
     );
     m_settings.noteController.reverseTrigger.whileTrue(
       new RunIndex(m_index, -.5)
-      .alongWith(new RunIntake(m_intake, -1.))
+      .alongWith(new RunIntake(m_intake, 1.))
     );
 
     m_drivetrain.setDefaultCommand(m_curvatureDrive);

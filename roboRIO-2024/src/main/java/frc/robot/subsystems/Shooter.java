@@ -91,6 +91,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean velocityIsWithinTarget () {
+
     return (getShooterEncoderVelocity() >= 2700. - 35.
          && getShooterEncoderVelocity() <= 2700. + 35.);
   }
