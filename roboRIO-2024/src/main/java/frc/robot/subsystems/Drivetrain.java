@@ -152,8 +152,8 @@ public class Drivetrain extends SubsystemBase {
 
   public void arcadeDrive (double speed, double rotation){
     m_drive.arcadeDrive(
-      speed * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed),
-      rotation * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed)
+      speed * (turboModeOn ? m_settings.driveSettings.turboSpeed : m_settings.driveSettings.normalSpeed),
+      rotation * (turboModeOn ? m_settings.driveSettings.turboSpeed : m_settings.driveSettings.normalSpeed)
     );
   }
 
@@ -166,7 +166,7 @@ public class Drivetrain extends SubsystemBase {
     // setLeftMotors(wheelSpeeds.left);
     // setRightMotors(wheelSpeeds.right);
 
-    m_drive.curvatureDrive(speed * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed), rotation, turnInPlace);
+    m_drive.curvatureDrive(speed * (turboModeOn ? m_settings.driveSettings.turboSpeed : m_settings.driveSettings.normalSpeed), rotation, turnInPlace);
   }
   @Override
   public void periodic() {

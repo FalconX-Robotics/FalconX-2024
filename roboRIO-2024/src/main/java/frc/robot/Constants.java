@@ -50,7 +50,7 @@ public final class Constants {
     // 0 is reserved for RIO
     // 1 is reserved for PDP
 
-    public static final boolean donatello = true; // :)
+    public static final boolean donatello = false; // :)
 
     //TODO: This probably won't work. test and remove if not. -w
     public enum drivetrain {

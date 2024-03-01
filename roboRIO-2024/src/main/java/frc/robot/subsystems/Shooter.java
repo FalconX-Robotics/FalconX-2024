@@ -82,7 +82,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean armJoystickActive () {
-    return Math.abs(m_settings.noteController.getArmJoystickValue()) > 0;
+    return Math.abs(m_settings.noteSettings.getArmJoystickValue()) > 0;
   }
 
   public boolean velocityIsWithinTarget (double target, double leniency) {

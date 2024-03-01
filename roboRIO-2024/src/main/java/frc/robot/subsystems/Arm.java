@@ -76,13 +76,13 @@ public class Arm extends SubsystemBase {
   }
   
   public void goToGoalPosition() {
-    TrapezoidProfile.State targetState = trapezoidProfile.calculate(
-      .02, 
-      new TrapezoidProfile.State(getArmEncoderRotation(), getArmEncoderVelocity()),
-      new TrapezoidProfile.State(goalPositionRad, 0)
-    );
-    double voltageOutput = armFeedforward.calculate(targetState.position, targetState.velocity);
-    setSparksVoltage(MathUtil.clamp(voltageOutput, -12., 12.));
+  TrapezoidProfile.State targetState = trapezoidProfile.calculate(
+  .02, 
+  new TrapezoidProfile.State(getArmEncoderRotation(), getArmEncoderVelocity()),
+  new TrapezoidProfile.State(goalPositionRad, 0)
+  );
+  double voltageOutput = armFeedforward.calculate(targetState.position, targetState.velocity);
+  setSparksVoltage(MathUtil.clamp(voltageOutput, -12., 12.));
   }
 
   @Override
@@ -94,7 +94,7 @@ public class Arm extends SubsystemBase {
     //   }
       //TODO make work
       // armSparkMax.set(feedforward());
-      armSparkMax.set(m_settings.noteController.getArmJoystickValue() * .3);
+      armSparkMax.set(m_settings.noteSettings.getArmJoystickValue() * .3);
       // }
       
       goToGoalPosition();

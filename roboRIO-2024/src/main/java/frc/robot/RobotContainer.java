@@ -74,12 +74,12 @@ public class RobotContainer {
   private final Shooter m_shooter = new Shooter(m_settings);
   private final Intake m_intake = new Intake();
   private final Index m_index = new Index();
-  private final Vision m_vision = new Vision();
+  // private final Vision m_vision = new Vision();
   private final Sensor m_sensor = new Sensor();
 
   public void periodic() {
-    m_vision.getAngleToTarget();
-    SmartDashboard.putNumber("PV Angle", m_vision.getAngleToTarget().orElse(0.));
+    // m_vision.getAngleToTarget();
+    // SmartDashboard.putNumber("PV Angle", m_vision.getAngleToTarget().orElse(0.));
   }
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -117,25 +117,25 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    m_settings.driveController.turboModeTrigger.whileTrue(
+    m_settings.driveSettings.turboModeTrigger.whileTrue(
       new TurboMode(m_drivetrain)
     );
-    m_settings.driveController.turnInPlaceTrigger.whileTrue(
+    m_settings.driveSettings.turnInPlaceTrigger.whileTrue(
       new TurnInPlace(m_drivetrain)
     );
 
-    m_settings.noteController.shooterChargeTrigger.whileTrue(
+    m_settings.noteSettings.shooterChargeTrigger.whileTrue(
       new PIDShoot(m_index, m_shooter)
     );
-    m_settings.noteController.shooterFireTrigger.whileTrue(
+    m_settings.noteSettings.shooterFireTrigger.whileTrue(
       new RunIndex(m_index, 1.)
       .onlyIf(() -> {return m_shooter.velocityIsWithinTarget();})
     );
-    m_settings.noteController.intakeTrigger.whileTrue(
+    m_settings.noteSettings.intakeTrigger.whileTrue(
       new RunIntake(m_intake, -0.8)
       .until(() -> {return m_sensor.getNoteSensed();})
     );
-    m_settings.noteController.reverseTrigger.whileTrue(
+    m_settings.noteSettings.reverseTrigger.whileTrue(
       new RunIndex(m_index, -.5)
       .alongWith(new RunIntake(m_intake, 1.))
     );
