@@ -41,8 +41,8 @@ public class Settings {
             );
         }
 
-        public Trigger turboModeTrigger   = new JoystickButton(m_driveController, Button.kRightBumper.value);
-        public Trigger turnInPlaceTrigger = new JoystickButton(m_driveController, Button.kLeftBumper.value);
+        // public Trigger turboModeTrigger   = new JoystickButton(m_driveController, Button.kRightBumper.value);
+        // public Trigger turnInPlaceTrigger = new JoystickButton(m_driveController, Button.kLeftBumper.value);
         
         public double deadband = 0.1;
         public double normalSpeed = 0.3;
@@ -50,10 +50,10 @@ public class Settings {
     }
     /** Configurations for controller centered around note manipulation */
     public class NoteController {
-        public Trigger shooterChargeTrigger   = new JoystickButton(m_noteController, Button.kA.value);
-        public Trigger shooterFireTrigger     = new JoystickButton(m_noteController, Button.kX.value);
-        public Trigger intakeTrigger          = new JoystickButton(m_noteController, Button.kB.value);
-        public Trigger reverseTrigger         = new JoystickButton(m_noteController, Button.kRightBumper.value);
+        // public Trigger shooterChargeTrigger   = new JoystickButton(m_noteController, Button.kA.value);
+        // public Trigger shooterFireTrigger     = new JoystickButton(m_noteController, Button.kX.value);
+        // public Trigger intakeTrigger          = new JoystickButton(m_noteController, Button.kB.value);
+        // public Trigger reverseTrigger         = new JoystickButton(m_noteController, Button.kRightBumper.value);
         
         public double getArmJoystickValue () {return MathUtil.applyDeadband( 
             m_noteController.getLeftY(), deadband);

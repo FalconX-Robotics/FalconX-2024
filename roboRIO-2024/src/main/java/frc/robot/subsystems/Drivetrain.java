@@ -163,12 +163,12 @@ public class Drivetrain extends SubsystemBase {
     // setLeftMotors(wheelSpeeds.left);
     // setRightMotors(wheelSpeeds.right);
 
-    m_drive.curvatureDrive(speed * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed), rotation, m_settings.driveController.turnInPlaceTrigger.getAsBoolean());
+    // m_drive.curvatureDrive(speed * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed), rotation, m_settings.driveController.turnInPlaceTrigger.getAsBoolean());
   }
   @Override
   public void periodic() {
     m_odometry.periodic();
-    DashboardHelper.putBoolean(DashboardHelper.LogLevel.Info, "turnInPlace", m_settings.driveController.turnInPlaceTrigger.getAsBoolean());
+    // DashboardHelper.putBoolean(DashboardHelper.LogLevel.Info, "turnInPlace", m_settings.driveController.turnInPlaceTrigger.getAsBoolean());
   }
 
   public WPI_PigeonIMU getGyro() {

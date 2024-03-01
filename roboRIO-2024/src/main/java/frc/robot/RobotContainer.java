@@ -8,6 +8,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.DashboardHelper.LogLevel;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.ArmGoToGoalRotation;
+import frc.robot.commands.BackupAuto;
 import frc.robot.commands.CurvatureDrive;
 import frc.robot.commands.PIDShoot;
 import frc.robot.commands.PathfindToPose;
@@ -74,9 +75,7 @@ public class RobotContainer {
 
   public final LEDs m_leds = new LEDs();
 
-  private final Shooter m_shooter = new Shooter(m_settings);
-  private final Intake m_intake = new Intake();
-  private final Index m_index = new Index();
+ 
   private final Vision m_vision = new Vision();
   private final Sensor m_sensor = new Sensor();
 
@@ -89,6 +88,7 @@ public class RobotContainer {
   public RobotContainer() {
 
     autoChooser = AutoBuilder.buildAutoChooser();
+    autoChooser.addOption("backupAuto", new BackupAuto(m_drivetrain));
 
     logLevelChooser.setDefaultOption("Info", DashboardHelper.LogLevel.Info);
     logLevelChooser.addOption("Important", DashboardHelper.LogLevel.Important);
@@ -120,28 +120,28 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    m_settings.driveController.turboModeTrigger.whileTrue(
-      new TurboMode(m_drivetrain)
-    );
+    // m_settings.driveController.turboModeTrigger.whileTrue(
+    //   new TurboMode(m_drivetrain)
+    // );
 
-    m_settings.noteController.shooterChargeTrigger.whileTrue(
-      new PIDShoot(m_index, m_shooter)
-    );
-    m_settings.noteController.shooterFireTrigger.whileTrue(
-      new RunIndex(m_index, 1.)
-      .onlyIf(() -> {return m_shooter.velocityIsWithinTarget();})
-    );
-    m_settings.noteController.intakeTrigger.whileTrue(
-      new RunIntake(m_intake, -0.8)
-      .until(() -> {return m_sensor.getNoteSensed();})
-    );
-    m_settings.noteController.reverseTrigger.whileTrue(
-      new RunIndex(m_index, -.5)
-      .alongWith(new RunIntake(m_intake, 1.))
-    );
+    // m_settings.noteController.shooterChargeTrigger.whileTrue(
+    //   new PIDShoot(m_index, m_shooter)
+    // );
+    // m_settings.noteController.shooterFireTrigger.whileTrue(
+    //   new RunIndex(m_index, 1.)
+    //   .onlyIf(() -> {return m_shooter.velocityIsWithinTarget();})
+    // );
+    // m_settings.noteController.intakeTrigger.whileTrue(
+    //   new RunIntake(m_intake, -0.8)
+    //   .until(() -> {return m_sensor.getNoteSensed();})
+    // );
+    // m_settings.noteController.reverseTrigger.whileTrue(
+    //   new RunIndex(m_index, -.5)
+    //   .alongWith(new RunIntake(m_intake, 1.))
+    // );
 
-    m_drivetrain.setDefaultCommand(m_curvatureDrive);
-    m_arm.setDefaultCommand(new ArmGoToGoalRotation(m_arm, 0.));
+    // m_drivetrain.setDefaultCommand(m_curvatureDrive);
+    // m_arm.setDefaultCommand(new ArmGoToGoalRotation(m_arm, 0.));
   }
 
   /**
