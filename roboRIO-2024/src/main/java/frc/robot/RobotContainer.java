@@ -21,6 +21,7 @@ import frc.robot.subsystems.Index;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Vision;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.subsystems.OdometrySubsystem;
@@ -70,8 +71,16 @@ public class RobotContainer {
   private final ArcadeDrive m_arcadeDrive = new ArcadeDrive(m_drivetrain, m_settings);
   private final CurvatureDrive m_curvatureDrive = new CurvatureDrive(m_drivetrain, m_settings);
 
-  private final LEDs m_leds = new LEDs();
-  private final Sensor m_sensor = new Sensor();
+  public final LEDs m_leds = new LEDs();
+  
+  final Shooter m_shooter = new Shooter();
+  final Intake m_intake = new Intake();  
+  final Vision m_vision = new Vision();
+
+  public void periodic() {
+    m_vision.getAngleToTarget();
+    SmartDashboard.putNumber("PV Angle", m_vision.getAngleToTarget().orElse(0.));
+  }
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */

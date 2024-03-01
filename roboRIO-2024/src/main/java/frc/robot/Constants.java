@@ -74,4 +74,12 @@ public final class Constants {
     public static final int arm = 20;
     public static final int armFollower = 21;
   }
+
+  public static class VisionConstants {
+    public static final double CAMERA_HEIGHT_METERS = 0.0;
+    public static final double TARGET_HEIGHT_METERS = 0.0;
+    public static final double CAMERA_PITCH_RADIANS = 0.0;
+  }
+
+  public static final int gyroId = 42;
 }
