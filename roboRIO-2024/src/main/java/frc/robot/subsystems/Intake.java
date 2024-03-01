@@ -19,7 +19,6 @@ public class Intake extends SubsystemBase {
     intakeSparkMax.setSmartCurrentLimit(40);
     intakeSparkMax.setInverted(true);
     intakeSparkMax.burnFlash();
-    // TODO: Set inverted here if necessary
   }
 
   public void setMotor(double speed){

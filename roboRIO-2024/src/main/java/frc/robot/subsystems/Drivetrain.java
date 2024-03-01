@@ -38,17 +38,16 @@ import frc.robot.Robot;
 import frc.robot.Settings;
 import frc.robot.Constants.MotorConstants;
 import frc.robot.Constants.RatioConstants;
-import frc.robot.Constants.MotorConstants.drivetrain;
 import frc.robot.DashboardHelper;
 
 public class Drivetrain extends SubsystemBase {
   // There is a different system used than previous years because MotorControlGroup is deprecated :(.
   // We set a motor to a leader, and make followers follow the leader in the constructor.  
   // Front wheels are leaders for no reason because its redundant
-  private CANSparkMax leftLeader = new CANSparkMax(MotorConstants.drivetrain.frontLeft.value, MotorType.kBrushless);
-  private CANSparkMax rightLeader = new CANSparkMax(MotorConstants.drivetrain.frontRight.value, MotorType.kBrushless);
-  private CANSparkMax leftFollower = new CANSparkMax(MotorConstants.drivetrain.backLeft.value, MotorType.kBrushless);
-  private CANSparkMax rightFollower = new CANSparkMax(MotorConstants.drivetrain.backRight.value, MotorType.kBrushless);
+  private CANSparkMax leftLeader = new CANSparkMax(MotorConstants.DrivetrainMotors.frontLeft.value, MotorType.kBrushless);
+  private CANSparkMax rightLeader = new CANSparkMax(MotorConstants.DrivetrainMotors.frontRight.value, MotorType.kBrushless);
+  private CANSparkMax leftFollower = new CANSparkMax(MotorConstants.DrivetrainMotors.backLeft.value, MotorType.kBrushless);
+  private CANSparkMax rightFollower = new CANSparkMax(MotorConstants.DrivetrainMotors.backRight.value, MotorType.kBrushless);
 
   private DataLog log = DataLogManager.getLog();
   
@@ -59,13 +58,10 @@ public class Drivetrain extends SubsystemBase {
   private WPI_PigeonIMU gyro = new WPI_PigeonIMU(Constants.PIGEON_PORT);
 
   private OdometrySubsystem m_odometry;
-  private State state;
 
   private Settings m_settings;
   
-
   private boolean turboModeOn = false;
-  private boolean turnInPlace = false;
 
   public void setLeftMotors (double volt) {
     leftLeader.set(volt);
@@ -166,12 +162,12 @@ public class Drivetrain extends SubsystemBase {
     // setLeftMotors(wheelSpeeds.left);
     // setRightMotors(wheelSpeeds.right);
 
-    m_drive.curvatureDrive(speed * (turboModeOn ? m_settings.driveSettings.turboSpeed : m_settings.driveSettings.normalSpeed), rotation, turnInPlace);
+    m_drive.curvatureDrive(speed * (turboModeOn ? m_settings.driveSettings.turboSpeed : m_settings.driveSettings.normalSpeed), rotation, m_settings.driveSettings.turnInPlaceTrigger.getAsBoolean());
   }
   @Override
   public void periodic() {
     m_odometry.periodic();
-    DashboardHelper.putBoolean(DashboardHelper.LogLevel.Info, "turnInPlace", turnInPlace);
+    DashboardHelper.putBoolean(DashboardHelper.LogLevel.Info, "turnInPlace", m_settings.driveSettings.turnInPlaceTrigger.getAsBoolean());
   }
 
   public WPI_PigeonIMU getGyro() {
@@ -187,12 +183,6 @@ public class Drivetrain extends SubsystemBase {
     return leftLeader.getEncoder();
   }
 
-  public void setTurnInPlace (boolean newTurnInPlace) {
-    turnInPlace = newTurnInPlace;
-  }
-  public boolean getTurnInPlace () {
-    return turnInPlace;
-  }
   public void setTurboMode (boolean newTurboMode) {
     turboModeOn = newTurboMode;
   }

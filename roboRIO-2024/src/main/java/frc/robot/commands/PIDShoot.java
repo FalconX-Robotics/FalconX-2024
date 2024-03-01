@@ -72,7 +72,7 @@ public class PIDShoot extends Command {
     m_shooter.setShooterReference(RPMin);
     // if (velocityIsInRange()){
       if (Timer.getFPGATimestamp() >= 1 + initialTimestamp){
-        new RunIndex(m_index, 1.).until(() -> {return Timer.getFPGATimestamp() >= initialTimestamp + 3;});
+        new RunIndex(m_index, 1.).until(() -> {return Timer.getFPGATimestamp() >= initialTimestamp + 30;});
       }
       // }
     SmartDashboard.putNumber("Timestamp", Timer.getFPGATimestamp());
