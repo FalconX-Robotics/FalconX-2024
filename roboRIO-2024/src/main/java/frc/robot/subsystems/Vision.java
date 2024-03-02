@@ -36,7 +36,7 @@ public class Vision {
         // Find distance between targets and camera
         if (result.getMultiTagResult().estimatedPose.isPresent) {
 
-            Transform3d fieldToCamera = result.getMultiTagResult().estimatedPose.best;
+            Transform3d fieldToCamera = result.getMultiTagResult().estimatedPose.best; //do we need this?
             Pose3d targetToCamera = getTargetsToField().get(0);
 
 
