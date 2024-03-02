@@ -120,28 +120,28 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // m_settings.driveController.turboModeTrigger.whileTrue(
-    //   new TurboMode(m_drivetrain)
-    // );
+    m_settings.driveController.turboModeTrigger.whileTrue(
+      new TurboMode(m_drivetrain)
+    );
 
-    // m_settings.noteController.shooterChargeTrigger.whileTrue(
-    //   new PIDShoot(m_index, m_shooter)
-    // );
-    // m_settings.noteController.shooterFireTrigger.whileTrue(
-    //   new RunIndex(m_index, 1.)
-    //   .onlyIf(() -> {return m_shooter.velocityIsWithinTarget();})
-    // );
-    // m_settings.noteController.intakeTrigger.whileTrue(
-    //   new RunIntake(m_intake, -0.8)
-    //   .until(() -> {return m_sensor.getNoteSensed();})
-    // );
-    // m_settings.noteController.reverseTrigger.whileTrue(
-    //   new RunIndex(m_index, -.5)
-    //   .alongWith(new RunIntake(m_intake, 1.))
-    // );
+    m_settings.noteController.shooterChargeTrigger.whileTrue(
+      new PIDShoot(m_index, m_shooter)
+    );
+    m_settings.noteController.shooterFireTrigger.whileTrue(
+      new RunIndex(m_index, 1.)
+      .onlyIf(() -> {return m_shooter.velocityIsWithinTarget();})
+    );
+    m_settings.noteController.intakeTrigger.whileTrue(
+      new RunIntake(m_intake, -0.8)
+      .until(() -> {return m_sensor.getNoteSensed();})
+    );
+    m_settings.noteController.reverseTrigger.whileTrue(
+      new RunIndex(m_index, -.5)
+      .alongWith(new RunIntake(m_intake, 1.))
+    );
 
-    // m_drivetrain.setDefaultCommand(m_curvatureDrive);
-    // m_arm.setDefaultCommand(new ArmGoToGoalRotation(m_arm, 0.));
+    m_drivetrain.setDefaultCommand(m_curvatureDrive);
+    m_arm.setDefaultCommand(new ArmGoToGoalRotation(m_arm, 0.));
   }
 
   /**
