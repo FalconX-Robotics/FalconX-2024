@@ -27,22 +27,26 @@ public class Settings {
     /** Configurations for controller centered around drivetrain repositioning */
     public class DriveSettings {
         public double getSpeedJoystickValue () { 
-            // m_driveController.setRumble(RumbleType.kBothRumble, 10); //?
-            return MathUtil.applyDeadband(
-                -m_driveController.getLeftY(), deadband
+            double output = -m_driveController.getLeftY();
+            output = MathUtil.applyDeadband(
+                output, deadband
             );
+            output = curveInput(output);
+            return output;
         }
         public double getRotationJoystickValue () {
-            // m_driveController.setRumble(RumbleType.kBothRumble, 1);
-            return MathUtil.applyDeadband( 
-                m_driveController.getRightX(), deadband
+            double output = -m_driveController.getRightX();
+            output = MathUtil.applyDeadband(
+                output, deadband
             );
+            output = curveInput(output);
+            return output;
         }
 
         public Trigger turboModeTrigger   = new JoystickButton(m_driveController, Button.kRightBumper.value);
         public Trigger turnInPlaceTrigger = new JoystickButton(m_driveController, Button.kLeftBumper.value);
         
-        public double deadband = 0.1;
+        public double deadband = 0.05;
         public double normalSpeed = 0.3;
         public double turboSpeed = 1.;
     }

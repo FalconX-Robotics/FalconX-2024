@@ -14,7 +14,6 @@ import frc.robot.commands.PathfindToPose;
 import frc.robot.commands.RunIndex;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.TankDrive;
-import frc.robot.commands.TurboMode;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Index;
@@ -117,10 +116,6 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    m_settings.driveSettings.turboModeTrigger.whileTrue(
-      new TurboMode(m_drivetrain)
-    );
-
     m_settings.noteSettings.shooterChargeTrigger.whileTrue(
       new PIDShoot(m_index, m_shooter)
     );
