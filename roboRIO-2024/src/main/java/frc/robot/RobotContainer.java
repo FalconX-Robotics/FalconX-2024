@@ -54,28 +54,33 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  private final SendableChooser<Command> autoChooser;
+  
   private final SendableChooser<LogLevel> logLevelChooser = new SendableChooser<>();
-
+  private final SendableChooser<Command> autoChooser;
+  
   private final XboxController driveController = new XboxController(OperatorConstants.kDriverControllerPort);
   private final XboxController noteController = new XboxController(OperatorConstants.kShooterControllerPort);
 
   private final Settings m_settings = new Settings(driveController, noteController);
 
   private final Drivetrain m_drivetrain = new Drivetrain(m_settings);
-  private final Arm m_arm = new Arm();
   private final Shooter m_shooter = new Shooter(m_settings);
   private final Intake m_intake = new Intake();
+  private final Sensor m_sensor = new Sensor();
   private final Index m_index = new Index();
-
-  private final TankDrive m_tankDrive = new TankDrive(m_drivetrain, driveController);
-  private final ArcadeDrive m_arcadeDrive = new ArcadeDrive(m_drivetrain, m_settings);
+  private final LEDs m_leds = new LEDs();
+  private final Arm m_arm = new Arm();
+  
   private final CurvatureDrive m_curvatureDrive = new CurvatureDrive(m_drivetrain, m_settings);
+  private final ArcadeDrive m_arcadeDrive = new ArcadeDrive(m_drivetrain, m_settings);
+  private final TankDrive m_tankDrive = new TankDrive(m_drivetrain, driveController);
+  
+  
 
-  public final LEDs m_leds = new LEDs();
+  
 
   // private final Vision m_vision = new Vision();
-  private final Sensor m_sensor = new Sensor();
+  
 
   public void periodic() {
     // m_vision.getAngleToTarget();
@@ -94,8 +99,9 @@ public class RobotContainer {
     logLevelChooser.addOption("Debug", DashboardHelper.LogLevel.Debug);
     logLevelChooser.addOption("Verbose", DashboardHelper.LogLevel.Verbose);
 
-    DashboardHelper.putData(DashboardHelper.LogLevel.Info, "Auto Chooser", autoChooser);
     DashboardHelper.putData(DashboardHelper.LogLevel.Info, "LogLevel Choices", logLevelChooser);
+    DashboardHelper.putData(DashboardHelper.LogLevel.Info, "Auto Chooser", autoChooser);
+    
 
     LocalDateTime startTime = LocalDateTime.now();
     Util.setStartTime(startTime);
@@ -126,14 +132,15 @@ public class RobotContainer {
       new RunIndex(m_index, 1.)
       .onlyIf(() -> {return m_shooter.velocityIsWithinTarget();})
     );
-    m_settings.noteSettings.intakeTrigger.whileTrue(
-      new RunIntake(m_intake, -0.8)
-      .until(() -> {return m_sensor.getNoteSensed();})
-    );
     m_settings.noteSettings.reverseTrigger.whileTrue(
       new RunIndex(m_index, -.5)
       .alongWith(new RunIntake(m_intake, 1.))
     );
+    m_settings.noteSettings.intakeTrigger.whileTrue(
+      new RunIntake(m_intake, -0.8)
+      .until(() -> {return m_sensor.getNoteSensed();})
+    );
+    
 
     m_drivetrain.setDefaultCommand(m_curvatureDrive);
     m_arm.setDefaultCommand(new ArmGoToGoalRotation(m_arm, 0.));
