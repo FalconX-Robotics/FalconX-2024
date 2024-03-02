@@ -58,7 +58,6 @@ public class Drivetrain extends SubsystemBase {
   private WPI_PigeonIMU gyro = new WPI_PigeonIMU(Constants.PIGEON_PORT);
 
   private OdometrySubsystem m_odometry;
-  private State state; //TODO probably remove?
 
   private Settings m_settings;
   
@@ -149,8 +148,8 @@ public class Drivetrain extends SubsystemBase {
 
   public void arcadeDrive (double speed, double rotation){
     m_drive.arcadeDrive(
-      speed * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed),
-      rotation * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed)
+      speed * (turboModeOn ? m_settings.driveSettings.turboSpeed : m_settings.driveSettings.normalSpeed),
+      rotation * (turboModeOn ? m_settings.driveSettings.turboSpeed : m_settings.driveSettings.normalSpeed)
     );
   }
 
@@ -163,12 +162,12 @@ public class Drivetrain extends SubsystemBase {
     // setLeftMotors(wheelSpeeds.left);
     // setRightMotors(wheelSpeeds.right);
 
-    m_drive.curvatureDrive(speed * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed), rotation, m_settings.driveController.turnInPlaceTrigger.getAsBoolean());
+    m_drive.curvatureDrive(speed * (turboModeOn ? m_settings.driveSettings.turboSpeed : m_settings.driveSettings.normalSpeed), rotation, m_settings.driveSettings.turnInPlaceTrigger.getAsBoolean());
   }
   @Override
   public void periodic() {
     m_odometry.periodic();
-    DashboardHelper.putBoolean(DashboardHelper.LogLevel.Info, "turnInPlace", m_settings.driveController.turnInPlaceTrigger.getAsBoolean());
+    DashboardHelper.putBoolean(DashboardHelper.LogLevel.Info, "turnInPlace", m_settings.driveSettings.turnInPlaceTrigger.getAsBoolean());
   }
 
   public WPI_PigeonIMU getGyro() {

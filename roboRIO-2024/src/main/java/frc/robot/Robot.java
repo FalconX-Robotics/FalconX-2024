@@ -30,7 +30,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    try { Thread.sleep(1500); } catch(Exception e) {}
+    // try { Thread.sleep(1500); } catch(Exception e) {}
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     Pathfinding.setPathfinder(new LocalADStar());
@@ -50,7 +50,7 @@ public class Robot extends TimedRobot {
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
-    //CommandScheduler.getInstance().run();
+    CommandScheduler.getInstance().run();
     m_robotContainer.periodic();
   }
 

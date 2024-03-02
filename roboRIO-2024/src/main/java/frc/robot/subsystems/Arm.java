@@ -13,6 +13,7 @@ import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ArmFeedForwardValues;
 import frc.robot.Constants.MotorConstants;
 import frc.robot.Constants.RatioConstants;
 
@@ -28,14 +29,14 @@ public class Arm extends SubsystemBase {
     armFollowerSparkMax.follow(armSparkMax, true);
     
     armFollowerSparkMax.setIdleMode(IdleMode.kBrake);
-    armFollowerSparkMax.getEncoder().setPositionConversionFactor(1/RatioConstants.ArmGearRatio/(2*Math.PI));
-    armFollowerSparkMax.getEncoder().setPosition(0);
+    armFollowerSparkMax.getEncoder().setPositionConversionFactor(1/(RatioConstants.ArmGearRatio*(2*Math.PI)));
+    armFollowerSparkMax.getEncoder().setPosition(ArmFeedForwardValues.offset);
     armFollowerSparkMax.setInverted(true);
     armFollowerSparkMax.burnFlash();
 
     armSparkMax.setIdleMode(IdleMode.kBrake);
-    armSparkMax.getEncoder().setPositionConversionFactor(1/RatioConstants.ArmGearRatio/(2*Math.PI));
-    armSparkMax.getEncoder().setPosition(0);
+    armSparkMax.getEncoder().setPositionConversionFactor(1/(RatioConstants.ArmGearRatio*(2*Math.PI)));
+    armSparkMax.getEncoder().setPosition(ArmFeedForwardValues.offset);
     armSparkMax.setInverted(false);
     armSparkMax.burnFlash();
   }
