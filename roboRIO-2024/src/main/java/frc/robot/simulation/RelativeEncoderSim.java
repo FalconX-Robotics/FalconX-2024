@@ -25,11 +25,11 @@ public class RelativeEncoderSim implements RelativeEncoder {
         return REVLibError.kOk;
     }
 
-    public void setSimulationVelocityMetersPerSecond(double velocity) {
+    public void setSimulationVelocity(double velocity) {
         m_simulationVelocity = velocity; 
     }
 
-    public void setSimulationPositionMeters(double position) {
+    public void setSimulationPosition(double position) {
         m_simulationPostion = position + m_offset;
     }
     
