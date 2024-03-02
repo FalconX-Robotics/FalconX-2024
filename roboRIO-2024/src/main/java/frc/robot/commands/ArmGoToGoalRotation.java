@@ -9,14 +9,15 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.ArmFeedForwardValues;
+import frc.robot.Constants.ArmFeedForwardConstants;
 import frc.robot.subsystems.Arm;
 
 public class ArmGoToGoalRotation extends Command {
   PIDController rotationPIDController = new PIDController(.25, 0, 0);
   PIDController velocityPIDController = new PIDController(.25, 0, 0);
-  TrapezoidProfile trapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(ArmFeedForwardValues.maxVelocity, ArmFeedForwardValues.maxAcceleration));
-
+  TrapezoidProfile trapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(ArmFeedForwardConstants.maxVelocity, ArmFeedForwardConstants.maxAcceleration));
+  TrapezoidProfile.State currentState = new TrapezoidProfile.State(ArmFeedForwardConstants.offset, 0.);
+  TrapezoidProfile.State targetState = new TrapezoidProfile.State(ArmFeedForwardConstants.offset, 0.);
   double goalRotationRad;
   Arm m_arm;
   ArmFeedforward armFeedforward;
@@ -24,9 +25,9 @@ public class ArmGoToGoalRotation extends Command {
   /** Creates a new ArmGoToGoalRotation. */
   public ArmGoToGoalRotation(Arm arm, double goalRotationRad) {
     armFeedforward = new ArmFeedforward(
-      ArmFeedForwardValues.staticGain,
-      ArmFeedForwardValues.gravityGain,
-      ArmFeedForwardValues.velocityGain
+      ArmFeedForwardConstants.staticGain,
+      ArmFeedForwardConstants.gravityGain,
+      ArmFeedForwardConstants.velocityGain
     );
     addRequirements(arm);
     m_arm = arm;
@@ -36,7 +37,7 @@ public class ArmGoToGoalRotation extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    TrapezoidProfile.State targetState = trapezoidProfile.calculate(
+    targetState = trapezoidProfile.calculate(
       .02, // 0.02 because each schedule takes 20ms
       new TrapezoidProfile.State(m_arm.getRotation(), m_arm.getVelocity()),
       new TrapezoidProfile.State(goalRotationRad, 0)

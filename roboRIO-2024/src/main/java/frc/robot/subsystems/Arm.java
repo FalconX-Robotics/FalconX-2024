@@ -18,10 +18,9 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ArmFeedForwardValues;
-import frc.robot.Constants;
 import frc.robot.DashboardHelper;
 import frc.robot.Robot;
+import frc.robot.Constants.ArmFeedForwardConstants;
 import frc.robot.Constants.MotorConstants;
 import frc.robot.Constants.RatioConstants;
 import frc.robot.simulation.RelativeEncoderSim;
@@ -41,7 +40,7 @@ public class Arm extends SubsystemBase {
     
     armFollowerSparkMax.setIdleMode(IdleMode.kBrake);
     armFollowerSparkMax.getEncoder().setPositionConversionFactor(1/(RatioConstants.ArmGearRatio*(2*Math.PI)));
-    armFollowerSparkMax.getEncoder().setPosition(ArmFeedForwardValues.offset);
+    armFollowerSparkMax.getEncoder().setPosition(ArmFeedForwardConstants.offset);
     armFollowerSparkMax.setInverted(true);
     armFollowerSparkMax.burnFlash();
 
@@ -54,7 +53,7 @@ public class Arm extends SubsystemBase {
 
     armSparkMax.setIdleMode(IdleMode.kBrake);
     armSparkMax.getEncoder().setPositionConversionFactor(1/(RatioConstants.ArmGearRatio*(2*Math.PI)));
-    armSparkMax.getEncoder().setPosition(ArmFeedForwardValues.offset);
+    armSparkMax.getEncoder().setPosition(ArmFeedForwardConstants.offset);
     armSparkMax.setInverted(false);
     armSparkMax.burnFlash();
 
@@ -97,7 +96,7 @@ public class Arm extends SubsystemBase {
 
   private SingleJointedArmSim m_armSim = new SingleJointedArmSim(
     DCMotor.getNEO(2),
-    Constants.RatioConstants.ArmGearRatio,
+    RatioConstants.ArmGearRatio,
     // MOI = mr^2 for a point
     Math.pow(BaseUnits.Distance.convertFrom(24, Units.Inches), 2) * 
       BaseUnits.Mass.convertFrom(20, Units.Pounds),
