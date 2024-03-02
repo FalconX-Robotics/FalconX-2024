@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog.State;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -38,6 +39,7 @@ import frc.robot.Robot;
 import frc.robot.Settings;
 import frc.robot.Constants.MotorConstants;
 import frc.robot.Constants.RatioConstants;
+import frc.robot.DashboardHelper.LogLevel;
 import frc.robot.DashboardHelper;
 
 public class Drivetrain extends SubsystemBase {
@@ -60,8 +62,6 @@ public class Drivetrain extends SubsystemBase {
   private OdometrySubsystem m_odometry;
 
   private Settings m_settings;
-  
-  private boolean turboModeOn = false;
 
   public void setLeftMotors (double volt) {
     leftLeader.set(volt);
@@ -130,6 +130,7 @@ public class Drivetrain extends SubsystemBase {
       setLeftMotorsVoltage(leftVoltage);
       setRightMotorsVoltage(rightVoltage);
     }
+
   }
 
   public void setLeftMotorsVoltage(double voltage) {
@@ -146,23 +147,28 @@ public class Drivetrain extends SubsystemBase {
 
   public DifferentialDrive m_drive = new DifferentialDrive(leftLeader, rightLeader);
 
-  public void arcadeDrive (double speed, double rotation){
+  public void arcadeDrive (double speed, double rotation, boolean turbo){
     m_drive.arcadeDrive(
-      speed * (turboModeOn ? m_settings.driveSettings.turboSpeed : m_settings.driveSettings.normalSpeed),
-      rotation * (turboModeOn ? m_settings.driveSettings.turboSpeed : m_settings.driveSettings.normalSpeed)
+      speed * (turbo ? m_settings.driveSettings.turboSpeed : m_settings.driveSettings.normalSpeed),
+      rotation * (turbo ? m_settings.driveSettings.turboSpeed : m_settings.driveSettings.normalSpeed)
     );
   }
 
-  public void curvatureDrive (double speed, double rotation){
-    // WheelSpeeds wheelSpeeds = DifferentialDrive.curvatureDriveIK(speed * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed),
-    // rotation, turnInPlace);
-    // wheelSpeeds.left += 0.05 * Math.signum(wheelSpeeds.left);
-    // wheelSpeeds.right += 0.05 * Math.signum(wheelSpeeds.right);
+  public void curvatureDrive (double speed, double rotation, boolean turbo, boolean turnInPlace){
+    
+    speed = speed * (turbo ? m_settings.driveSettings.turboSpeed : m_settings.driveSettings.normalSpeed);
+    if (!turbo && turnInPlace) {
+      rotation *= m_settings.driveSettings.normalSpeed;
+    }
 
-    // setLeftMotors(wheelSpeeds.left);
-    // setRightMotors(wheelSpeeds.right);
+    DashboardHelper.putNumber(LogLevel.Debug, "Rotation", rotation);
+    WheelSpeeds wheelSpeeds = DifferentialDrive.curvatureDriveIK(speed, rotation, turnInPlace);
+    wheelSpeeds.left += 0.05 * Math.signum(wheelSpeeds.left);
+    wheelSpeeds.right += 0.05 * Math.signum(wheelSpeeds.right);
 
-    m_drive.curvatureDrive(speed * (turboModeOn ? m_settings.driveSettings.turboSpeed : m_settings.driveSettings.normalSpeed), rotation, m_settings.driveSettings.turnInPlaceTrigger.getAsBoolean());
+    setLeftMotors(wheelSpeeds.left);
+    setRightMotors(wheelSpeeds.right);
+    m_drive.feed();
   }
   @Override
   public void periodic() {
@@ -181,13 +187,6 @@ public class Drivetrain extends SubsystemBase {
 
   public RelativeEncoder getLeftEncoder() {
     return leftLeader.getEncoder();
-  }
-
-  public void setTurboMode (boolean newTurboMode) {
-    turboModeOn = newTurboMode;
-  }
-  public boolean getTurboMode () {
-    return turboModeOn;
   }
 
   DifferentialDrivetrainSim m_simulation = 
