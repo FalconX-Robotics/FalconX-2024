@@ -74,9 +74,6 @@ public class RobotContainer {
 
   public final LEDs m_leds = new LEDs();
 
-  private final Shooter m_shooter = new Shooter(m_settings);
-  private final Intake m_intake = new Intake();
-  private final Index m_index = new Index();
   private final Vision m_vision = new Vision();
   private final Sensor m_sensor = new Sensor();
 

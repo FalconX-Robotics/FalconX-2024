@@ -19,7 +19,9 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonUtils;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
+import frc.robot.DashboardHelper;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.DashboardHelper.LogLevel;
 
 public class Vision {
 
@@ -29,20 +31,19 @@ public class Vision {
 
     var result = m_camera.getLatestResult();
     
-    SmartDashboard.putNumber("ambiguity", result.getMultiTagResult().estimatedPose.ambiguity);
-    SmartDashboard.putBoolean("estimated pose is present", result.getMultiTagResult().estimatedPose.isPresent);
+    DashboardHelper.putNumber(LogLevel.Debug,"ambiguity", result.getMultiTagResult().estimatedPose.ambiguity);
+    DashboardHelper.putBoolean(LogLevel.Debug,"estimated pose is present", result.getMultiTagResult().estimatedPose.isPresent);
     // SmartDashboard.putNumberArray("detected ids", result.getMultiTagResult().fiducialIDsUsed.toArray(new Double[result.getMultiTagResult().fiducialIDsUsed.size()]));
     // result.getTargets().
         // Find distance between targets and camera
         if (result.getMultiTagResult().estimatedPose.isPresent) {
 
-            Transform3d fieldToCamera = result.getMultiTagResult().estimatedPose.best; //do we need this?
             Pose3d targetToCamera = getTargetsToField().get(0);
 
 
-            SmartDashboard.putNumber("PV TargetX", targetToCamera.getX());
-            SmartDashboard.putNumber("PV TargetY", targetToCamera.getY()); 
-            SmartDashboard.putNumber("PV TargetZ", targetToCamera.getZ()); 
+            DashboardHelper.putNumber(LogLevel.Info,"PV TargetX", targetToCamera.getX());
+            DashboardHelper.putNumber(LogLevel.Info,"PV TargetY", targetToCamera.getY()); 
+            DashboardHelper.putNumber(LogLevel.Info,"PV TargetZ", targetToCamera.getZ()); 
                            
             Rotation3d m_rotation = targetToCamera.getRotation();
             return Optional.of(m_rotation.getZ());
