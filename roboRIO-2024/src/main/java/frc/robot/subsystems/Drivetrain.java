@@ -90,29 +90,36 @@ public class Drivetrain extends SubsystemBase {
     rightFollower.setInverted(true);
     leftLeader.getEncoder().setMeasurementPeriod(20);
     rightLeader.getEncoder().setMeasurementPeriod(20);
-    leftLeader.getEncoder().setAverageDepth(1);
-    rightLeader.getEncoder().setAverageDepth(1);
+    leftLeader.getEncoder().setAverageDepth(4);
+    rightLeader.getEncoder().setAverageDepth(4);
 
-    leftLeader.setIdleMode(IdleMode.kBrake);
-    leftFollower.setIdleMode(IdleMode.kBrake);
-    rightLeader.setIdleMode(IdleMode.kBrake);
-    rightFollower.setIdleMode(IdleMode.kBrake);
+    applytoAllMotors((motor) -> {
+      motor.setIdleMode(IdleMode.kBrake);
+    });
 
     setMotorConversionFactors();
 
     m_odometry = new OdometrySubsystem(this);
   }
+
+  private void applytoAllMotors(Consumer<CANSparkMax> consumer) {
+    consumer.accept(leftLeader);
+    consumer.accept(leftFollower);
+    consumer.accept(rightLeader);
+    consumer.accept(rightFollower);
+  }
+
   private void setMotorConversionFactors() {
-    double conversionFactor = 1./(RatioConstants.NESSIE_GEAR_RATIO) * BaseUnits.Distance.convertFrom(6 * Math.PI, Units.Inches);
-    leftLeader.getEncoder().setVelocityConversionFactor(conversionFactor/60);
-    leftFollower.getEncoder().setVelocityConversionFactor(conversionFactor/60);
-    rightLeader.getEncoder().setVelocityConversionFactor(conversionFactor/60);
-    rightFollower.getEncoder().setVelocityConversionFactor(conversionFactor/60);
     
-    leftLeader.getEncoder().setPositionConversionFactor(conversionFactor);
-    leftFollower.getEncoder().setPositionConversionFactor(conversionFactor);
-    rightLeader.getEncoder().setPositionConversionFactor(conversionFactor);
-    rightFollower.getEncoder().setPositionConversionFactor(conversionFactor); // m/s
+    double conversionFactor = 1./(RatioConstants.KITBOT_GEAR_RATIO) * BaseUnits.Distance.convertFrom(Constants.KITBOT_WHEEL_DIAMETER * Math.PI, Units.Inches);
+    applytoAllMotors((motor) -> {
+      motor.getEncoder().setVelocityConversionFactor(conversionFactor/60);
+    });
+    applytoAllMotors((motor) -> {
+      motor.getEncoder().setPositionConversionFactor(conversionFactor);
+    });
+    
+    // m/s
   }
 
   // runs the motors
@@ -163,8 +170,8 @@ public class Drivetrain extends SubsystemBase {
 
     DashboardHelper.putNumber(LogLevel.Debug, "Rotation", rotation);
     WheelSpeeds wheelSpeeds = DifferentialDrive.curvatureDriveIK(speed, rotation, turnInPlace);
-    wheelSpeeds.left += 0.05 * Math.signum(wheelSpeeds.left);
-    wheelSpeeds.right += 0.05 * Math.signum(wheelSpeeds.right);
+    wheelSpeeds.left += 0.00 * Math.signum(wheelSpeeds.left);
+    wheelSpeeds.right += 0.00 * Math.signum(wheelSpeeds.right);
 
     setLeftMotors(wheelSpeeds.left);
     setRightMotors(wheelSpeeds.right);
