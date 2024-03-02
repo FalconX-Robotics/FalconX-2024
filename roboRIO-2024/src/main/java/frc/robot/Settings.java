@@ -21,7 +21,7 @@ public class Settings {
     }
 
     public static double curveInput(double input) {
-        return Math.pow(input, 2) * Math.signum(input);
+        return Math.pow(Math.abs(input), 2) * Math.signum(input);
     }
 
     /** Configurations for controller centered around drivetrain repositioning */

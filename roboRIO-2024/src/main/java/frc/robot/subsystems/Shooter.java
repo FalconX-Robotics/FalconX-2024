@@ -64,6 +64,9 @@ public class Shooter extends SubsystemBase {
 
     shooterFollowerSparkMax.follow(shooterLeaderSparkMax, true);
 
+    shooterLeaderSparkMax.getEncoder().setAverageDepth(4);
+    shooterLeaderSparkMax.getEncoder().setMeasurementPeriod(8);
+
     shooterLeaderSparkMax.setIdleMode(IdleMode.kCoast);
     shooterLeaderSparkMax.setInverted(false);
     shooterLeaderSparkMax.burnFlash();
@@ -92,8 +95,8 @@ public class Shooter extends SubsystemBase {
 
   public boolean velocityIsWithinTarget () {
 
-    return (getShooterEncoderVelocity() >= 2700. - 35.
-         && getShooterEncoderVelocity() <= 2700. + 35.);
+    return (getShooterEncoderVelocity() >= 2700. - 50.
+         && getShooterEncoderVelocity() <= 2700. + 50.);
   }
 
   @Override

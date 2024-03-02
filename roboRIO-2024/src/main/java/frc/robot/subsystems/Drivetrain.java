@@ -137,7 +137,7 @@ public class Drivetrain extends SubsystemBase {
       setLeftMotorsVoltage(leftVoltage);
       setRightMotorsVoltage(rightVoltage);
     }
-
+    m_drive.feed();
   }
 
   public void setLeftMotorsVoltage(double voltage) {

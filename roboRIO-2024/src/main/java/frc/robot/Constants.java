@@ -50,7 +50,7 @@ public final class Constants {
     // 0 is reserved for RoboRIO and just generally shouldn't be used
     // 1 is reserved for Rev PDP
 
-    public static final boolean donatello = false; // :)
+    public static final boolean donatello = true; // :)
 
     //TODO: This probably won't work. test and remove if not. -w
     public enum DrivetrainMotors {

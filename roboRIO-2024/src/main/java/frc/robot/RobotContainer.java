@@ -138,6 +138,7 @@ public class RobotContainer {
     );
     m_settings.noteSettings.intakeTrigger.whileTrue(
       new RunIntake(m_intake, -0.8)
+      .alongWith(new RunIndex(m_index, 1.))
       .until(() -> {return m_sensor.getNoteSensed();})
     );
     

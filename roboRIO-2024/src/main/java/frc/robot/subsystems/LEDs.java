@@ -44,7 +44,14 @@ public class LEDs extends SubsystemBase{
         PURPLE (0.91),
         HEARTBEAT_RED (-0.25),
         HEARTBEAT_BLUE (-0.23),
-        YELLOW (0.69);
+        YELLOW (0.69),
+        FIRE_LARGE(-0.57),
+        CONFETTI(-0.87),
+        CHASE_RED(-0.31),
+        CHASE_BLUE(-0.29),
+        BLACK(0.99),
+        OCEAN(-0.95),
+        LAVA(-0.93);
 
         private final double value;
 
