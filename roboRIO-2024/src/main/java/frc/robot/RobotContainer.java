@@ -33,6 +33,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 
@@ -85,6 +86,8 @@ public class RobotContainer {
   public RobotContainer() {
 
     autoChooser = AutoBuilder.buildAutoChooser();
+    NamedCommands.registerCommand("Shoot", new PIDShoot(m_index, m_shooter));
+    NamedCommands.registerCommand("Intake", new RunIntake(m_intake, -0.8));
 
     logLevelChooser.setDefaultOption("Info", DashboardHelper.LogLevel.Info);
     logLevelChooser.addOption("Important", DashboardHelper.LogLevel.Important);
