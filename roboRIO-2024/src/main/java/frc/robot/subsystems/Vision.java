@@ -26,6 +26,9 @@ import frc.robot.DashboardHelper.LogLevel;
 public class Vision {
 
     PhotonCamera m_camera = new PhotonCamera("Shelldon");
+    LEDs.Color ledsIsNotAligned = LEDs.Color.HEARTBEAT_RED;
+    LEDs.Color ledsIsAligned = LEDs.Color.HEARTBEAT_BLUE;
+    LEDs ledColor = new LEDs();
 
     public Optional<Double> getAngleToTarget() {
 
@@ -78,4 +81,20 @@ public class Vision {
         // return result;
         /*Pose3d robotPose = PhotonUtils.estimateFieldToRobotAprilTag(target.getMultiTagResult(), aprilTagFieldLayout.getTagPose(target.getFiducialId()), cameraToRobot); */
     }
+    // public boolean poseOffesetLedIndicator(boolean isAligned) {
+    //     if (getTargetsToField().get(0).getX() < 3 /*&& get distanve here < 2 meters*/ ) {
+    //         return true;
+    //     }
+    //     return false;
+    // }
+
+        public void poseOffsetLedIndicator() {
+            if (getTargetsToField().get(0).getX() < 3 ) {
+                ledColor.setColor(ledsIsAligned);
+            } else {
+                ledColor.setColor(ledsIsNotAligned);
+            }
+        }
+
+    
 }
