@@ -92,6 +92,11 @@ public class Drivetrain extends SubsystemBase {
     rightLeader.getEncoder().setMeasurementPeriod(20);
     leftLeader.getEncoder().setAverageDepth(4);
     rightLeader.getEncoder().setAverageDepth(4);
+    leftLeader.setSmartCurrentLimit(60);
+    rightLeader.setSmartCurrentLimit(60);
+    leftLeader.setSmartCurrentLimit(60);
+    rightLeader.setSmartCurrentLimit(60);
+    applytoAllMotors((motor) -> {motor.setOpenLoopRampRate(0.2);});
 
     applytoAllMotors((motor) -> {
       motor.setIdleMode(IdleMode.kBrake);
@@ -166,6 +171,8 @@ public class Drivetrain extends SubsystemBase {
     speed = speed * (turbo ? m_settings.driveSettings.turboSpeed : m_settings.driveSettings.normalSpeed);
     if (!turbo && turnInPlace) {
       rotation *= m_settings.driveSettings.normalSpeed;
+    } else if (turbo && !turnInPlace) {
+      rotation *= 1./2.;
     }
 
     DashboardHelper.putNumber(LogLevel.Debug, "Rotation", rotation);

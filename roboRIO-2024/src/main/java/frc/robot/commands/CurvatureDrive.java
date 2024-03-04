@@ -30,7 +30,7 @@ public class CurvatureDrive extends Command {
     m_drivetrain.curvatureDrive(
       Settings.curveInput(m_settings.driveSettings.getSpeedJoystickValue()),
       m_settings.driveSettings.getRotationJoystickValue(),
-      m_settings.driveSettings.turboModeTrigger.getAsBoolean(),
+      !m_settings.driveSettings.turboModeTrigger.getAsBoolean(),
       m_settings.driveSettings.turnInPlaceTrigger.getAsBoolean()
     );
   }

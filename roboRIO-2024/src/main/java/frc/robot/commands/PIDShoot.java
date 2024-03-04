@@ -20,7 +20,7 @@ public class PIDShoot extends Command {
 
   /** Creates a new Shoot. */
   public PIDShoot(Index index, Shooter shooter) {
-    this(index, shooter, 50., 2700.);
+    this(index, shooter, 50., 2450.);
   }
 
   public PIDShoot(Index index, Shooter shooter, double leniency, double RPMin) {
@@ -86,6 +86,7 @@ public class PIDShoot extends Command {
   @Override
   public void end (boolean interrupted) {
     m_shooter.setShooterSparks(0.);
+    // SmartDashboard.putNumber("Actual Shooter Speed", 0.); // It won't be actual but it'll stop unintended behavior when the command is done and deleted
     System.out.println("Note firing completed.");
   }
 }

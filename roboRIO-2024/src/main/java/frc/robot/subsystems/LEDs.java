@@ -33,7 +33,8 @@ public class LEDs extends SubsystemBase{
     @Override
     public void periodic() {
         // LEDs.set(color.getValue());
-        LEDs.set(colorChooser.getSelected().colorToSpeed());
+        // LEDs.set(colorChooser.getSelected().colorToSpeed());
+        LEDs.set(this.color.colorToSpeed());
     }
 
     public void setColor(Color color) {
@@ -62,5 +63,9 @@ public class LEDs extends SubsystemBase{
         public double colorToSpeed() {
             return value;
         }
+    }
+
+    public void useChooser() {
+        setColor(colorChooser.getSelected());
     }
 }

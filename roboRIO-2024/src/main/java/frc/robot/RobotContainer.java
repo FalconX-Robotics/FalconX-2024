@@ -13,6 +13,7 @@ import frc.robot.commands.PIDShoot;
 import frc.robot.commands.PathfindToPose;
 import frc.robot.commands.RunIndex;
 import frc.robot.commands.RunIntake;
+import frc.robot.commands.SimpleShoot;
 import frc.robot.commands.TankDrive;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
@@ -42,6 +43,8 @@ import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -115,6 +118,7 @@ public class RobotContainer {
     configureBindings();
   }
 
+
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
    * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
@@ -130,18 +134,25 @@ public class RobotContainer {
     );
     m_settings.noteSettings.shooterFireTrigger.whileTrue(
       new RunIndex(m_index, 1.)
-      .onlyIf(() -> {return m_shooter.velocityIsWithinTarget();})
+      .onlyIf(() -> {return m_shooter.velocityIsWithinTarget(2450., 50.);})
+      .withTimeout(1.5).andThen(new RunIndex(m_index, 1.))
     );
     m_settings.noteSettings.reverseTrigger.whileTrue(
       new RunIndex(m_index, -.5)
       .alongWith(new RunIntake(m_intake, 1.))
+      .alongWith(new SimpleShoot(m_shooter, -.2))
     );
     m_settings.noteSettings.intakeTrigger.whileTrue(
       new RunIntake(m_intake, -0.8)
       .alongWith(new RunIndex(m_index, 1.))
       .until(() -> {return m_sensor.getNoteSensed();})
     );
-    
+    new Trigger(()->{return m_sensor.getNoteSensed();}).whileTrue(
+      Commands.run(()->{
+      m_leds.setColor(LEDs.Color.LAVA);
+
+    }, m_leds));
+    m_leds.setDefaultCommand(Commands.run(() -> {m_leds.useChooser();}, m_leds));
 
     m_drivetrain.setDefaultCommand(m_curvatureDrive);
     m_arm.setDefaultCommand(new ArmGoToGoalRotation(m_arm, 0.));

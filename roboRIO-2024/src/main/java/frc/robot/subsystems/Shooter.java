@@ -94,7 +94,6 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean velocityIsWithinTarget () {
-
     return (getShooterEncoderVelocity() >= 2700. - 50.
          && getShooterEncoderVelocity() <= 2700. + 50.);
   }
@@ -103,6 +102,7 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("Shooter Encoder Position", shooterLeaderSparkMax.getEncoder().getPosition());
     SmartDashboard.putNumber("Shooter Encoder Velocity", shooterLeaderSparkMax.getEncoder().getVelocity());
+    SmartDashboard.putBoolean("Shooter Velocity Within Target Speed", velocityIsWithinTarget(2450., 50.));
 
     shooterEncoderPositionEntry.append(shooterLeaderSparkMax.getEncoder().getPosition());
     shooterEncoderVelocityEntry.append(shooterLeaderSparkMax.getEncoder().getVelocity());

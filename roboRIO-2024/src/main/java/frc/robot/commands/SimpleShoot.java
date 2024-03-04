@@ -9,16 +9,18 @@ import frc.robot.subsystems.Shooter;
 
 public class SimpleShoot extends Command {
   Shooter m_shooter;
+  double speedPercent;
   /** Creates a new SimpleShoot. */
-  public SimpleShoot(Shooter shooter) {
+  public SimpleShoot(Shooter shooter, double speedPercent) {
     m_shooter = shooter;
+    this.speedPercent = speedPercent;
     addRequirements(m_shooter);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_shooter.setShooterSparks(.25);
+    m_shooter.setShooterSparks(speedPercent);
   }
 
   @Override
