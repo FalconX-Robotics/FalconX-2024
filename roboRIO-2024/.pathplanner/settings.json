@@ -3,7 +3,8 @@
   "robotLength": 0.9,
   "holonomicMode": false,
   "pathFolders": [
-    "4 ring auto"
+    "4 ring auto",
+    "PathPlannerTest"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,
