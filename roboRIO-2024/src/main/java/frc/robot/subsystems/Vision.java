@@ -1,26 +1,18 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonUtils;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.DashboardHelper;
-import frc.robot.Constants.VisionConstants;
 import frc.robot.DashboardHelper.LogLevel;
 
 public class Vision {
@@ -91,8 +83,15 @@ public class Vision {
         public void poseOffsetLedIndicator() {
             if (getTargetsToField().get(0).getX() < 3 ) {
                 ledColor.setColor(ledsIsAligned);
+                DashboardHelper.putBoolean(LogLevel.Info, "Robot Alignment to Target", true);
+                // Commands.run(()->{
+                //     ledColor.setColor(ledsIsAligned);
+                // }, ledColor);
             } else {
                 ledColor.setColor(ledsIsNotAligned);
+                DashboardHelper.putBoolean(LogLevel.Info, "Robot Alignment to Target", false);
+                
+
             }
         }
 
