@@ -37,6 +37,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.pathfinding.Pathfinding;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.event.EventLoop;
@@ -96,6 +97,7 @@ public class RobotContainer {
     autoChooser = AutoBuilder.buildAutoChooser();
     NamedCommands.registerCommand("Shoot", new PIDShoot(m_index, m_shooter));
     NamedCommands.registerCommand("Intake", new RunIntake(m_intake, -0.8));
+    
 
     logLevelChooser.setDefaultOption("Info", DashboardHelper.LogLevel.Info);
     logLevelChooser.addOption("Important", DashboardHelper.LogLevel.Important);
@@ -157,6 +159,8 @@ public class RobotContainer {
     m_drivetrain.setDefaultCommand(m_curvatureDrive);
     m_arm.setDefaultCommand(new ArmGoToGoalRotation(m_arm, 0.));
   }
+
+  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

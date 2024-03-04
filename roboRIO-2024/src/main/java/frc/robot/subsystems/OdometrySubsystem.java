@@ -21,6 +21,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.BaseUnits;
+import edu.wpi.first.units.Unit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
@@ -60,7 +61,7 @@ public class OdometrySubsystem {
   PIDController leftController = new PIDController(0., 0.0, 0.0);
   PIDController rightController = new PIDController(0., 0.0, 0.); //this sorta works (maybe? (i dont know))
   
-  private static final double kTrackWidth = 0.457; // meters, this is the defauklt from wpilib
+  private static final double kTrackWidth = Units.Inches.toBaseUnits(22); // meters, this is the defauklt from wpilib
                                                    // change this later
 
   private final DifferentialDriveKinematics kinematics =
@@ -81,7 +82,8 @@ public class OdometrySubsystem {
         this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
         this::getCurrentSpeeds, // Current ChassisSpeeds supplier
         this::driveChassisSpeeds, // Method that will drive the robot given ChassisSpeeds
-        new ReplanningConfig(), // Default path replanning config. See the API for the options here
+        2.0, 0.7,
+        new ReplanningConfig(false, false), // Default path replanning config. See the API for the options here
         () -> {
                     // Boolean supplier that controls when the path will be mirrored for the red alliance
                     // This will flip the path being followed to the red side of the field.
