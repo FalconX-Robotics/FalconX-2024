@@ -54,7 +54,10 @@ public class Settings {
         public Trigger intakeTrigger          = new JoystickButton(m_noteController, Button.kB.value);
         public Trigger reverseTrigger         = new JoystickButton(m_noteController, Button.kRightBumper.value);
         
-        public double getArmJoystickValue () {return MathUtil.applyDeadband( 
+        public Trigger ampTrigger             = new JoystickButton(m_noteController, Button.kStart.value);
+        public Trigger storeTrigger           = new JoystickButton(m_noteController, Button.kBack.value);
+
+        public double getManualArmJoystickValue () {return MathUtil.applyDeadband( 
             m_noteController.getLeftY(), deadband);
         }
         public double deadband = 0.1;

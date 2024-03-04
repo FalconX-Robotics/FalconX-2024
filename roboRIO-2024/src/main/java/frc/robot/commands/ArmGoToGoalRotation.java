@@ -9,13 +9,16 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.DashboardHelper;
 import frc.robot.Constants.ArmFeedForwardConstants;
+import frc.robot.DashboardHelper.LogLevel;
 import frc.robot.subsystems.Arm;
 
 public class ArmGoToGoalRotation extends Command {
   PIDController rotationPIDController = new PIDController(.25, 0, 0);
   PIDController velocityPIDController = new PIDController(.25, 0, 0);
-  TrapezoidProfile trapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(ArmFeedForwardConstants.maxVelocity, ArmFeedForwardConstants.maxAcceleration));
+  TrapezoidProfile trapezoidProfile = new TrapezoidProfile(
+    new TrapezoidProfile.Constraints(ArmFeedForwardConstants.maxVelocity, ArmFeedForwardConstants.maxAcceleration));
   TrapezoidProfile.State currentState = new TrapezoidProfile.State(ArmFeedForwardConstants.offset, 0.);
   TrapezoidProfile.State targetState = new TrapezoidProfile.State(ArmFeedForwardConstants.offset, 0.);
   double goalRotationRad;
@@ -45,7 +48,10 @@ public class ArmGoToGoalRotation extends Command {
     double voltageOutput = armFeedforward.calculate(targetState.position, targetState.velocity);
     double positionPIDOutput = rotationPIDController.calculate(m_arm.getRotation(), targetState.position);
     double velocityPIDOutput = velocityPIDController.calculate(m_arm.getVelocity(), targetState.velocity);
-    
+    DashboardHelper.putNumber(LogLevel.Important, "Target State Position", targetState.position);
+    DashboardHelper.putNumber(LogLevel.Important, "Target State Velocity", targetState.velocity);
+
+    // Why do we need to clamp? We already have a max voltage -w
     m_arm.setSparksVoltage(MathUtil.clamp(voltageOutput + positionPIDOutput + velocityPIDOutput, -12., 12.));
   }
 

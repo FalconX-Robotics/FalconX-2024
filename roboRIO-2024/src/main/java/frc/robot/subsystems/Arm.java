@@ -24,6 +24,7 @@ import frc.robot.Constants.ArmFeedForwardConstants;
 import frc.robot.Constants.MotorConstants;
 import frc.robot.Constants.RatioConstants;
 import frc.robot.simulation.RelativeEncoderSim;
+import frc.robot.Settings;
 
 public class Arm extends SubsystemBase {
   CANSparkMax armSparkMax = new CANSparkMax(MotorConstants.arm, MotorType.kBrushless);
@@ -31,11 +32,12 @@ public class Arm extends SubsystemBase {
   DataLog log = DataLogManager.getLog();
   DoubleLogEntry shooterArmEncoderVelocityEntry = new DoubleLogEntry(log, "/arm/shooter_arm_velocity");
   DoubleLogEntry shooterArmEncoderPositionEntry = new DoubleLogEntry(log, "/arm/shooter_arm_position");
-
+  Settings m_settings;
   RelativeEncoder m_armEncoder;
 
   /** Creates a new Arm. */
-  public Arm() {
+  public Arm(Settings settings) {
+    m_settings = settings;
     armFollowerSparkMax.follow(armSparkMax, true);
     
     armFollowerSparkMax.setIdleMode(IdleMode.kBrake);
@@ -52,8 +54,8 @@ public class Arm extends SubsystemBase {
     }
 
     armSparkMax.setIdleMode(IdleMode.kBrake);
-    armSparkMax.getEncoder().setPositionConversionFactor(1/(RatioConstants.ArmGearRatio*(2*Math.PI)));
-    armSparkMax.getEncoder().setPosition(ArmFeedForwardConstants.offset);
+    m_armEncoder.setPositionConversionFactor(1/(RatioConstants.ArmGearRatio*(2*Math.PI)));
+    m_armEncoder.setPosition(ArmFeedForwardConstants.offset);
     armSparkMax.setInverted(false);
     armSparkMax.burnFlash();
 
@@ -79,13 +81,15 @@ public class Arm extends SubsystemBase {
     // If no current command, set arm via joystick value.
     // if(this.getCurrentCommand() == null) {
     //   if (armJoystickActive()) {
-    //     // armSparkMax.set(limitArmViaEncoder(m_settings.noteController.getArmJoystickValue())); return;
+    //     // armSparkMax.set(limitArmViaEncoder(m_settings.noteSettings.getManualArmJoystickValue())); return;
     //   }
       //TODO make work
       // armSparkMax.set(feedforward());
       // }
-      // if (Math.abs(m_settings.noteController.getArmJoystickValue()) > 0.2){
-      //   armSparkMax.set(m_settings.noteController.getArmJoystickValue() * .3);
+      // if (Math.abs(m_settings.noteSettings.getManualArmJoystickValue()) > 0.2){
+      armSparkMax.set(m_settings.noteSettings.getManualArmJoystickValue()
+        * SmartDashboard.getNumber("arm max speed", .3)
+      );
       // }
     
     SmartDashboard.putNumber("Shooter Arm Encoder Position", m_armEncoder.getPosition());

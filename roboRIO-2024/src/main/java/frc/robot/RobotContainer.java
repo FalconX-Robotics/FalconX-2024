@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.robot.Constants.ArmFeedForwardConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.DashboardHelper.LogLevel;
 import frc.robot.commands.ArcadeDrive;
@@ -63,7 +64,7 @@ public class RobotContainer {
   private final Settings m_settings = new Settings(driveController, noteController);
 
   private final Drivetrain m_drivetrain = new Drivetrain(m_settings);
-  private final Arm m_arm = new Arm();
+  private final Arm m_arm = new Arm(m_settings);
   private final Shooter m_shooter = new Shooter();
   private final Intake m_intake = new Intake();
   private final Index m_index = new Index();
@@ -138,8 +139,11 @@ public class RobotContainer {
       .alongWith(new RunIntake(m_intake, 1.))
     );
 
+    m_settings.noteSettings.ampTrigger.whileTrue(new ArmGoToGoalRotation(m_arm, Math.toRadians(90) + ArmFeedForwardConstants.offset));
+    m_settings.noteSettings.storeTrigger.whileTrue(new ArmGoToGoalRotation(m_arm, ArmFeedForwardConstants.offset));
+
     m_drivetrain.setDefaultCommand(m_curvatureDrive);
-    m_arm.setDefaultCommand(new ArmGoToGoalRotation(m_arm, 0.));
+    // m_arm.setDefaultCommand(new ArmGoToGoalRotation(m_arm, ArmFeedForwrdConstants.offset));
   }
 
   /**
