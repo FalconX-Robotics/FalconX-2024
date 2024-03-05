@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.4439904803980226,
-        "y": 5.583099697005081
+        "x": 2.443504451250402,
+        "y": 5.6025530060538795
       },
       "isLocked": false,
       "linkedName": "Ring Two"
@@ -20,8 +20,8 @@
         "y": 5.6025530060538795
       },
       "prevControl": {
-        "x": 1.8798445179828744,
-        "y": 5.5636463879562825
+        "x": 1.8814299063834412,
+        "y": 5.6025530060538795
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,7 +33,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
@@ -42,7 +42,7 @@
     "rotation": 0,
     "rotateFast": false
   },
-  "reversed": false,
+  "reversed": true,
   "folder": "4 ring auto",
   "previewStartingState": null,
   "useDefaultConstraints": false
