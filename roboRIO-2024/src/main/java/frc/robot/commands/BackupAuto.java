@@ -12,17 +12,18 @@ public class BackupAuto extends Command {
 
     }
     public void moveFoward() {
-        
-        double time = Timer.getFPGATimestamp();
-
-        if(time < 5) {
-            m_drivetrain.setMotors(0.2, 0.2);
-        } else {
-            m_drivetrain.setMotors(0.0, 0.0);
-        }
+        m_drivetrain.setMotors(0.2, 0.2);
     }
     @Override
     public void execute() {
        moveFoward();
+    }
+    @Override
+    public boolean isFinished() {
+        return Timer.getFPGATimestamp() >= 5.;
+    }
+    @Override   
+    public void end (boolean interrupted){
+        m_drivetrain.setMotors(0.,0.);
     }
 }
