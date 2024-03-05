@@ -57,9 +57,9 @@ public class OdometrySubsystem {
   DoubleLogEntry targetY = new DoubleLogEntry(log, "/odometry/targetY");
   DoubleLogEntry targetRotationDegrees = new DoubleLogEntry(log, "/odometry/targetRotationDegrees");
   
-
-  PIDController leftController = new PIDController(0., 0.0, 0.0);
-  PIDController rightController = new PIDController(0., 0.0, 0.); //this sorta works (maybe? (i dont know))
+  
+  PIDController leftController = new PIDController(3, 0, 0.0);
+  PIDController rightController = new PIDController(3, 0, 0.0); //this sorta works (maybe? (i dont know))
   
   private static final double kTrackWidth = Units.Inches.toBaseUnits(22); // meters, this is the defauklt from wpilib
                                                    // change this later
@@ -82,7 +82,7 @@ public class OdometrySubsystem {
         this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
         this::getCurrentSpeeds, // Current ChassisSpeeds supplier
         this::driveChassisSpeeds, // Method that will drive the robot given ChassisSpeeds
-        2.0, 0.7,
+        7,1.5,
         new ReplanningConfig(false, false), // Default path replanning config. See the API for the options here
         () -> {
                     // Boolean supplier that controls when the path will be mirrored for the red alliance

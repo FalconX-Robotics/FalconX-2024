@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.3014333171604355,
-        "y": 6.559107804073391
+        "x": 2.287862579693686,
+        "y": 6.5455370666066415
       },
       "isLocked": false,
       "linkedName": "Ring One"
@@ -20,7 +20,7 @@
         "y": 5.6025530060538795
       },
       "prevControl": {
-        "x": 2.2830346244563646,
+        "x": 2.285646593980089,
         "y": 5.6025530060538795
       },
       "nextControl": null,
@@ -32,7 +32,7 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
+    "maxVelocity": 2.0,
     "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0

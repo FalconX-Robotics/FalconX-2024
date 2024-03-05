@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.9011432430447806,
-        "y": 4.08519490024762
+        "x": 2.509346773079512,
+        "y": 4.1252228870372525
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.3710182630937804,
-        "y": 4.61531988019862
+        "x": 2.2197440231442345,
+        "y": 4.414825636972529
       },
       "isLocked": false,
       "linkedName": "Ring Three"
@@ -20,7 +20,7 @@
         "y": 5.6025530060538795
       },
       "prevControl": {
-        "x": 2.293321855764524,
+        "x": 2.0877654439031517,
         "y": 5.6025530060538795
       },
       "nextControl": null,
@@ -32,7 +32,7 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
+    "maxVelocity": 2.0,
     "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
