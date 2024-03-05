@@ -52,7 +52,7 @@ public class ArmGoToGoalRotation extends Command {
     DashboardHelper.putNumber(LogLevel.Important, "Target State Velocity", targetState.velocity);
 
     // Why do we need to clamp? We already have a max voltage -w
-    m_arm.setSparksVoltage(MathUtil.clamp(voltageOutput + positionPIDOutput + velocityPIDOutput, -12., 12.));
+    m_arm.setSparksVoltage(MathUtil.clamp(voltageOutput + positionPIDOutput + velocityPIDOutput, -4., 4.));
   }
 
   // Called once the command ends or is interrupted.

@@ -86,9 +86,8 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean velocityIsWithinTarget () {
-
-    return (getShooterEncoderVelocity() >= 2700. - 35.
-         && getShooterEncoderVelocity() <= 2700. + 35.);
+    return (getShooterEncoderVelocity() >= 2450. - 35.
+         && getShooterEncoderVelocity() <= 2450. + 35.);
   }
 
   @Override
@@ -122,6 +121,5 @@ public class Shooter extends SubsystemBase {
     
     DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Sim Shooter Voltage", pidSim.getVoltageOutput());
     DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Sim Shooter RPM", shooterSim.getAngularVelocityRPM());
-
   }
 }

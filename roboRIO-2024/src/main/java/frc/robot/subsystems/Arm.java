@@ -87,9 +87,10 @@ public class Arm extends SubsystemBase {
       // armSparkMax.set(feedforward());
       // }
       // if (Math.abs(m_settings.noteSettings.getManualArmJoystickValue()) > 0.2){
-      armSparkMax.set(m_settings.noteSettings.getManualArmJoystickValue()
-        * SmartDashboard.getNumber("arm max speed", .3)
-      );
+      double armAppliedOutput = m_settings.noteSettings.getManualArmJoystickValue()
+        * SmartDashboard.getNumber("arm max speed", .3) * 12;
+      armSparkMax.setVoltage(armAppliedOutput);
+      SmartDashboard.putNumber("Arm Applied Output", armAppliedOutput);
       // }
     
     SmartDashboard.putNumber("Shooter Arm Encoder Position", m_armEncoder.getPosition());
@@ -105,19 +106,19 @@ public class Arm extends SubsystemBase {
     Math.pow(BaseUnits.Distance.convertFrom(24, Units.Inches), 2) * 
       BaseUnits.Mass.convertFrom(20, Units.Pounds),
     BaseUnits.Distance.convertFrom(24, Units.Inches),
-    BaseUnits.Angle.convertFrom(70, Units.Degrees),
+    BaseUnits.Angle.convertFrom(0, Units.Degrees),
     BaseUnits.Angle.convertFrom(270, Units.Degrees),
     true,
-    BaseUnits.Angle.convertFrom(70, Units.Degrees)
+    BaseUnits.Angle.convertFrom(0, Units.Degrees)
   );
 
 
   @Override
   public void simulationPeriodic() {
-    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "Arm Applied Output", armSparkMax.getAppliedOutput());
-    m_armSim.setInputVoltage(armSparkMax.getAppliedOutput());
     m_armSim.update(0.02);
-
+    double temporaryNumber = armSparkMax.get() * 12;
+    m_armSim.setInputVoltage(temporaryNumber);
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Important, "Arm Applied Output", temporaryNumber);
     
     RelativeEncoderSim armEncoderSim = (RelativeEncoderSim) m_armEncoder;
     DashboardHelper.putNumber(DashboardHelper.LogLevel.Important, "Arm Angle Radians", 
