@@ -18,7 +18,7 @@ import frc.robot.DashboardHelper.LogLevel;
 public class Vision {
 
     PhotonCamera m_camera = new PhotonCamera("Shelldon");
-    LEDs.Color ledsIsNotAligned = LEDs.Color.HEARTBEAT_RED;
+   
     LEDs.Color ledsIsAligned = LEDs.Color.HEARTBEAT_BLUE;
     LEDs ledColor = new LEDs();
 
@@ -31,9 +31,11 @@ public class Vision {
     // SmartDashboard.putNumberArray("detected ids", result.getMultiTagResult().fiducialIDsUsed.toArray(new Double[result.getMultiTagResult().fiducialIDsUsed.size()]));
     // result.getTargets().
         // Find distance between targets and camera
-        if (result.getMultiTagResult().estimatedPose.isPresent) {
+         if (result.getMultiTagResult().estimatedPose.isPresent) {
 
-            Pose3d targetToCamera = getTargetsToField().get(0);
+            Transform3d fieldToCamera = result.getMultiTagResult().estimatedPose.best;
+            Transform3d targetToField = new Transform3d(new Translation3d(0, -5.5, -2), new Rotation3d());
+            Transform3d targetToCamera = targetToField.plus(fieldToCamera);
 
 
             DashboardHelper.putNumber(LogLevel.Info,"PV TargetX", targetToCamera.getX());
@@ -49,13 +51,13 @@ public class Vision {
                 VisionConstants.TARGET_HEIGHT_METERS,
                 VisionConstants.CAMERA_PITCH_RADIANS,
                 Units.degreesToRadians(result.MultitagResult())); */
-        }
+        } 
 
-        return Optional.empty();
+        return Optional.empty(); 
     }
 
     public ArrayList<Pose3d> getTargetsToField() {
-        Transform3d result = new Transform3d(new Translation3d(0, 5.5, 2), new Rotation3d());
+        Transform3d result = new Transform3d(new Translation3d(0, -5.5, -2), new Rotation3d());
         
         AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();  
         ArrayList<Pose3d> pose3ds = new ArrayList<>();
@@ -65,6 +67,7 @@ public class Vision {
         });
 
         return pose3ds;
+
 
         // PhotonPoseEstimator photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR
         // , m_camera, result);
@@ -81,17 +84,15 @@ public class Vision {
     // }
 
         public void poseOffsetLedIndicator() {
-            if (getTargetsToField().get(0).getX() < 3 ) {
+            Optional<Double> angle = getAngleToTarget();
+            if (angle.isEmpty()) {
+                DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Target Not Present.");
+            } else if(Math.abs(angle.get()) < 5) {
                 ledColor.setColor(ledsIsAligned);
-                DashboardHelper.putBoolean(LogLevel.Info, "Robot Alignment to Target", true);
-                // Commands.run(()->{
-                //     ledColor.setColor(ledsIsAligned);
-                // }, ledColor);
-            } else {
-                ledColor.setColor(ledsIsNotAligned);
-                DashboardHelper.putBoolean(LogLevel.Info, "Robot Alignment to Target", false);
+                DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Aligned.");
                 
-
+            } else if(Math.abs(angle.get()) > 5) {
+                DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Unaligned.");
             }
         }
 
