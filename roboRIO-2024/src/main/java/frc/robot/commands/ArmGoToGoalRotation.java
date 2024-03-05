@@ -16,7 +16,7 @@ import frc.robot.subsystems.Arm;
 
 public class ArmGoToGoalRotation extends Command {
   PIDController rotationPIDController = new PIDController(.25, 0, 0);
-  PIDController velocityPIDController = new PIDController(.25, 0, 0);
+  PIDController velocityPIDController = new PIDController(0., 0, 0);
   TrapezoidProfile trapezoidProfile = new TrapezoidProfile(
     new TrapezoidProfile.Constraints(ArmFeedForwardConstants.maxVelocity, ArmFeedForwardConstants.maxAcceleration));
   TrapezoidProfile.State currentState = new TrapezoidProfile.State(ArmFeedForwardConstants.offset, 0.);
@@ -37,12 +37,17 @@ public class ArmGoToGoalRotation extends Command {
     this.goalRotationRad = goalRotationRad;
   }
 
+  @Override
+  public void initialize () {
+    targetState = new TrapezoidProfile.State(m_arm.getRotation(), m_arm.getVelocity());
+  }
+
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     targetState = trapezoidProfile.calculate(
       .02, // 0.02 because each schedule takes 20ms
-      new TrapezoidProfile.State(m_arm.getRotation(), m_arm.getVelocity()),
+      targetState,
       new TrapezoidProfile.State(goalRotationRad, 0)
     );
     double voltageOutput = armFeedforward.calculate(targetState.position, targetState.velocity);

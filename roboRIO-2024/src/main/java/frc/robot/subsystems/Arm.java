@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.BaseUnits;
 import edu.wpi.first.units.Units;
@@ -41,7 +42,7 @@ public class Arm extends SubsystemBase {
     armFollowerSparkMax.follow(armSparkMax, true);
     
     armFollowerSparkMax.setIdleMode(IdleMode.kBrake);
-    armFollowerSparkMax.getEncoder().setPositionConversionFactor(1/(RatioConstants.ArmGearRatio*(2*Math.PI)));
+    armFollowerSparkMax.getEncoder().setPositionConversionFactor((2*Math.PI)/(RatioConstants.ArmGearRatio));
     armFollowerSparkMax.getEncoder().setPosition(ArmFeedForwardConstants.offset);
     armFollowerSparkMax.setInverted(true);
     armFollowerSparkMax.burnFlash();
@@ -50,23 +51,36 @@ public class Arm extends SubsystemBase {
       m_armEncoder = new RelativeEncoderSim();
     } else {
       m_armEncoder = armSparkMax.getEncoder();
-      m_armEncoder.setPositionConversionFactor(1/RatioConstants.ArmGearRatio/(2*Math.PI));
+      m_armEncoder.setPositionConversionFactor((2*Math.PI)/RatioConstants.ArmGearRatio);
     }
 
     armSparkMax.setIdleMode(IdleMode.kBrake);
-    m_armEncoder.setPositionConversionFactor(1/(RatioConstants.ArmGearRatio*(2*Math.PI)));
+    // m_armEncoder.setPositionConversionFactor(1/(*(2*Math.PI)RatioConstants.ArmGearRatio));
     m_armEncoder.setPosition(ArmFeedForwardConstants.offset);
     armSparkMax.setInverted(false);
     armSparkMax.burnFlash();
 
+    SmartDashboard.putNumber("arm max speed", .3);
+  }
+
+  public boolean isStored(){
+    return getRotation() <= Math.toRadians(10);
   }
 
   public void setSparks (double percentOutput) {
-    armSparkMax.set(percentOutput);
+    if(isStored()){
+      armSparkMax.set(MathUtil.clamp(percentOutput, 0., 1.5));
+    } else {
+      armSparkMax.set(percentOutput);
+    }
   }
 
   public void setSparksVoltage(double volt){
-    armSparkMax.setVoltage(volt);
+    if (isStored()){
+      armSparkMax.setVoltage(MathUtil.clamp(volt, 0., 15.));
+    } else {
+      armSparkMax.setVoltage(volt);
+    }
   }
 
   public double getRotation() {
@@ -89,7 +103,7 @@ public class Arm extends SubsystemBase {
       // if (Math.abs(m_settings.noteSettings.getManualArmJoystickValue()) > 0.2){
       double armAppliedOutput = m_settings.noteSettings.getManualArmJoystickValue()
         * SmartDashboard.getNumber("arm max speed", .3) * 12;
-      armSparkMax.setVoltage(armAppliedOutput);
+      // armSparkMax.setVoltage(armAppliedOutput);
       SmartDashboard.putNumber("Arm Applied Output", armAppliedOutput);
       // }
     
