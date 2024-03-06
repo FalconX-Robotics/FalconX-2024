@@ -82,8 +82,6 @@ public class RobotContainer {
   private final CurvatureDrive m_curvatureDrive = new CurvatureDrive(m_drivetrain, m_settings);
 
   public final LEDs m_leds = new LEDs();
-  private final ArcadeDrive m_arcadeDrive = new ArcadeDrive(m_drivetrain, m_settings);
-  private final TankDrive m_tankDrive = new TankDrive(m_drivetrain, driveController);
   // private final Vision m_vision = new Vision();
   
 
