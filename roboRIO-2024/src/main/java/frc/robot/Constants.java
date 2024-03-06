@@ -30,7 +30,7 @@ public final class Constants {
     public static final int kShooterControllerPort = 1;
   }
   public static class RatioConstants {
-    public static final double KITBOT_GEAR_RATIO = 8.45;
+    public static final double KITBOT_GEAR_RATIO = 50.0/14.0 * 40.0/24.0;
     public static final double NESSIE_GEAR_RATIO = 50.0/12.0 * 50.0/24.0;
     public static final double ArmGearRatio = 120.;
     // TODO: set to a reasonable value
@@ -38,17 +38,17 @@ public final class Constants {
   /** To be changed later; change values based on the weight, offset, etc of the arm */
   public static class ArmFeedForwardValues {
     public static final double maxVelocity = .25;
-    public static final double maxAcceleration = .5; // how do you spell accelleration
+    public static final double maxAcceleration = .5;
 
     /** In radians, the offset of the arm */
-    public static final double offset = 2.;
+    public static final double offset = Math.toRadians(25);
     public static final double staticGain = 0.06662;
     public static final double gravityGain = 0.;
-    public static final double velocityGain = 5600. / RatioConstants.ArmGearRatio / 60. / (2. * Math.PI);
+    public static final double velocityGain = 12/((5600. / RatioConstants.ArmGearRatio / 60.) * (2. * Math.PI));
 }
   public static class MotorConstants {
-    // 0 is reserved for RIO
-    // 1 is reserved for PDP
+    // 0 is reserved for RoboRIO and just generally shouldn't be used
+    // 1 is reserved for Rev PDP
 
     public static final boolean donatello = true; // :)
 

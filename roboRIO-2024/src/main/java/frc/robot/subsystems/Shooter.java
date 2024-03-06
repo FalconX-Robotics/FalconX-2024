@@ -64,6 +64,9 @@ public class Shooter extends SubsystemBase {
 
     shooterFollowerSparkMax.follow(shooterLeaderSparkMax, true);
 
+    shooterLeaderSparkMax.getEncoder().setAverageDepth(4);
+    shooterLeaderSparkMax.getEncoder().setMeasurementPeriod(8);
+
     shooterLeaderSparkMax.setIdleMode(IdleMode.kCoast);
     shooterLeaderSparkMax.setInverted(false);
     shooterLeaderSparkMax.burnFlash();
@@ -82,7 +85,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean armJoystickActive () {
-    return Math.abs(m_settings.noteController.getArmJoystickValue()) > 0;
+    return Math.abs(m_settings.noteSettings.getArmJoystickValue()) > 0;
   }
 
   public boolean velocityIsWithinTarget (double target, double leniency) {
@@ -91,15 +94,15 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean velocityIsWithinTarget () {
-
-    return (getShooterEncoderVelocity() >= 2700. - 35.
-         && getShooterEncoderVelocity() <= 2700. + 35.);
+    return (getShooterEncoderVelocity() >= 2700. - 50.
+         && getShooterEncoderVelocity() <= 2700. + 50.);
   }
 
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Shooter Encoder Position", shooterLeaderSparkMax.getEncoder().getPosition());
     SmartDashboard.putNumber("Shooter Encoder Velocity", shooterLeaderSparkMax.getEncoder().getVelocity());
+    SmartDashboard.putBoolean("Shooter Velocity Within Target Speed", velocityIsWithinTarget(2450., 50.));
 
     shooterEncoderPositionEntry.append(shooterLeaderSparkMax.getEncoder().getPosition());
     shooterEncoderVelocityEntry.append(shooterLeaderSparkMax.getEncoder().getVelocity());
