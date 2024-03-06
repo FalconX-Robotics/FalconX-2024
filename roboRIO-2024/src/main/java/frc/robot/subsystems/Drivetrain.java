@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog.State;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -38,6 +39,7 @@ import frc.robot.Robot;
 import frc.robot.Settings;
 import frc.robot.Constants.MotorConstants;
 import frc.robot.Constants.RatioConstants;
+import frc.robot.DashboardHelper.LogLevel;
 import frc.robot.DashboardHelper;
 
 public class Drivetrain extends SubsystemBase {
@@ -60,8 +62,6 @@ public class Drivetrain extends SubsystemBase {
   private OdometrySubsystem m_odometry;
 
   private Settings m_settings;
-  
-  private boolean turboModeOn = false;
 
   public void setLeftMotors (double volt) {
     leftLeader.set(volt);
@@ -90,29 +90,41 @@ public class Drivetrain extends SubsystemBase {
     rightFollower.setInverted(true);
     leftLeader.getEncoder().setMeasurementPeriod(20);
     rightLeader.getEncoder().setMeasurementPeriod(20);
-    leftLeader.getEncoder().setAverageDepth(1);
-    rightLeader.getEncoder().setAverageDepth(1);
+    leftLeader.getEncoder().setAverageDepth(4);
+    rightLeader.getEncoder().setAverageDepth(4);
+    leftLeader.setSmartCurrentLimit(60);
+    rightLeader.setSmartCurrentLimit(60);
+    leftLeader.setSmartCurrentLimit(60);
+    rightLeader.setSmartCurrentLimit(60);
+    applytoAllMotors((motor) -> {motor.setOpenLoopRampRate(0.2);});
 
-    leftLeader.setIdleMode(IdleMode.kBrake);
-    leftFollower.setIdleMode(IdleMode.kBrake);
-    rightLeader.setIdleMode(IdleMode.kBrake);
-    rightFollower.setIdleMode(IdleMode.kBrake);
+    applytoAllMotors((motor) -> {
+      motor.setIdleMode(IdleMode.kBrake);
+    });
 
     setMotorConversionFactors();
 
     m_odometry = new OdometrySubsystem(this);
   }
+
+  private void applytoAllMotors(Consumer<CANSparkMax> consumer) {
+    consumer.accept(leftLeader);
+    consumer.accept(leftFollower);
+    consumer.accept(rightLeader);
+    consumer.accept(rightFollower);
+  }
+
   private void setMotorConversionFactors() {
-    double conversionFactor = 1./(RatioConstants.NESSIE_GEAR_RATIO) * BaseUnits.Distance.convertFrom(6 * Math.PI, Units.Inches);
-    leftLeader.getEncoder().setVelocityConversionFactor(conversionFactor/60);
-    leftFollower.getEncoder().setVelocityConversionFactor(conversionFactor/60);
-    rightLeader.getEncoder().setVelocityConversionFactor(conversionFactor/60);
-    rightFollower.getEncoder().setVelocityConversionFactor(conversionFactor/60);
     
-    leftLeader.getEncoder().setPositionConversionFactor(conversionFactor);
-    leftFollower.getEncoder().setPositionConversionFactor(conversionFactor);
-    rightLeader.getEncoder().setPositionConversionFactor(conversionFactor);
-    rightFollower.getEncoder().setPositionConversionFactor(conversionFactor); // m/s
+    double conversionFactor = 1./(RatioConstants.KITBOT_GEAR_RATIO) * BaseUnits.Distance.convertFrom(Constants.KITBOT_WHEEL_DIAMETER * Math.PI, Units.Inches);
+    applytoAllMotors((motor) -> {
+      motor.getEncoder().setVelocityConversionFactor(conversionFactor/60);
+    });
+    applytoAllMotors((motor) -> {
+      motor.getEncoder().setPositionConversionFactor(conversionFactor);
+    });
+    
+    // m/s
   }
 
   // runs the motors
@@ -130,6 +142,7 @@ public class Drivetrain extends SubsystemBase {
       setLeftMotorsVoltage(leftVoltage);
       setRightMotorsVoltage(rightVoltage);
     }
+    m_drive.feed();
   }
 
   public void setLeftMotorsVoltage(double voltage) {
@@ -146,23 +159,30 @@ public class Drivetrain extends SubsystemBase {
 
   public DifferentialDrive m_drive = new DifferentialDrive(leftLeader, rightLeader);
 
-  public void arcadeDrive (double speed, double rotation){
+  public void arcadeDrive (double speed, double rotation, boolean turbo){
     m_drive.arcadeDrive(
-      speed * (turboModeOn ? m_settings.driveSettings.turboSpeed : m_settings.driveSettings.normalSpeed),
-      rotation * (turboModeOn ? m_settings.driveSettings.turboSpeed : m_settings.driveSettings.normalSpeed)
+      speed * (turbo ? m_settings.driveSettings.turboSpeed : m_settings.driveSettings.normalSpeed),
+      rotation * (turbo ? m_settings.driveSettings.turboSpeed : m_settings.driveSettings.normalSpeed)
     );
   }
 
-  public void curvatureDrive (double speed, double rotation){
-    // WheelSpeeds wheelSpeeds = DifferentialDrive.curvatureDriveIK(speed * (turboModeOn ? m_settings.driveController.turboSpeed : m_settings.driveController.normalSpeed),
-    // rotation, turnInPlace);
-    // wheelSpeeds.left += 0.05 * Math.signum(wheelSpeeds.left);
-    // wheelSpeeds.right += 0.05 * Math.signum(wheelSpeeds.right);
+  public void curvatureDrive (double speed, double rotation, boolean turbo, boolean turnInPlace){
+    
+    speed = speed * (turbo ? m_settings.driveSettings.turboSpeed : m_settings.driveSettings.normalSpeed);
+    if (!turbo && turnInPlace) {
+      rotation *= m_settings.driveSettings.normalSpeed;
+    } else if (turbo && !turnInPlace) {
+      rotation *= 1./2.;
+    }
 
-    // setLeftMotors(wheelSpeeds.left);
-    // setRightMotors(wheelSpeeds.right);
+    DashboardHelper.putNumber(LogLevel.Debug, "Rotation", rotation);
+    WheelSpeeds wheelSpeeds = DifferentialDrive.curvatureDriveIK(speed, rotation, turnInPlace);
+    wheelSpeeds.left += 0.00 * Math.signum(wheelSpeeds.left);
+    wheelSpeeds.right += 0.00 * Math.signum(wheelSpeeds.right);
 
-    m_drive.curvatureDrive(speed * (turboModeOn ? m_settings.driveSettings.turboSpeed : m_settings.driveSettings.normalSpeed), rotation, m_settings.driveSettings.turnInPlaceTrigger.getAsBoolean());
+    setLeftMotors(wheelSpeeds.left);
+    setRightMotors(wheelSpeeds.right);
+    m_drive.feed();
   }
   @Override
   public void periodic() {
@@ -183,17 +203,10 @@ public class Drivetrain extends SubsystemBase {
     return leftLeader.getEncoder();
   }
 
-  public void setTurboMode (boolean newTurboMode) {
-    turboModeOn = newTurboMode;
-  }
-  public boolean getTurboMode () {
-    return turboModeOn;
-  }
-
   DifferentialDrivetrainSim m_simulation = 
   new DifferentialDrivetrainSim(DCMotor.getNEO(2), Constants.RatioConstants.KITBOT_GEAR_RATIO, 5, 
   BaseUnits.Mass.convertFrom(95, Units.Pounds), BaseUnits.Distance.convertFrom(2, Units.Inches), 
-  BaseUnits.Distance.convertFrom(18, Units.Inches), null);
+  Units.Inches.toBaseUnits(22), null);
   
 
   @Override

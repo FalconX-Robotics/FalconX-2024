@@ -5,6 +5,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -20,13 +21,20 @@ public class LEDs extends SubsystemBase{
     private Color color = Color.PURPLE;
 
     public LEDs() {
+        for (Color color : Color.values()) {
+            colorChooser.addOption(color.name(), color);
+        }
+        colorChooser.setDefaultOption("PURPLE", Color.PURPLE);
+        SmartDashboard.putData("Color Chooser", colorChooser);
         //?
         // LEDs = new Spark(Constants.LED_PORT);
     }
 
     @Override
     public void periodic() {
-        LEDs.set(color.getValue());
+        // LEDs.set(color.getValue());
+        // LEDs.set(colorChooser.getSelected().colorToSpeed());
+        LEDs.set(this.color.colorToSpeed());
     }
 
     public void setColor(Color color) {
@@ -37,7 +45,14 @@ public class LEDs extends SubsystemBase{
         PURPLE (0.91),
         HEARTBEAT_RED (-0.25),
         HEARTBEAT_BLUE (-0.23),
-        YELLOW (0.69);
+        YELLOW (0.69),
+        FIRE_LARGE(-0.57),
+        CONFETTI(-0.87),
+        CHASE_RED(-0.31),
+        CHASE_BLUE(-0.29),
+        BLACK(0.99),
+        OCEAN(-0.95),
+        LAVA(-0.93);
 
         private final double value;
 
@@ -45,8 +60,12 @@ public class LEDs extends SubsystemBase{
             this.value = value;
         }
 
-        public double getValue() {
+        public double colorToSpeed() {
             return value;
         }
+    }
+
+    public void useChooser() {
+        setColor(colorChooser.getSelected());
     }
 }

@@ -59,6 +59,9 @@ public class Shooter extends SubsystemBase {
 
     shooterFollowerSparkMax.follow(shooterLeaderSparkMax, true);
 
+    shooterLeaderSparkMax.getEncoder().setAverageDepth(4);
+    shooterLeaderSparkMax.getEncoder().setMeasurementPeriod(8);
+
     shooterLeaderSparkMax.setIdleMode(IdleMode.kCoast);
     shooterLeaderSparkMax.setInverted(false);
     shooterLeaderSparkMax.burnFlash();
@@ -94,6 +97,7 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("Shooter Encoder Position", shooterLeaderSparkMax.getEncoder().getPosition());
     SmartDashboard.putNumber("Shooter Encoder Velocity", shooterLeaderSparkMax.getEncoder().getVelocity());
+    SmartDashboard.putBoolean("Shooter Velocity Within Target Speed", velocityIsWithinTarget(2450., 50.));
 
     shooterEncoderPositionEntry.append(shooterLeaderSparkMax.getEncoder().getPosition());
     shooterEncoderVelocityEntry.append(shooterLeaderSparkMax.getEncoder().getVelocity());

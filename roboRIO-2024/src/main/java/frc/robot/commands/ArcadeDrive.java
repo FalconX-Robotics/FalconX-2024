@@ -25,7 +25,10 @@ public class ArcadeDrive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_drivetrain.arcadeDrive(m_settings.driveSettings.getSpeedJoystickValue(), m_settings.driveSettings.getRotationJoystickValue());
+    m_drivetrain.arcadeDrive(
+      m_settings.driveSettings.getSpeedJoystickValue(), 
+      m_settings.driveSettings.getRotationJoystickValue(),
+      m_settings.driveSettings.turboModeTrigger.getAsBoolean());
   }
 
   // Called once the command ends or is interrupted.
