@@ -51,6 +51,7 @@ public class LEDs extends SubsystemBase{
         CHASE_RED(-0.31),
         CHASE_BLUE(-0.29),
         BLACK(0.99),
+        RED_STROBE(-0.11),
         OCEAN(-0.95),
         LAVA(-0.93);
 

@@ -79,11 +79,6 @@ public class RobotContainer {
   private final CurvatureDrive m_curvatureDrive = new CurvatureDrive(m_drivetrain, m_settings);
   private final ArcadeDrive m_arcadeDrive = new ArcadeDrive(m_drivetrain, m_settings);
   private final TankDrive m_tankDrive = new TankDrive(m_drivetrain, driveController);
-  
-  
-
-  
-
   // private final Vision m_vision = new Vision();
   
 
@@ -94,16 +89,17 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-
-    autoChooser = AutoBuilder.buildAutoChooser();
+    
     NamedCommands.registerCommand("Shoot", new ParallelCommandGroup(
       new PIDShoot(m_shooter),
-      new RunIndex(m_index, 1.)
-      .onlyIf(() -> {return m_shooter.velocityIsWithinTarget(2450., 50.);})
+      new RunIndex(m_index, 0.)
+      .until(() -> {return m_shooter.velocityIsWithinTarget(2450., 50.);})
       .withTimeout(1.5).andThen(new RunIndex(m_index, 1.))
     ).withTimeout(2));
-    NamedCommands.registerCommand("Intake", new RunIntake(m_intake, -0.8));
+    NamedCommands.registerCommand("Intake", new RunIntake(m_intake, -0.4).alongWith(new RunIndex(m_index, 0.5)).until(() -> {return m_sensor.getNoteSensed();}));
     
+    autoChooser = AutoBuilder.buildAutoChooser();
+    autoChooser.addOption("Pathfind VERY EXPIREMENTAL", PathfindToPose.getPathfindCommand(1.23, 1.65, -127));
 
     logLevelChooser.setDefaultOption("Info", DashboardHelper.LogLevel.Info);
     logLevelChooser.addOption("Important", DashboardHelper.LogLevel.Important);
@@ -117,7 +113,6 @@ public class RobotContainer {
     LocalDateTime startTime = LocalDateTime.now();
     Util.setStartTime(startTime);
     DataLogManager.start();
-    
     DriverStation.startDataLog(DataLogManager.getLog());
     logLevelChooser.onChange((logLevel) -> {
       DashboardHelper.setLogLevel(logLevel);
