@@ -135,6 +135,10 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    m_settings.noteSettings.intakeTrigger.whileTrue(
+      new RunIntake(m_intake, -0.8)
+      .until(() -> {return m_sensor.getNoteSensed();})
+    );
     m_settings.noteSettings.shooterChargeTrigger.whileTrue(
       new PIDShoot(m_shooter)
     );
@@ -148,8 +152,11 @@ public class RobotContainer {
       .alongWith(new RunIntake(m_intake, 1.))
     );
 
+    m_settings.noteSettings.ampTrigger.whileTrue(new ArmGoToGoalRotation(m_arm, Math.toRadians(90) + ArmFeedForwardConstants.offset));
+    m_settings.noteSettings.storeTrigger.whileTrue(new ArmGoToGoalRotation(m_arm, ArmFeedForwardConstants.offset));
+
     m_drivetrain.setDefaultCommand(m_curvatureDrive);
-    // m_arm.setDefaultCommand(new ArmGoToGoalRotation(m_arm, ArmFeedForwrdConstants.offset));
+    // m_arm.setDefaultCommand(new ArmGoToGoalRotation(m_arm, 0.));
   }
 
   

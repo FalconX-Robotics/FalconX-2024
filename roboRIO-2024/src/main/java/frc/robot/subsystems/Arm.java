@@ -43,8 +43,8 @@ public class Arm extends SubsystemBase {
     
     armFollowerSparkMax.setIdleMode(IdleMode.kBrake);
     armFollowerSparkMax.getEncoder().setPositionConversionFactor((2*Math.PI)/(RatioConstants.ArmGearRatio));
-    armFollowerSparkMax.getEncoder().setPosition(ArmFeedForwardConstants.offset);
-    armFollowerSparkMax.setInverted(true);
+    armFollowerSparkMax.getEncoder().setPosition(0.);
+    armFollowerSparkMax.setSmartCurrentLimit(40);
     armFollowerSparkMax.burnFlash();
 
     if (Robot.isSimulation()) {
@@ -56,8 +56,9 @@ public class Arm extends SubsystemBase {
 
     armSparkMax.setIdleMode(IdleMode.kBrake);
     // m_armEncoder.setPositionConversionFactor(1/(*(2*Math.PI)RatioConstants.ArmGearRatio));
-    m_armEncoder.setPosition(ArmFeedForwardConstants.offset);
+    m_armEncoder.setPosition(0.);
     armSparkMax.setInverted(false);
+    armSparkMax.setSmartCurrentLimit(40);
     armSparkMax.burnFlash();
 
     SmartDashboard.putNumber("arm max speed", .3);
@@ -101,10 +102,10 @@ public class Arm extends SubsystemBase {
       // armSparkMax.set(feedforward());
       // }
       // if (Math.abs(m_settings.noteSettings.getManualArmJoystickValue()) > 0.2){
-      double armAppliedOutput = m_settings.noteSettings.getManualArmJoystickValue()
-        * SmartDashboard.getNumber("arm max speed", .3) * 12;
+      // double armAppliedOutput = m_settings.noteSettings.getManualArmJoystickValue()
+      //   * SmartDashboard.getNumber("arm max speed", .3) * 12;
       // armSparkMax.setVoltage(armAppliedOutput);
-      SmartDashboard.putNumber("Arm Applied Output", armAppliedOutput);
+      // SmartDashboard.putNumber("Arm Applied Output", armAppliedOutput);
       // }
     
     SmartDashboard.putNumber("Shooter Arm Encoder Position", m_armEncoder.getPosition());
