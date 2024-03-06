@@ -4,51 +4,36 @@
 
 package frc.robot;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.DashboardHelper.LogLevel;
-import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.ArmGoToGoalRotation;
 import frc.robot.commands.CurvatureDrive;
 import frc.robot.commands.PIDShoot;
-import frc.robot.commands.PathfindToPose;
 import frc.robot.commands.RunIndex;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.SimpleShoot;
-import frc.robot.commands.TankDrive;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Index;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
+import frc.robot.subsystems.Sensor;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Vision;
-import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.DriverStation;
-import frc.robot.subsystems.OdometrySubsystem;
-import frc.robot.DashboardHelper;
-import frc.robot.subsystems.Sensor;
-
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.concurrent.TimeUnit;
-
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.path.PathPlannerPath;
-
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.event.EventLoop;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -73,6 +58,7 @@ public class RobotContainer {
   private final Index m_index = new Index();
   private final LEDs m_leds = new LEDs();
   private final Arm m_arm = new Arm();
+  private final Vision m_vision = new Vision();
   
   private final CurvatureDrive m_curvatureDrive = new CurvatureDrive(m_drivetrain, m_settings);
 
@@ -141,8 +127,19 @@ public class RobotContainer {
     new Trigger(()->{return m_sensor.getNoteSensed();}).whileTrue(
       Commands.run(()->{
       m_leds.setColor(LEDs.Color.LAVA);
+      //m_vision.poseOffsetLedIndicator();
+      Optional<Double> angle = m_vision.getAngleToTarget();
+      if (angle.isEmpty()) {
+        DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Target Not Present.");
+      } else if(Math.abs(angle.get()) < 5) {
+        m_vision.ledColor.setColor(m_vision.ledsIsAligned);
+        DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Aligned.");
+                
+      } else if(Math.abs(angle.get()) > 5) {
+        DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Unaligned.");
+      }
 
-    }, m_leds));
+    }, m_leds, m_vision));
     m_leds.setDefaultCommand(Commands.run(() -> {m_leds.useChooser();}, m_leds));
 
     m_drivetrain.setDefaultCommand(m_curvatureDrive);

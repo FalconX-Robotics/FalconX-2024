@@ -12,15 +12,16 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.DashboardHelper;
 import frc.robot.DashboardHelper.LogLevel;
 
-public class Vision {
+public class Vision extends SubsystemBase {
 
     PhotonCamera m_camera = new PhotonCamera("Shelldon");
    
-    LEDs.Color ledsIsAligned = LEDs.Color.HEARTBEAT_BLUE;
-    LEDs ledColor = new LEDs();
+    public LEDs.Color ledsIsAligned = LEDs.Color.HEARTBEAT_BLUE;
+    public LEDs ledColor = new LEDs();
 
     public Optional<Double> getAngleToTarget() {
 
@@ -83,18 +84,18 @@ public class Vision {
     //     return false;
     // }
 
-        public void poseOffsetLedIndicator() {
-            Optional<Double> angle = getAngleToTarget();
-            if (angle.isEmpty()) {
-                DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Target Not Present.");
-            } else if(Math.abs(angle.get()) < 5) {
-                ledColor.setColor(ledsIsAligned);
-                DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Aligned.");
+        // public void poseOffsetLedIndicator() {
+        //     Optional<Double> angle = getAngleToTarget();
+        //     if (angle.isEmpty()) {
+        //         DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Target Not Present.");
+        //     } else if(Math.abs(angle.get()) < 5) {
+        //         ledColor.setColor(ledsIsAligned);
+        //         DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Aligned.");
                 
-            } else if(Math.abs(angle.get()) > 5) {
-                DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Unaligned.");
-            }
-        }
+        //     } else if(Math.abs(angle.get()) > 5) {
+        //         DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Unaligned.");
+        //     }
+        // }
 
     
 }
