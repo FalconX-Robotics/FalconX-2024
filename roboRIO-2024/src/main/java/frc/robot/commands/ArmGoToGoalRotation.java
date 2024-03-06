@@ -15,7 +15,7 @@ import frc.robot.DashboardHelper.LogLevel;
 import frc.robot.subsystems.Arm;
 
 public class ArmGoToGoalRotation extends Command {
-  PIDController rotationPIDController = new PIDController(5., 0, 0);
+  PIDController rotationPIDController = new PIDController(30., 0, 0);
   PIDController velocityPIDController = new PIDController(0., 0, 0);
   TrapezoidProfile trapezoidProfile = new TrapezoidProfile(
     new TrapezoidProfile.Constraints(ArmFeedForwardConstants.maxVelocity, ArmFeedForwardConstants.maxAcceleration));
