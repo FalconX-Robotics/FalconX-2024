@@ -36,16 +36,16 @@ public final class Constants {
     // TODO: set to a reasonable value
   }
   /** To be changed later; change values based on the weight, offset, etc of the arm */
-  public static class ArmFeedForwardValues {
-    public static final double maxVelocity = .25;
+  public static class ArmFeedForwardConstants {
+    public static final double maxVelocity = 100;
     public static final double maxAcceleration = .5;
 
     /** In radians, the offset of the arm */
     public static final double offset = Math.toRadians(25);
-    public static final double staticGain = 0.06662;
-    public static final double gravityGain = 0.;
+    public static final double staticGain = 0.2;
+    public static final double gravityGain = 0.5;
     public static final double velocityGain = 12/((5600. / RatioConstants.ArmGearRatio / 60.) * (2. * Math.PI));
-}
+  }
   public static class MotorConstants {
     // 0 is reserved for RoboRIO and just generally shouldn't be used
     // 1 is reserved for Rev PDP

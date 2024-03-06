@@ -245,10 +245,10 @@ public double getRightPosition () {
 
     RelativeEncoderSim leftEncoder = (RelativeEncoderSim) m_leftEncoder;
     RelativeEncoderSim rightEncoder = (RelativeEncoderSim) m_rightEncoder;
-    leftEncoder.setSimulationPositionMeters(simulation.getLeftPositionMeters());
-    rightEncoder.setSimulationPositionMeters(simulation.getRightPositionMeters());
-    leftEncoder.setSimulationVelocityMetersPerSecond(simulation.getLeftVelocityMetersPerSecond());
-    rightEncoder.setSimulationVelocityMetersPerSecond(simulation.getRightVelocityMetersPerSecond());
+    leftEncoder.setSimulationPosition(simulation.getLeftPositionMeters());
+    rightEncoder.setSimulationPosition(simulation.getRightPositionMeters());
+    leftEncoder.setSimulationVelocity(simulation.getLeftVelocityMetersPerSecond());
+    rightEncoder.setSimulationVelocity(simulation.getRightVelocityMetersPerSecond());
 
   }
 }

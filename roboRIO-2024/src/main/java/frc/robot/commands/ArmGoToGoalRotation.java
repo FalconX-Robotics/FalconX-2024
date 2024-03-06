@@ -9,14 +9,18 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.ArmFeedForwardValues;
+import frc.robot.DashboardHelper;
+import frc.robot.Constants.ArmFeedForwardConstants;
+import frc.robot.DashboardHelper.LogLevel;
 import frc.robot.subsystems.Arm;
 
 public class ArmGoToGoalRotation extends Command {
   PIDController rotationPIDController = new PIDController(.25, 0, 0);
-  PIDController velocityPIDController = new PIDController(.25, 0, 0);
-  TrapezoidProfile trapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(ArmFeedForwardValues.maxVelocity, ArmFeedForwardValues.maxAcceleration));
-
+  PIDController velocityPIDController = new PIDController(0., 0, 0);
+  TrapezoidProfile trapezoidProfile = new TrapezoidProfile(
+    new TrapezoidProfile.Constraints(ArmFeedForwardConstants.maxVelocity, ArmFeedForwardConstants.maxAcceleration));
+  TrapezoidProfile.State currentState = new TrapezoidProfile.State(ArmFeedForwardConstants.offset, 0.);
+  TrapezoidProfile.State targetState = new TrapezoidProfile.State(ArmFeedForwardConstants.offset, 0.);
   double goalRotationRad;
   Arm m_arm;
   ArmFeedforward armFeedforward;
@@ -24,28 +28,36 @@ public class ArmGoToGoalRotation extends Command {
   /** Creates a new ArmGoToGoalRotation. */
   public ArmGoToGoalRotation(Arm arm, double goalRotationRad) {
     armFeedforward = new ArmFeedforward(
-      ArmFeedForwardValues.staticGain,
-      ArmFeedForwardValues.gravityGain,
-      ArmFeedForwardValues.velocityGain
+      ArmFeedForwardConstants.staticGain,
+      ArmFeedForwardConstants.gravityGain,
+      ArmFeedForwardConstants.velocityGain
     );
     addRequirements(arm);
     m_arm = arm;
     this.goalRotationRad = goalRotationRad;
   }
 
+  @Override
+  public void initialize () {
+    targetState = new TrapezoidProfile.State(m_arm.getRotation(), m_arm.getVelocity());
+  }
+
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    TrapezoidProfile.State targetState = trapezoidProfile.calculate(
+    targetState = trapezoidProfile.calculate(
       .02, // 0.02 because each schedule takes 20ms
-      new TrapezoidProfile.State(m_arm.getRotation(), m_arm.getVelocity()),
+      targetState,
       new TrapezoidProfile.State(goalRotationRad, 0)
     );
     double voltageOutput = armFeedforward.calculate(targetState.position, targetState.velocity);
     double positionPIDOutput = rotationPIDController.calculate(m_arm.getRotation(), targetState.position);
     double velocityPIDOutput = velocityPIDController.calculate(m_arm.getVelocity(), targetState.velocity);
-    
-    m_arm.setSparksVoltage(MathUtil.clamp(voltageOutput + positionPIDOutput + velocityPIDOutput, -12., 12.));
+    DashboardHelper.putNumber(LogLevel.Important, "Target State Position", targetState.position);
+    DashboardHelper.putNumber(LogLevel.Important, "Target State Velocity", targetState.velocity);
+
+    // Why do we need to clamp? We already have a max voltage -w
+    m_arm.setSparksVoltage(MathUtil.clamp(voltageOutput + positionPIDOutput + velocityPIDOutput, -4., 4.));
   }
 
   // Called once the command ends or is interrupted.

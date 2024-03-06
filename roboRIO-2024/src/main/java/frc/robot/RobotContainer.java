@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.robot.Constants.ArmFeedForwardConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.DashboardHelper.LogLevel;
 import frc.robot.commands.ArcadeDrive;
@@ -69,20 +70,26 @@ public class RobotContainer {
   private final Settings m_settings = new Settings(driveController, noteController);
 
   private final Drivetrain m_drivetrain = new Drivetrain(m_settings);
-  private final Shooter m_shooter = new Shooter(m_settings);
+  private final Arm m_arm = new Arm(m_settings);
+  private final Shooter m_shooter = new Shooter();
   private final Intake m_intake = new Intake();
   private final Sensor m_sensor = new Sensor();
   private final Index m_index = new Index();
-  private final LEDs m_leds = new LEDs();
-  private final Arm m_arm = new Arm();
-  
+  private final Vision m_vision = new Vision();
+
+  private final TankDrive m_tankDrive = new TankDrive(m_drivetrain, driveController);
+  private final ArcadeDrive m_arcadeDrive = new ArcadeDrive(m_drivetrain, m_settings);
   private final CurvatureDrive m_curvatureDrive = new CurvatureDrive(m_drivetrain, m_settings);
+
+  public final LEDs m_leds = new LEDs();
   private final ArcadeDrive m_arcadeDrive = new ArcadeDrive(m_drivetrain, m_settings);
   private final TankDrive m_tankDrive = new TankDrive(m_drivetrain, driveController);
   // private final Vision m_vision = new Vision();
   
 
   public void periodic() {
+    m_vision.getAngleToTarget();
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "PV Angle", m_vision.getAngleToTarget().orElse(0.));
     // m_vision.getAngleToTarget();
     // SmartDashboard.putNumber("PV Angle", m_vision.getAngleToTarget().orElse(0.));
   }
@@ -143,22 +150,10 @@ public class RobotContainer {
     m_settings.noteSettings.reverseTrigger.whileTrue(
       new RunIndex(m_index, -.5)
       .alongWith(new RunIntake(m_intake, 1.))
-      .alongWith(new SimpleShoot(m_shooter, -.2))
     );
-    m_settings.noteSettings.intakeTrigger.whileTrue(
-      new RunIntake(m_intake, -0.8)
-      .alongWith(new RunIndex(m_index, 1.))
-      .until(() -> {return m_sensor.getNoteSensed();})
-    );
-    new Trigger(()->{return m_sensor.getNoteSensed();}).whileTrue(
-      Commands.run(()->{
-      m_leds.setColor(LEDs.Color.LAVA);
-
-    }, m_leds));
-    m_leds.setDefaultCommand(Commands.run(() -> {m_leds.useChooser();}, m_leds));
 
     m_drivetrain.setDefaultCommand(m_curvatureDrive);
-    m_arm.setDefaultCommand(new ArmGoToGoalRotation(m_arm, 0.));
+    // m_arm.setDefaultCommand(new ArmGoToGoalRotation(m_arm, ArmFeedForwrdConstants.offset));
   }
 
   

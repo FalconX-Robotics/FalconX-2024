@@ -43,11 +43,14 @@
         }
       },
       "SmartDashboard": {
+        "Arm Velocity Radians": {
+          "open": true
+        },
+        "Auto Chooser": {
+          "open": true
+        },
         "LogLevel Choices": {
-          "open": true,
-          "string[]##v_/SmartDashboard/LogLevel Choices/options": {
-            "open": true
-          }
+          "open": true
         },
         "open": true
       }

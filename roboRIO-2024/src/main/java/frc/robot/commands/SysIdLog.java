@@ -10,7 +10,7 @@ public class SysIdLog extends Command{
 
     SysIdLog(Drivetrain drivetrain) {
         this.drivetrain = drivetrain;
-        addRequirements(drivetrain);
+        // addRequirements(drivetrain); //Using addRequirements here 
     }
 
     @Override
