@@ -126,16 +126,17 @@ public class RobotContainer {
     );
     new Trigger(()->{return m_sensor.getNoteSensed();}).whileTrue(
       Commands.run(()->{
-      m_leds.setColor(LEDs.Color.LAVA);
       //m_vision.poseOffsetLedIndicator();
       Optional<Double> angle = m_vision.getAngleToTarget();
       if (angle.isEmpty()) {
+        m_leds.setColor(LEDs.Color.LAVA);
         DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Target Not Present.");
       } else if(Math.abs(angle.get()) < 5) {
         m_vision.ledColor.setColor(m_vision.ledsIsAligned);
         DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Aligned.");
                 
       } else if(Math.abs(angle.get()) > 5) {
+        m_leds.setColor(LEDs.Color.LAVA);
         DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Unaligned.");
       }
 
