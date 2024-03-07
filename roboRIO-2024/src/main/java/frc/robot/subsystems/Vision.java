@@ -11,7 +11,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.DashboardHelper;
 import frc.robot.DashboardHelper.LogLevel;
@@ -35,15 +35,32 @@ public class Vision extends SubsystemBase {
          if (result.getMultiTagResult().estimatedPose.isPresent) {
 
             Transform3d fieldToCamera = result.getMultiTagResult().estimatedPose.best;
-            Transform3d targetToField = new Transform3d(new Translation3d(0, -5.5, -2), new Rotation3d());
-            Transform3d targetToCamera = targetToField.plus(fieldToCamera);
+            Transform3d blueTargetToField = new Transform3d(new Translation3d(0, -5.5, -2), new Rotation3d()); // Blue Speakers
+            Transform3d redTargetToField = new Transform3d(new Translation3d(0., 0., 0.), new Rotation3d()); //coordinates unknown at this time (Red Speakers)
+            Transform3d blueTargetToCamera = blueTargetToField.plus(fieldToCamera);
+            Transform3d redTargetToCamera = redTargetToField.plus(fieldToCamera);
+
+            var alliance = DriverStation.getAlliance();
 
 
-            DashboardHelper.putNumber(LogLevel.Info,"PV TargetX", targetToCamera.getX());
-            DashboardHelper.putNumber(LogLevel.Info,"PV TargetY", targetToCamera.getY()); 
-            DashboardHelper.putNumber(LogLevel.Info,"PV TargetZ", targetToCamera.getZ()); 
-                           
-            Rotation3d m_rotation = targetToCamera.getRotation();
+            if(alliance.isPresent() && alliance.get() == DriverStation.Alliance.Blue) {
+                DashboardHelper.putNumber(LogLevel.Info,"PV TargetX", blueTargetToCamera.getX());
+                DashboardHelper.putNumber(LogLevel.Info,"PV TargetY", blueTargetToCamera.getY()); 
+                DashboardHelper.putNumber(LogLevel.Info,"PV TargetZ", blueTargetToCamera.getZ()); 
+            } else {
+                DashboardHelper.putNumber(LogLevel.Info,"PV TargetX", redTargetToCamera.getX());
+                DashboardHelper.putNumber(LogLevel.Info,"PV TargetY", redTargetToCamera.getY()); 
+                DashboardHelper.putNumber(LogLevel.Info,"PV TargetZ", redTargetToCamera.getZ()); 
+            }          
+
+            Rotation3d m_rotation = blueTargetToCamera.getRotation();
+
+            if(alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
+                m_rotation = redTargetToCamera.getRotation();
+            }
+
+            
+
             return Optional.of(m_rotation.getZ());
 
             /* double range =
@@ -58,7 +75,7 @@ public class Vision extends SubsystemBase {
     }
 
     public ArrayList<Pose3d> getTargetsToField() {
-        Transform3d result = new Transform3d(new Translation3d(0, -5.5, -2), new Rotation3d());
+        Transform3d result = new Transform3d(new Translation3d(0, -5.5, -2), new Rotation3d()); //Translation3d for tags 7 and 8 (Blue side)
         
         AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();  
         ArrayList<Pose3d> pose3ds = new ArrayList<>();
