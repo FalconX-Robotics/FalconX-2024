@@ -54,7 +54,7 @@ public class PIDShoot extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    System.out.println("Note Fired!");
+    // System.out.println("Note Fired!");
     initialTimestamp = Timer.getFPGATimestamp();
   }
 
@@ -77,6 +77,6 @@ public class PIDShoot extends Command {
   public void end (boolean interrupted) {
     m_shooter.setShooterSparks(0.);
     // SmartDashboard.putNumber("Actual Shooter Speed", 0.); // It won't be actual but it'll stop unintended behavior when the command is done and deleted
-    System.out.println("Note firing completed.");
+    // System.out.println("Note firing completed.");
   }
 }
