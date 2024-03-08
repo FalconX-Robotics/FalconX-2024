@@ -138,7 +138,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     m_settings.noteSettings.intakeTrigger.whileTrue(
-      new RunIntake(m_intake, -0.8)
+      new RunIntake(m_intake, -0.8).alongWith(new RunIndex(m_index, 1.))
       .until(() -> {return m_sensor.getNoteSensed();})
     );
     m_settings.noteSettings.shooterChargeTrigger.whileTrue(
@@ -153,9 +153,11 @@ public class RobotContainer {
       new RunIndex(m_index, -.5)
       .alongWith(new RunIntake(m_intake, 1.))
     );
+    m_settings.noteSettings.shootAmpTrigger.whileTrue(new RunIndex(m_index, 1.).alongWith(new SimpleShoot(m_shooter, 3.)));
 
     m_settings.noteSettings.ampTrigger.onTrue(new ArmGoToGoalRotation(m_arm, Math.toRadians(105)));
-    m_settings.noteSettings.storeTrigger.onTrue(new ArmGoToGoalRotation(m_arm, Math.toRadians(5.)));
+    m_settings.noteSettings.storeTrigger.onTrue(new ArmGoToGoalRotation(m_arm, Math.toRadians(5.))
+      .withTimeout(5.));
 
     m_drivetrain.setDefaultCommand(m_curvatureDrive);
     // m_arm.setDefaultCommand(new ArmGoToGoalRotation(m_arm, 0.));

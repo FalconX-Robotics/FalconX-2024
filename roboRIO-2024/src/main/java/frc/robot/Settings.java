@@ -56,6 +56,7 @@ public class Settings {
         public Trigger shooterChargeTrigger   = new JoystickButton(m_noteController, Button.kA.value);
         public Trigger shooterFireTrigger     = new JoystickButton(m_noteController, Button.kX.value);
         public Trigger intakeTrigger          = new JoystickButton(m_noteController, Button.kB.value);
+        public Trigger shootAmpTrigger        = new JoystickButton(m_noteController, Button.kY.value);
         public Trigger reverseTrigger         = new JoystickButton(m_noteController, Button.kRightBumper.value);
         
         public Trigger ampTrigger             = new JoystickButton(m_noteController, Button.kStart.value);
