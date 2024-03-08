@@ -88,10 +88,10 @@ public class Drivetrain extends SubsystemBase {
     leftFollower.setInverted(false);
     rightLeader.setInverted(true);
     rightFollower.setInverted(true);
-    leftLeader.getEncoder().setMeasurementPeriod(20);
-    rightLeader.getEncoder().setMeasurementPeriod(20);
-    leftLeader.getEncoder().setAverageDepth(4);
-    rightLeader.getEncoder().setAverageDepth(4);
+    leftLeader.getEncoder().setMeasurementPeriod(8);
+    rightLeader.getEncoder().setMeasurementPeriod(8);
+    leftLeader.getEncoder().setAverageDepth(2);
+    rightLeader.getEncoder().setAverageDepth(2);
     leftLeader.setSmartCurrentLimit(60);
     rightLeader.setSmartCurrentLimit(60);
     leftLeader.setSmartCurrentLimit(60);

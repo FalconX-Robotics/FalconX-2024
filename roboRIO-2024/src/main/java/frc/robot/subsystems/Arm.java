@@ -42,6 +42,8 @@ public class Arm extends SubsystemBase {
     armFollowerSparkMax.follow(armSparkMax, true);
     
     armFollowerSparkMax.setIdleMode(IdleMode.kBrake);
+    armFollowerSparkMax.getEncoder().setMeasurementPeriod(8);
+    armFollowerSparkMax.getEncoder().setAverageDepth(4);
     armFollowerSparkMax.getEncoder().setPositionConversionFactor((2*Math.PI)/(RatioConstants.ArmGearRatio));
     armFollowerSparkMax.getEncoder().setPosition(0.);
     armFollowerSparkMax.setSmartCurrentLimit(40);
@@ -55,7 +57,8 @@ public class Arm extends SubsystemBase {
     }
 
     armSparkMax.setIdleMode(IdleMode.kBrake);
-    // m_armEncoder.setPositionConversionFactor(1/(*(2*Math.PI)RatioConstants.ArmGearRatio));
+    m_armEncoder.setMeasurementPeriod(8);
+    m_armEncoder.setAverageDepth(4);
     m_armEncoder.setPosition(0.);
     armSparkMax.setInverted(false);
     armSparkMax.setSmartCurrentLimit(40);

@@ -68,7 +68,7 @@ public class OdometrySubsystem {
     new DifferentialDriveKinematics(kTrackWidth);
 
     
-  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.52, 2.4, 0.7);
+  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.52, 2.4, 0.3);
     
     // constructor so i can find in in the wall of code
   public OdometrySubsystem (Drivetrain drivetrain) {
