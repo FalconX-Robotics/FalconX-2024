@@ -75,7 +75,7 @@ public class RobotContainer {
   private final Intake m_intake = new Intake();
   private final Sensor m_sensor = new Sensor();
   private final Index m_index = new Index();
-  private final Vision m_vision = new Vision();
+  // private final Vision m_vision = new Vision();
 
   private final TankDrive m_tankDrive = new TankDrive(m_drivetrain, driveController);
   private final ArcadeDrive m_arcadeDrive = new ArcadeDrive(m_drivetrain, m_settings);
@@ -86,8 +86,8 @@ public class RobotContainer {
   
 
   public void periodic() {
-    m_vision.getAngleToTarget();
-    DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "PV Angle", m_vision.getAngleToTarget().orElse(0.));
+    // m_vision.getAngleToTarget();
+    // DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "PV Angle", m_vision.getAngleToTarget().orElse(0.));
     // m_vision.getAngleToTarget();
     // SmartDashboard.putNumber("PV Angle", m_vision.getAngleToTarget().orElse(0.));
   }
@@ -98,9 +98,9 @@ public class RobotContainer {
     NamedCommands.registerCommand("Shoot", new ParallelCommandGroup(
       new PIDShoot(m_shooter),
       new RunIndex(m_index, 0.)
-      .until(() -> {return m_shooter.velocityIsWithinTarget(2450., 50.);})
-      .withTimeout(1.5).andThen(new RunIndex(m_index, 1.))
-    ).withTimeout(2));
+      .onlyIf(() -> {return m_shooter.velocityIsWithinTarget(2750., 50.);})
+      .withTimeout(0).andThen(new RunIndex(m_index, 1.))
+    ).withTimeout(0.5));
     NamedCommands.registerCommand("Intake", new RunIntake(m_intake, -0.4).alongWith(new RunIndex(m_index, 0.5)).until(() -> {return m_sensor.getNoteSensed();}));
     
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -146,7 +146,7 @@ public class RobotContainer {
     );
     m_settings.noteSettings.shooterFireTrigger.whileTrue(
       new RunIndex(m_index, 1.)
-      .onlyIf(() -> {return m_shooter.velocityIsWithinTarget(2450., 50.);})
+      .onlyIf(() -> {return m_shooter.velocityIsWithinTarget(2650., 25.);})
       .withTimeout(1.5).andThen(new RunIndex(m_index, 1.))
     );
     m_settings.noteSettings.reverseTrigger.whileTrue(
