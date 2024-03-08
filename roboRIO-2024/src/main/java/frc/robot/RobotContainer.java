@@ -152,8 +152,8 @@ public class RobotContainer {
       .alongWith(new RunIntake(m_intake, 1.))
     );
 
-    m_settings.noteSettings.ampTrigger.whileTrue(new ArmGoToGoalRotation(m_arm, Math.toRadians(90)));
-    m_settings.noteSettings.storeTrigger.whileTrue(new ArmGoToGoalRotation(m_arm, 0.));
+    m_settings.noteSettings.ampTrigger.onTrue(new ArmGoToGoalRotation(m_arm, Math.toRadians(105)));
+    m_settings.noteSettings.storeTrigger.onTrue(new ArmGoToGoalRotation(m_arm, Math.toRadians(5.)));
 
     m_drivetrain.setDefaultCommand(m_curvatureDrive);
     // m_arm.setDefaultCommand(new ArmGoToGoalRotation(m_arm, 0.));

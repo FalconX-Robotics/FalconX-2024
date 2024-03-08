@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 1.4032384462873189,
-        "y": 5.6025530060538795
+        "x": 1.2337167531477924,
+        "y": 4.735004898581226
       },
       "prevControl": {
-        "x": 2.0877654439031517,
-        "y": 5.6025530060538795
+        "x": 1.7907761529808777,
+        "y": 4.339199535541929
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Starting Point"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],

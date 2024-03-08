@@ -16,7 +16,7 @@ import frc.robot.subsystems.Arm;
 
 public class ArmGoToGoalRotation extends Command {
   PIDController rotationPIDController = new PIDController(30., 0, 0);
-  PIDController velocityPIDController = new PIDController(0., 0, 0);
+  // PIDController velocityPIDController = new PIDController(0., 0, 0);
   TrapezoidProfile trapezoidProfile = new TrapezoidProfile(
     new TrapezoidProfile.Constraints(ArmFeedForwardConstants.maxVelocity, ArmFeedForwardConstants.maxAcceleration));
   TrapezoidProfile.State currentState = new TrapezoidProfile.State(0., 0.);
@@ -52,17 +52,18 @@ public class ArmGoToGoalRotation extends Command {
     );
     double voltageOutput = armFeedforward.calculate(targetState.position - ArmFeedForwardConstants.offset, targetState.velocity);
     double positionPIDOutput = rotationPIDController.calculate(m_arm.getRotation(), targetState.position);
-    double velocityPIDOutput = velocityPIDController.calculate(m_arm.getVelocity(), targetState.velocity);
+    // double velocityPIDOutput = velocityPIDController.calculate(m_arm.getVelocity(), targetState.velocity);
     DashboardHelper.putNumber(LogLevel.Important, "Target State Position", targetState.position);
     DashboardHelper.putNumber(LogLevel.Important, "Target State Velocity", targetState.velocity);
 
     // Why do we need to clamp? We already have a max voltage -w
-    m_arm.setSparksVoltage(MathUtil.clamp(voltageOutput + positionPIDOutput + velocityPIDOutput, -4., 4.));
+    m_arm.setSparksVoltage(MathUtil.clamp(voltageOutput + positionPIDOutput, -4., 4.));
+    DashboardHelper.putNumber(LogLevel.Debug, "Attempt Spark Volt", voltageOutput + positionPIDOutput);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_arm.setSparks(0);
+    m_arm.setSparksVoltage(0);
   }
 }

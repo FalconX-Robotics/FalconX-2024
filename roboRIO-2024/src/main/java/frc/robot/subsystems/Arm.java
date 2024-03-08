@@ -65,23 +65,33 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean isStored(){
-    return getRotation() <= Math.toRadians(10);
+    return getRotation() <= Math.toRadians(5);
+  }
+  public boolean isAtMaxExtension(){
+    return getRotation() >= Math.toRadians(120);
   }
 
   public void setSparks (double percentOutput) {
     if(isStored()){
       armSparkMax.set(MathUtil.clamp(percentOutput, 0., 1.5));
-    } else {
-      armSparkMax.set(percentOutput);
+      return;
     }
+    if(isAtMaxExtension()){
+      armSparkMax.set(MathUtil.clamp(percentOutput, -1.5, 0));
+      return;
+    }
+    armSparkMax.set(percentOutput);
   }
 
   public void setSparksVoltage(double volt){
     if (isStored()){
       armSparkMax.setVoltage(MathUtil.clamp(volt, 0., 15.));
-    } else {
-      armSparkMax.setVoltage(volt);
     }
+    if(isAtMaxExtension()){
+      armSparkMax.setVoltage(MathUtil.clamp(volt, -15., 0.));
+      return;
+    }
+    armSparkMax.setVoltage(volt);
   }
 
   public double getRotation() {
