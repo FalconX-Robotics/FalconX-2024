@@ -45,6 +45,7 @@ public class Arm extends SubsystemBase {
     armFollowerSparkMax.getEncoder().setMeasurementPeriod(8);
     armFollowerSparkMax.getEncoder().setAverageDepth(4);
     armFollowerSparkMax.getEncoder().setPositionConversionFactor((2*Math.PI)/(RatioConstants.ArmGearRatio));
+    armFollowerSparkMax.getEncoder().setVelocityConversionFactor((2*Math.PI)/(RatioConstants.ArmGearRatio)/60.);
     armFollowerSparkMax.getEncoder().setPosition(0.);
     armFollowerSparkMax.setSmartCurrentLimit(40);
     armFollowerSparkMax.burnFlash();
@@ -60,6 +61,7 @@ public class Arm extends SubsystemBase {
     m_armEncoder.setMeasurementPeriod(8);
     m_armEncoder.setAverageDepth(4);
     m_armEncoder.setPosition(0.);
+    m_armEncoder.setVelocityConversionFactor((2*Math.PI)/(RatioConstants.ArmGearRatio)/60.);
     armSparkMax.setInverted(false);
     armSparkMax.setSmartCurrentLimit(40);
     armSparkMax.burnFlash();
@@ -76,25 +78,31 @@ public class Arm extends SubsystemBase {
 
   public void setSparks (double percentOutput) {
     if(isStored()){
-      armSparkMax.set(MathUtil.clamp(percentOutput, 0., 1.5));
+      SmartDashboard.putNumber("Arm Volt Set", MathUtil.clamp(percentOutput, 0., 1.2) * 12);
+      armSparkMax.set(MathUtil.clamp(percentOutput, 0., 1.2));
       return;
     }
     if(isAtMaxExtension()){
-      armSparkMax.set(MathUtil.clamp(percentOutput, -1.5, 0));
+      SmartDashboard.putNumber("Arm Volt Set", MathUtil.clamp(percentOutput, -1.5, -.33) * 12);
+      armSparkMax.set(MathUtil.clamp(percentOutput, -1.5, -.33));
       return;
     }
     armSparkMax.set(percentOutput);
+    SmartDashboard.putNumber("Arm Volt Set", percentOutput);
   }
 
   public void setSparksVoltage(double volt){
     if (isStored()){
+      SmartDashboard.putNumber("Arm Volt Set", MathUtil.clamp(volt, 0., 15.));
       armSparkMax.setVoltage(MathUtil.clamp(volt, 0., 15.));
     }
     if(isAtMaxExtension()){
-      armSparkMax.setVoltage(MathUtil.clamp(volt, -15., 0.));
+      SmartDashboard.putNumber("Arm Volt Set", MathUtil.clamp(volt, -15., -.3));
+      armSparkMax.setVoltage(MathUtil.clamp(volt, -15., -.3));
       return;
     }
     armSparkMax.setVoltage(volt);
+    SmartDashboard.putNumber("Arm Volt Set", volt);
   }
 
   public double getRotation() {
@@ -104,13 +112,19 @@ public class Arm extends SubsystemBase {
     return m_armEncoder.getVelocity();
   }
 
+  public boolean armJoystickActive () {
+    return m_settings.noteSettings.getManualArmJoystickValue() != 0.;
+  }
+
   @Override
   public void periodic() {
     // If no current command, set arm via joystick value.
-    // if(this.getCurrentCommand() == null) {
-    //   if (armJoystickActive()) {
-    //     // armSparkMax.set(limitArmViaEncoder(m_settings.noteSettings.getManualArmJoystickValue())); return;
-    //   }
+    if(this.getCurrentCommand() == null) {
+      if (armJoystickActive()) {
+        setSparks(m_settings.noteSettings.getManualArmJoystickValue() * .2);
+      }
+    }
+
       //TODO make work
       // armSparkMax.set(feedforward());
       // }

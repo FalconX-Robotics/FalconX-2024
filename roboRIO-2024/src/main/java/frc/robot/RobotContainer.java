@@ -23,6 +23,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.LEDs.Color;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.subsystems.OdometrySubsystem;
@@ -90,6 +91,7 @@ public class RobotContainer {
     // DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "PV Angle", m_vision.getAngleToTarget().orElse(0.));
     // m_vision.getAngleToTarget();
     // SmartDashboard.putNumber("PV Angle", m_vision.getAngleToTarget().orElse(0.));
+    DashboardHelper.putString(LogLevel.Debug, "Arm Command", m_arm.getCurrentCommand() == null?"No Command":"Command Running");
   }
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -98,10 +100,22 @@ public class RobotContainer {
     NamedCommands.registerCommand("Shoot", new ParallelCommandGroup(
       new PIDShoot(m_shooter),
       new RunIndex(m_index, 0.)
-      .onlyIf(() -> {return m_shooter.velocityIsWithinTarget(2750., 50.);})
-      .withTimeout(0).andThen(new RunIndex(m_index, 1.))
+      .until(() -> {return m_shooter.velocityIsWithinTarget(2450., 50.);})
+      .withTimeout(1).andThen(new RunIndex(m_index, 1.)),
+      new RunIntake(m_intake, -.5)
     ).withTimeout(0.5));
-    NamedCommands.registerCommand("Intake", new RunIntake(m_intake, -0.4).alongWith(new RunIndex(m_index, 0.5)).until(() -> {return m_sensor.getNoteSensed();}));
+    NamedCommands.registerCommand("Intake", 
+      new RunIntake(m_intake, -0.6)
+        .alongWith(new RunIndex(m_index, 0.75))
+        .until(() -> {return m_sensor.getNoteSensed();})
+        .andThen(
+          new RunIndex(m_index, -.3)
+          .withTimeout(.15)
+        ).alongWith(
+          new SimpleShoot(m_shooter, -.2)
+          .withTimeout(.15)
+        )
+      );
     
     autoChooser = AutoBuilder.buildAutoChooser();
     autoChooser.addOption("Pathfind VERY EXPIREMENTAL", PathfindToPose.getPathfindCommand(1.23, 1.65, -127));
@@ -129,7 +143,7 @@ public class RobotContainer {
 
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
+   * {@lnk Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
    * predicate, or via the named factories in {@link
    * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
    * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
@@ -138,11 +152,25 @@ public class RobotContainer {
    */
   private void configureBindings() {
     m_settings.noteSettings.intakeTrigger.whileTrue(
-      new RunIntake(m_intake, -0.8).alongWith(new RunIndex(m_index, 1.))
+      new RunIntake(m_intake, -0.8)
+      .alongWith(new RunIndex(m_index, 1.))
       .until(() -> {return m_sensor.getNoteSensed();})
+      .andThen(
+        new RunIndex(m_index, -.3)
+        .withTimeout(.15)
+      ).alongWith(
+        new SimpleShoot(m_shooter, -.2)
+        .withTimeout(.15)
+      )
     );
     m_settings.noteSettings.shooterChargeTrigger.whileTrue(
       new PIDShoot(m_shooter)
+      .alongWith(
+        new ArmGoToGoalRotation(m_arm, Math.toRadians(5))
+      )
+    ).onFalse(
+      new ArmGoToGoalRotation(m_arm, 0)
+      .withTimeout(.3)
     );
     m_settings.noteSettings.shooterFireTrigger.whileTrue(
       new RunIndex(m_index, 1.)
@@ -153,11 +181,31 @@ public class RobotContainer {
       new RunIndex(m_index, -.5)
       .alongWith(new RunIntake(m_intake, 1.))
     );
-    m_settings.noteSettings.shootAmpTrigger.whileTrue(new RunIndex(m_index, 1.).alongWith(new SimpleShoot(m_shooter, 3.)));
+    m_settings.noteSettings.shootAmpTrigger.whileTrue(new RunIndex(m_index, 1.).alongWith(new SimpleShoot(m_shooter, 2.)));
 
-    m_settings.noteSettings.ampTrigger.onTrue(new ArmGoToGoalRotation(m_arm, Math.toRadians(105)));
-    m_settings.noteSettings.storeTrigger.onTrue(new ArmGoToGoalRotation(m_arm, Math.toRadians(5.))
-      .withTimeout(5.));
+    new Trigger(()->  {return m_sensor.getNoteSensed();}).whileTrue(
+      Commands.run(()->{
+        m_leds.setColor(LEDs.Color.FOREST);
+      }, m_leds)
+    );
+    m_leds.setDefaultCommand(Commands.run(()->{
+      var alliance = DriverStation.getAlliance();
+          if (alliance.isPresent()) {
+            if (alliance.get() == DriverStation.Alliance.Red) {
+              m_leds.setColor(Color.RED);
+            } else if (alliance.get() == DriverStation.Alliance.Blue){
+              m_leds.setColor(Color.BLUE);
+            } else {
+              m_leds.setColor(Color.PURPLE);
+            }
+          } else {
+            m_leds.setColor(Color.PURPLE);
+          }
+      }, m_leds));
+
+    m_settings.noteSettings.ampTrigger.onTrue(new ArmGoToGoalRotation(m_arm, Math.toRadians(95)).onlyWhile(() -> {return !m_arm.armJoystickActive();}));
+    m_settings.noteSettings.storeTrigger.onTrue(new ArmGoToGoalRotation(m_arm, Math.toRadians(5.)).onlyWhile(() -> {return !m_arm.armJoystickActive();})
+      .withTimeout(3.));
 
     m_drivetrain.setDefaultCommand(m_curvatureDrive);
     // m_arm.setDefaultCommand(new ArmGoToGoalRotation(m_arm, 0.));

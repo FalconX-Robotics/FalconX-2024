@@ -53,7 +53,10 @@ public class LEDs extends SubsystemBase{
         BLACK(0.99),
         RED_STROBE(-0.11),
         OCEAN(-0.95),
-        LAVA(-0.93);
+        LAVA(-0.93),
+        RED(0.61),
+        BLUE(0.87),
+        FOREST(-0.91);
 
         private final double value;
 
