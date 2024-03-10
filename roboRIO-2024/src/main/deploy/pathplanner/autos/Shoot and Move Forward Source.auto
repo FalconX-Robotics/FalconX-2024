@@ -2,19 +2,25 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 2.0,
-      "y": 7.0
+      "x": 0.7206357269857403,
+      "y": 4.339199535541929
     },
-    "rotation": 0
+    "rotation": -60.2551187030578
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "short paths"
+            "pathName": "Shoot and Move Forward Right"
           }
         }
       ]

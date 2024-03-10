@@ -98,14 +98,26 @@ public class RobotContainer {
   public RobotContainer() {
     
     NamedCommands.registerCommand("Shoot", new ParallelCommandGroup(
-      new PIDShoot(m_shooter),
+      new PIDShoot(m_shooter).withTimeout(.7),
+      new ArmGoToGoalRotation(m_arm, Math.toRadians(5.)).withTimeout(0.7),
       new RunIndex(m_index, 0.)
       .until(() -> {return m_shooter.velocityIsWithinTarget(2450., 50.);})
       .withTimeout(1).andThen(new RunIndex(m_index, 1.)),
       new RunIntake(m_intake, -.5)
-    ).withTimeout(0.5));
+    ).withTimeout(0.8).andThen(new ArmGoToGoalRotation(m_arm, 0).withTimeout(.1)));
+    
+    NamedCommands.registerCommand("Shoot Corner", new ParallelCommandGroup(
+      new PIDShoot(m_shooter).withTimeout(.7),
+      new ArmGoToGoalRotation(m_arm, Math.toRadians(9.)).withTimeout(0.7),
+      new RunIndex(m_index, 0.)
+      .until(() -> {return m_shooter.velocityIsWithinTarget(2450., 50.);})
+      .withTimeout(1).andThen(new RunIndex(m_index, 1.)),
+      new RunIntake(m_intake, -.5)
+    ).withTimeout(1.).andThen(new ArmGoToGoalRotation(m_arm, 0).withTimeout(.1)));
+
     NamedCommands.registerCommand("Intake", 
       new RunIntake(m_intake, -0.6)
+        .alongWith(new ArmGoToGoalRotation(m_arm, 0).withTimeout(.1))
         .alongWith(new RunIndex(m_index, 0.75))
         .until(() -> {return m_sensor.getNoteSensed();})
         .andThen(
