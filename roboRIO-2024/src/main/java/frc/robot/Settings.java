@@ -61,6 +61,12 @@ public class Settings {
         public double getArmJoystickValue () {return MathUtil.applyDeadband( 
             m_noteController.getLeftY(), deadband);
         }
+        public double getUpClimbValue () {return MathUtil.applyDeadband( 
+            m_noteController.getLeftTriggerAxis(), deadband);
+        }
+        public double getDownClimbValue () {return MathUtil.applyDeadband( 
+            m_noteController.getRightTriggerAxis(), deadband);
+        }
         public double deadband = 0.1;
     }
 }

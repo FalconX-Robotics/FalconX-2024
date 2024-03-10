@@ -26,7 +26,9 @@ import frc.robot.commands.PIDShoot;
 import frc.robot.commands.RunIndex;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.SimpleShoot;
+import frc.robot.commands.TriggerClimb;
 import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Index;
 import frc.robot.subsystems.Intake;
@@ -53,6 +55,7 @@ public class RobotContainer {
 
   private final Drivetrain m_drivetrain = new Drivetrain(m_settings);
   private final Shooter m_shooter = new Shooter(m_settings);
+  private final Climber m_climber = new Climber();
   private final Intake m_intake = new Intake();
   private final Sensor m_sensor = new Sensor();
   private final Index m_index = new Index();
@@ -144,6 +147,7 @@ public class RobotContainer {
     m_leds.setDefaultCommand(Commands.run(() -> {m_leds.useChooser();}, m_leds));
 
     m_drivetrain.setDefaultCommand(m_curvatureDrive);
+    m_climber.setDefaultCommand(new TriggerClimb(m_settings, m_climber));
     m_arm.setDefaultCommand(new ArmGoToGoalRotation(m_arm, 0.));
   }
 
