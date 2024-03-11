@@ -105,6 +105,10 @@ public class Arm extends SubsystemBase {
     SmartDashboard.putNumber("Arm Volt Set", volt);
   }
 
+  public void resetEncoder (){
+    armSparkMax.getEncoder().setPosition(0.);
+  }
+
   public double getRotation() {
     return m_armEncoder.getPosition();
   }

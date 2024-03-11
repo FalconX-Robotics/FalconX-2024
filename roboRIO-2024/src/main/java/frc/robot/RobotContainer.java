@@ -12,6 +12,7 @@ import frc.robot.commands.ArmGoToGoalRotation;
 import frc.robot.commands.CurvatureDrive;
 import frc.robot.commands.PIDShoot;
 import frc.robot.commands.PathfindToPose;
+import frc.robot.commands.ResetArmEncoder;
 import frc.robot.commands.RunIndex;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.SimpleShoot;
@@ -98,22 +99,42 @@ public class RobotContainer {
   public RobotContainer() {
     
     NamedCommands.registerCommand("Shoot", new ParallelCommandGroup(
-      new PIDShoot(m_shooter).withTimeout(.7),
-      new ArmGoToGoalRotation(m_arm, Math.toRadians(5.)).withTimeout(0.7),
+      new PIDShoot(m_shooter),
+      //arm go to 5 degrees
+      new ArmGoToGoalRotation(m_arm, Math.toRadians(5.)),
+      //run index when shooter is at velocity and arm is at angle
       new RunIndex(m_index, 0.)
-      .until(() -> {return m_shooter.velocityIsWithinTarget(2450., 50.);})
-      .withTimeout(1).andThen(new RunIndex(m_index, 1.)),
+        .until(() -> {
+          return m_shooter.velocityIsWithinTarget(2450., 50.)
+          && Math.abs(Math.toDegrees(m_arm.getRotation()) - 5) <= 0.5;}
+        )
+        .withTimeout(.4)
+        .andThen(new RunIndex(m_index, 1.)),
       new RunIntake(m_intake, -.5)
-    ).withTimeout(0.8).andThen(new ArmGoToGoalRotation(m_arm, 0).withTimeout(.1)));
+    )
+    .withTimeout(0.8)
+    .andThen(
+      new ArmGoToGoalRotation(m_arm, 0)
+      .withTimeout(.1)
+    ));
     
     NamedCommands.registerCommand("Shoot Corner", new ParallelCommandGroup(
-      new PIDShoot(m_shooter).withTimeout(.7),
-      new ArmGoToGoalRotation(m_arm, Math.toRadians(9.)).withTimeout(0.7),
+      new PIDShoot(m_shooter),
+      new ArmGoToGoalRotation(m_arm, Math.toRadians(8.)),
       new RunIndex(m_index, 0.)
-      .until(() -> {return m_shooter.velocityIsWithinTarget(2450., 50.);})
-      .withTimeout(1).andThen(new RunIndex(m_index, 1.)),
+      .until(() -> {
+        return m_shooter.velocityIsWithinTarget(2450., 50.) 
+        && Math.abs(Math.toDegrees(m_arm.getRotation()) - 8) <= 0.5;}
+      )
+      .withTimeout(.4)
+      .andThen(new RunIndex(m_index, 1.)),
       new RunIntake(m_intake, -.5)
-    ).withTimeout(1.).andThen(new ArmGoToGoalRotation(m_arm, 0).withTimeout(.1)));
+    )
+    .withTimeout(.8)
+    .andThen(
+      new ArmGoToGoalRotation(m_arm, 0)
+      .withTimeout(.1)
+    ));
 
     NamedCommands.registerCommand("Intake", 
       new RunIntake(m_intake, -0.6)
@@ -187,13 +208,13 @@ public class RobotContainer {
     m_settings.noteSettings.shooterFireTrigger.whileTrue(
       new RunIndex(m_index, 1.)
       .onlyIf(() -> {return m_shooter.velocityIsWithinTarget(2650., 25.);})
-      .withTimeout(1.5).andThen(new RunIndex(m_index, 1.))
+      .withTimeout(1.5).andThen(new RunIndex(m_index, .5))
     );
     m_settings.noteSettings.reverseTrigger.whileTrue(
       new RunIndex(m_index, -.5)
       .alongWith(new RunIntake(m_intake, 1.))
     );
-    m_settings.noteSettings.shootAmpTrigger.whileTrue(new RunIndex(m_index, 1.).alongWith(new SimpleShoot(m_shooter, 2.)));
+    m_settings.noteSettings.shootAmpTrigger.whileTrue(new RunIndex(m_index, .5).alongWith(new SimpleShoot(m_shooter, .6)));
 
     new Trigger(()->  {return m_sensor.getNoteSensed();}).whileTrue(
       Commands.run(()->{
@@ -214,6 +235,8 @@ public class RobotContainer {
             m_leds.setColor(Color.PURPLE);
           }
       }, m_leds));
+
+    m_settings.noteSettings.resetArmEncoderTrigger.onTrue(new ResetArmEncoder(m_arm));
 
     m_settings.noteSettings.ampTrigger.onTrue(new ArmGoToGoalRotation(m_arm, Math.toRadians(95)).onlyWhile(() -> {return !m_arm.armJoystickActive();}));
     m_settings.noteSettings.storeTrigger.onTrue(new ArmGoToGoalRotation(m_arm, Math.toRadians(5.)).onlyWhile(() -> {return !m_arm.armJoystickActive();})
