@@ -13,7 +13,8 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static final double KITBOT_WHEEL_DIAMETER = 4.;
+  public static final double SLIP_FACTOR = 1.;
+  public static final double KITBOT_WHEEL_DIAMETER = 4. * SLIP_FACTOR;
   public static final double NESSIE_WHEEL_DIAMETER = 6.;
 
   //FIX THIS WHEN PIGEON IS ADDED

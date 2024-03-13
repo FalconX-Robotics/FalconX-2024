@@ -36,6 +36,9 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
+import org.ejml.data.ComplexPolar_F32;
+import org.ejml.ops.ComplexMath_F64;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -50,6 +53,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -152,6 +156,15 @@ public class RobotContainer {
     
     autoChooser = AutoBuilder.buildAutoChooser();
     autoChooser.addOption("Pathfind VERY EXPIREMENTAL", PathfindToPose.getPathfindCommand(1.23, 1.65, -127));
+    autoChooser.addOption("Test every motor", new SequentialCommandGroup(
+      Commands.run(()->{m_drivetrain.setLeftMotors(0.3);}, m_drivetrain).withTimeout(1),
+      Commands.run(()->{m_drivetrain.setRightMotors(0.3);}, m_drivetrain).withTimeout(1),
+      new ArmGoToGoalRotation(m_arm, Math.toRadians(95)),
+      new ArmGoToGoalRotation(m_arm, Math.toRadians(5.)),
+      new RunIntake(m_intake, 0.3).withTimeout(1),
+      new RunIndex(m_index, 0.3).withTimeout(1),
+      new SimpleShoot(m_shooter, 0.3)
+    ));
 
     logLevelChooser.setDefaultOption("Info", DashboardHelper.LogLevel.Info);
     logLevelChooser.addOption("Important", DashboardHelper.LogLevel.Important);
