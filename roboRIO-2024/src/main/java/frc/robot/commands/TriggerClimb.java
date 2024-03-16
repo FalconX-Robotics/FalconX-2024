@@ -23,12 +23,12 @@ public class TriggerClimb extends Command {
   private double getGreatestTriggerValue(){
     final double firstTrigger = m_settings.noteSettings.getUpClimbValue();
     final double secondTrigger = m_settings.noteSettings.getDownClimbValue();
-    return firstTrigger>secondTrigger?firstTrigger:secondTrigger;
+    return firstTrigger>secondTrigger?firstTrigger:-secondTrigger;
   }
 
   @Override
   public void execute() {
-    m_climber.setSparks(getGreatestTriggerValue());
+    m_climber.setSparks(getGreatestTriggerValue() * .3);
   }
 
   // Called once the command ends or is interrupted.

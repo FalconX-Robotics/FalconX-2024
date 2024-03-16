@@ -40,7 +40,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Sensor;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Vision;
+// import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.LEDs.Color;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -99,7 +99,7 @@ public class RobotContainer {
   private final Sensor m_sensor = new Sensor();
   private final Index m_index = new Index();
   private final Climber m_climber = new Climber();
-  private final Vision m_vision = new Vision();
+  // private final Vision m_vision = new Vision();
 
   private final TankDrive m_tankDrive = new TankDrive(m_drivetrain, driveController);
   private final ArcadeDrive m_arcadeDrive = new ArcadeDrive(m_drivetrain, m_settings);
@@ -249,10 +249,10 @@ public class RobotContainer {
     new Trigger(()->  {return m_sensor.getNoteSensed();}).whileTrue(
       Commands.run(()->{
         //m_vision.poseOffsetLedIndicator();
-      Optional<Double> angle = m_vision.getAngleToTarget();
-      if (angle.isEmpty()) {
+      // Optional<Double> angle = m_vision.getAngleToTarget();
+      // if (angle.isEmpty()) {
         m_leds.setColor(LEDs.Color.FOREST);
-      }
+      // }
     }, m_leds)
     );
     m_leds.setDefaultCommand(Commands.run(()->{
@@ -268,7 +268,7 @@ public class RobotContainer {
           } else {
             m_leds.setColor(Color.PURPLE);
           }
-    }, m_leds, m_vision));
+    }, m_leds));
 
     m_settings.noteSettings.resetArmEncoderTrigger.onTrue(new ResetArmEncoder(m_arm));
 
@@ -278,7 +278,7 @@ public class RobotContainer {
 
     m_drivetrain.setDefaultCommand(m_curvatureDrive);
     m_climber.setDefaultCommand(new TriggerClimb(m_settings, m_climber));
-    m_arm.setDefaultCommand(new ArmGoToGoalRotation(m_arm, 0.));
+    // m_arm.setDefaultCommand(new ArmGoToGoalRotation(m_arm, 0.));
   }
 
   
