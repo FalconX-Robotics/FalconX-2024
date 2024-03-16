@@ -16,6 +16,7 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -128,9 +129,9 @@ public class Arm extends SubsystemBase {
     DCMotor.getNEO(2),
     RatioConstants.ArmGearRatio,
     // MOI = mr^2 for a point
-    Math.pow(BaseUnits.Distance.convertFrom(24, Units.Inches), 2) * 
-      BaseUnits.Mass.convertFrom(20, Units.Pounds),
-    BaseUnits.Distance.convertFrom(24, Units.Inches),
+    Math.pow(BaseUnits.Distance.convertFrom(18, Units.Inches), 2) * 
+      BaseUnits.Mass.convertFrom(20, Units.Pounds) / 3,
+    BaseUnits.Distance.convertFrom(18, Units.Inches),
     BaseUnits.Angle.convertFrom(0, Units.Degrees),
     BaseUnits.Angle.convertFrom(270, Units.Degrees),
     true,
@@ -140,10 +141,19 @@ public class Arm extends SubsystemBase {
 
   @Override
   public void simulationPeriodic() {
+    double voltage = 0;
+    // account for weird get/getAppliedOutput behavior (get only works with set)
+    // getAppliedOutput only works with setVoltage()
+    double appliedOutputVoltage = armSparkMax.getAppliedOutput();
+    double getVoltage = armSparkMax.get() * RobotController.getBatteryVoltage();
+    if (Math.abs(appliedOutputVoltage) > 0.0001) {
+      voltage = appliedOutputVoltage;
+    } else if (Math.abs(getVoltage) > 0.0001) {
+      voltage = getVoltage;
+    }
+    m_armSim.setInputVoltage(voltage);
     m_armSim.update(0.02);
-    double temporaryNumber = armSparkMax.get() * 12;
-    m_armSim.setInputVoltage(temporaryNumber);
-    DashboardHelper.putNumber(DashboardHelper.LogLevel.Important, "Arm Applied Output", temporaryNumber);
+    DashboardHelper.putNumber(DashboardHelper.LogLevel.Important, "Arm Sim Applied Output", voltage);
     
     RelativeEncoderSim armEncoderSim = (RelativeEncoderSim) m_armEncoder;
     DashboardHelper.putNumber(DashboardHelper.LogLevel.Important, "Arm Angle Radians", 
