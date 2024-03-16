@@ -74,8 +74,6 @@ public final class Constants {
     public static final int shooterFollower = 13;
     public static final int arm = 20;
     public static final int armFollower = 21;
-    public static final int climber = 30;
-    public static final int climberFollower = 31;
   }
 
   public static class VisionConstants {

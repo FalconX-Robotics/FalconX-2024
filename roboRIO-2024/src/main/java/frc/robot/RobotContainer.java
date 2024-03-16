@@ -5,22 +5,9 @@
 package frc.robot;
 
 import frc.robot.Constants.ArmFeedForwardConstants;
-import java.time.LocalDateTime;
-import java.util.Optional;
-
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-
-import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.DashboardHelper.LogLevel;
+import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.ArmGoToGoalRotation;
 import frc.robot.commands.CurvatureDrive;
 import frc.robot.commands.PIDShoot;
@@ -29,14 +16,12 @@ import frc.robot.commands.ResetArmEncoder;
 import frc.robot.commands.RunIndex;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.SimpleShoot;
-import frc.robot.commands.TriggerClimb;
+import frc.robot.commands.TankDrive;
 import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Index;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
-import frc.robot.subsystems.Sensor;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.LEDs.Color;
@@ -246,9 +231,6 @@ public class RobotContainer {
 
     new Trigger(()->  {return m_sensor.getNoteSensed();}).whileTrue(
       Commands.run(()->{
-        //m_vision.poseOffsetLedIndicator();
-      Optional<Double> angle = m_vision.getAngleToTarget();
-      if (angle.isEmpty()) {
         m_leds.setColor(LEDs.Color.FOREST);
       }, m_leds)
     );
@@ -264,17 +246,8 @@ public class RobotContainer {
             }
           } else {
             m_leds.setColor(Color.PURPLE);
-          }        DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Target Not Present.");
-      } else if(Math.abs(angle.get()) < 5) {
-        m_vision.ledColor.setColor(m_vision.ledsIsAligned);
-        DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Aligned.");
-                
-        } else if(Math.abs(angle.get()) > 5) {
-        m_leds.setColor(LEDs.Color.LAVA);
-        DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Unaligned.");
-      }
-
-    }, m_leds, m_vision));
+          }
+      }, m_leds));
 
     m_settings.noteSettings.resetArmEncoderTrigger.onTrue(new ResetArmEncoder(m_arm));
 
@@ -283,8 +256,7 @@ public class RobotContainer {
       .withTimeout(3.));
 
     m_drivetrain.setDefaultCommand(m_curvatureDrive);
-    m_climber.setDefaultCommand(new TriggerClimb(m_settings, m_climber));
-    m_arm.setDefaultCommand(new ArmGoToGoalRotation(m_arm, 0.));
+    // m_arm.setDefaultCommand(new ArmGoToGoalRotation(m_arm, 0.));
   }
 
   
