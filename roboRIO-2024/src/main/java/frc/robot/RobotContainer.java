@@ -29,6 +29,8 @@ import frc.robot.commands.ResetArmEncoder;
 import frc.robot.commands.RunIndex;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.SimpleShoot;
+import frc.robot.commands.TankDrive;
+import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.TriggerClimb;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Climber;
@@ -96,14 +98,14 @@ public class RobotContainer {
   private final Intake m_intake = new Intake();
   private final Sensor m_sensor = new Sensor();
   private final Index m_index = new Index();
-  // private final Vision m_vision = new Vision();
+  private final Climber m_climber = new Climber();
+  private final Vision m_vision = new Vision();
 
   private final TankDrive m_tankDrive = new TankDrive(m_drivetrain, driveController);
   private final ArcadeDrive m_arcadeDrive = new ArcadeDrive(m_drivetrain, m_settings);
   private final CurvatureDrive m_curvatureDrive = new CurvatureDrive(m_drivetrain, m_settings);
 
   public final LEDs m_leds = new LEDs();
-  // private final Vision m_vision = new Vision();
   
 
   public void periodic() {
@@ -250,7 +252,8 @@ public class RobotContainer {
       Optional<Double> angle = m_vision.getAngleToTarget();
       if (angle.isEmpty()) {
         m_leds.setColor(LEDs.Color.FOREST);
-      }, m_leds)
+      }
+    }, m_leds)
     );
     m_leds.setDefaultCommand(Commands.run(()->{
       var alliance = DriverStation.getAlliance();
@@ -264,16 +267,7 @@ public class RobotContainer {
             }
           } else {
             m_leds.setColor(Color.PURPLE);
-          }        DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Target Not Present.");
-      } else if(Math.abs(angle.get()) < 5) {
-        m_vision.ledColor.setColor(m_vision.ledsIsAligned);
-        DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Aligned.");
-                
-        } else if(Math.abs(angle.get()) > 5) {
-        m_leds.setColor(LEDs.Color.LAVA);
-        DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Unaligned.");
-      }
-
+          }
     }, m_leds, m_vision));
 
     m_settings.noteSettings.resetArmEncoderTrigger.onTrue(new ResetArmEncoder(m_arm));
