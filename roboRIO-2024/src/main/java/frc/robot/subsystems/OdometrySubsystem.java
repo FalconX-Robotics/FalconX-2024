@@ -21,6 +21,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.BaseUnits;
+import edu.wpi.first.units.Unit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
@@ -56,21 +57,23 @@ public class OdometrySubsystem {
   DoubleLogEntry targetY = new DoubleLogEntry(log, "/odometry/targetY");
   DoubleLogEntry targetRotationDegrees = new DoubleLogEntry(log, "/odometry/targetRotationDegrees");
   
-
-  PIDController leftController = new PIDController(0., 0.0, 0.0);
-  PIDController rightController = new PIDController(0., 0.0, 0.); //this sorta works (maybe? (i dont know))
   
-  private static final double kTrackWidth = 0.457; // meters, this is the defauklt from wpilib
+  PIDController leftController = new PIDController(3,0,0);
+  PIDController rightController = new PIDController(3,0,0); //this sorta works (maybe? (i dont know))
+  
+  private static final double kTrackWidth = Units.Inches.toBaseUnits(22); // meters, this is the defauklt from wpilib
                                                    // change this later
 
   private final DifferentialDriveKinematics kinematics =
     new DifferentialDriveKinematics(kTrackWidth);
 
     
-  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.52, 2.4, 0.7);
+  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.52, 2.4, 0.3);
     
     // constructor so i can find in in the wall of code
   public OdometrySubsystem (Drivetrain drivetrain) {
+      leftController.setIntegratorRange(-2, 2);
+      rightController.setIntegratorRange(-2,2);
       this.drivetrain = drivetrain;
       gyro = drivetrain.getGyro();
       m_leftEncoder = drivetrain.getLeftEncoder();
@@ -81,7 +84,8 @@ public class OdometrySubsystem {
         this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
         this::getCurrentSpeeds, // Current ChassisSpeeds supplier
         this::driveChassisSpeeds, // Method that will drive the robot given ChassisSpeeds
-        new ReplanningConfig(), // Default path replanning config. See the API for the options here
+        7,1.3,
+        new ReplanningConfig(false, false), // Default path replanning config. See the API for the options here
         () -> {
                     // Boolean supplier that controls when the path will be mirrored for the red alliance
                     // This will flip the path being followed to the red side of the field.
@@ -241,10 +245,10 @@ public double getRightPosition () {
 
     RelativeEncoderSim leftEncoder = (RelativeEncoderSim) m_leftEncoder;
     RelativeEncoderSim rightEncoder = (RelativeEncoderSim) m_rightEncoder;
-    leftEncoder.setSimulationPositionMeters(simulation.getLeftPositionMeters());
-    rightEncoder.setSimulationPositionMeters(simulation.getRightPositionMeters());
-    leftEncoder.setSimulationVelocityMetersPerSecond(simulation.getLeftVelocityMetersPerSecond());
-    rightEncoder.setSimulationVelocityMetersPerSecond(simulation.getRightVelocityMetersPerSecond());
+    leftEncoder.setSimulationPosition(simulation.getLeftPositionMeters());
+    rightEncoder.setSimulationPosition(simulation.getRightPositionMeters());
+    leftEncoder.setSimulationVelocity(simulation.getLeftVelocityMetersPerSecond());
+    rightEncoder.setSimulationVelocity(simulation.getRightVelocityMetersPerSecond());
 
   }
 }

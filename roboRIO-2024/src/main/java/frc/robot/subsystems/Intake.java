@@ -22,7 +22,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void setMotor(double speed){
-    System.out.println("setting intake to "+speed);
+    // System.out.println("setting intake to "+speed);
     intakeSparkMax.set(speed);
   }
 

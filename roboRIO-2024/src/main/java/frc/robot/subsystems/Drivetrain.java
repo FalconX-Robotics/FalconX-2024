@@ -88,10 +88,10 @@ public class Drivetrain extends SubsystemBase {
     leftFollower.setInverted(false);
     rightLeader.setInverted(true);
     rightFollower.setInverted(true);
-    leftLeader.getEncoder().setMeasurementPeriod(20);
-    rightLeader.getEncoder().setMeasurementPeriod(20);
-    leftLeader.getEncoder().setAverageDepth(4);
-    rightLeader.getEncoder().setAverageDepth(4);
+    leftLeader.getEncoder().setMeasurementPeriod(8);
+    rightLeader.getEncoder().setMeasurementPeriod(8);
+    leftLeader.getEncoder().setAverageDepth(2);
+    rightLeader.getEncoder().setAverageDepth(2);
     leftLeader.setSmartCurrentLimit(60);
     rightLeader.setSmartCurrentLimit(60);
     leftLeader.setSmartCurrentLimit(60);
@@ -206,7 +206,7 @@ public class Drivetrain extends SubsystemBase {
   DifferentialDrivetrainSim m_simulation = 
   new DifferentialDrivetrainSim(DCMotor.getNEO(2), Constants.RatioConstants.KITBOT_GEAR_RATIO, 5, 
   BaseUnits.Mass.convertFrom(95, Units.Pounds), BaseUnits.Distance.convertFrom(2, Units.Inches), 
-  BaseUnits.Distance.convertFrom(18, Units.Inches), null);
+  Units.Inches.toBaseUnits(22), null);
   
 
   @Override

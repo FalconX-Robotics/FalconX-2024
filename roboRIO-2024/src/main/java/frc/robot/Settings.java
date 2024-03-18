@@ -56,10 +56,21 @@ public class Settings {
         public Trigger shooterChargeTrigger   = new JoystickButton(m_noteController, Button.kA.value);
         public Trigger shooterFireTrigger     = new JoystickButton(m_noteController, Button.kX.value);
         public Trigger intakeTrigger          = new JoystickButton(m_noteController, Button.kB.value);
+        public Trigger shootAmpTrigger        = new JoystickButton(m_noteController, Button.kY.value);
         public Trigger reverseTrigger         = new JoystickButton(m_noteController, Button.kRightBumper.value);
         
-        public double getArmJoystickValue () {return MathUtil.applyDeadband( 
+        public Trigger ampTrigger             = new JoystickButton(m_noteController, Button.kStart.value);
+        public Trigger storeTrigger           = new JoystickButton(m_noteController, Button.kBack.value);
+        public Trigger resetArmEncoderTrigger = new JoystickButton(m_noteController, Button.kLeftStick.value);
+
+        public double getManualArmJoystickValue () {return MathUtil.applyDeadband( 
             m_noteController.getLeftY(), deadband);
+        }
+        public double getUpClimbValue () {return MathUtil.applyDeadband( 
+            m_noteController.getLeftTriggerAxis(), deadband);
+        }
+        public double getDownClimbValue () {return MathUtil.applyDeadband( 
+            m_noteController.getRightTriggerAxis(), deadband);
         }
         public double deadband = 0.1;
     }

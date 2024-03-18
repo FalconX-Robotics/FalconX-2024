@@ -3,37 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.8169382053049823,
-        "y": 5.6025530060538795
+        "x": 0.749954642766429,
+        "y": 6.728691171668058
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.427385995181397,
-        "y": 5.6025530060538795
+        "x": 1.4389491636126137,
+        "y": 7.960085634456983
       },
       "isLocked": false,
-      "linkedName": "Ring Two"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.4096302478319247,
-        "y": 5.6025530060538795
+        "x": 7.493305272324831,
+        "y": 7.534961355636996
       },
       "prevControl": {
-        "x": 1.8878217079280468,
-        "y": 5.6025530060538795
+        "x": 6.493305272324831,
+        "y": 7.534961355636996
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Starting Point"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 2.0,
-    "maxAcceleration": 2.0,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 1.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
@@ -42,8 +42,11 @@
     "rotation": 0,
     "rotateFast": false
   },
-  "reversed": true,
+  "reversed": false,
   "folder": "4 ring auto",
-  "previewStartingState": null,
-  "useDefaultConstraints": false
+  "previewStartingState": {
+    "rotation": 61.11341823308925,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
 }

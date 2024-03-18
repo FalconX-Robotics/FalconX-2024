@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.4032384462873189,
+      "x": 1.4096302478319247,
       "y": 5.6025530060538795
     },
-    "rotation": -0.5939097107169558
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
@@ -80,34 +80,9 @@
           }
         },
         {
-          "type": "deadline",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Pickup Ring 3"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
-                }
-              }
-            ]
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "Shoot Ring 3"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot Corner"
+            "pathName": "Go to Center Line"
           }
         }
       ]

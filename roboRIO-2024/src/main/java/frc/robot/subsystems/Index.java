@@ -19,7 +19,7 @@ public class Index extends SubsystemBase {
 
   public void setIndexMotor(double velocity) {
     indexSparkMax.set(velocity);
-    System.out.println("setting index to " + velocity);
+    // System.out.println("setting index to " + velocity);
   }
 
   @Override

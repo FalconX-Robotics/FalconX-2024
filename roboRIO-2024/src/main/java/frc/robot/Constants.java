@@ -13,7 +13,8 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static final double KITBOT_WHEEL_DIAMETER = 4.;
+  public static final double SLIP_FACTOR = 1.;
+  public static final double KITBOT_WHEEL_DIAMETER = 4. * SLIP_FACTOR;
   public static final double NESSIE_WHEEL_DIAMETER = 6.;
 
   //FIX THIS WHEN PIGEON IS ADDED
@@ -36,16 +37,16 @@ public final class Constants {
     // TODO: set to a reasonable value
   }
   /** To be changed later; change values based on the weight, offset, etc of the arm */
-  public static class ArmFeedForwardValues {
-    public static final double maxVelocity = .25;
-    public static final double maxAcceleration = .5;
+  public static class ArmFeedForwardConstants {
+    public static final double maxVelocity = 100;
+    public static final double maxAcceleration = 1.5;
 
     /** In radians, the offset of the arm */
     public static final double offset = Math.toRadians(25);
-    public static final double staticGain = 0.06662;
-    public static final double gravityGain = 0.;
+    public static final double staticGain = 0.2;
+    public static final double gravityGain = 0.5;
     public static final double velocityGain = 12/((5600. / RatioConstants.ArmGearRatio / 60.) * (2. * Math.PI));
-}
+  }
   public static class MotorConstants {
     // 0 is reserved for RoboRIO and just generally shouldn't be used
     // 1 is reserved for Rev PDP
@@ -73,6 +74,8 @@ public final class Constants {
     public static final int shooterFollower = 13;
     public static final int arm = 20;
     public static final int armFollower = 21;
+    public static final int climber = 30;
+    public static final int climberFollower = 31;
   }
 
   public static class VisionConstants {
