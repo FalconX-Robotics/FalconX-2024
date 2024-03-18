@@ -35,8 +35,8 @@ public class Vision extends SubsystemBase {
          if (result.getMultiTagResult().estimatedPose.isPresent) {
 
             Transform3d fieldToCamera = result.getMultiTagResult().estimatedPose.best;
-            Transform3d blueTargetToField = new Transform3d(new Translation3d(0, -5.5, -2), new Rotation3d()); // Blue Speakers
-            Transform3d redTargetToField = new Transform3d(new Translation3d(0., 0., 0.), new Rotation3d()); //coordinates unknown at this time (Red Speakers)
+            Transform3d blueTargetToField = new Transform3d(new Translation3d(0, -5.5, 1.5), new Rotation3d()); // Blue Speakers
+            Transform3d redTargetToField = new Transform3d(new Translation3d(16.5, 5.5, 1.5), new Rotation3d()); //coordinates unknown at this time (Red Speakers)
             Transform3d blueTargetToCamera = blueTargetToField.plus(fieldToCamera);
             Transform3d redTargetToCamera = redTargetToField.plus(fieldToCamera);
 
@@ -75,8 +75,9 @@ public class Vision extends SubsystemBase {
     }
 
     public ArrayList<Pose3d> getTargetsToField() {
-        Transform3d result = new Transform3d(new Translation3d(0, -5.5, -2), new Rotation3d()); //Translation3d for tags 7 and 8 (Blue side)
-        
+        Transform3d blueResult = new Transform3d(new Translation3d(0, -5.5, 1.5), new Rotation3d()); //Translation3d for tags 7 and 8 (Blue side)
+        Transform3d redResult = new Transform3d(new Translation3d(16.5, 5.5, 1.5), new Rotation3d());
+
         AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();  
         ArrayList<Pose3d> pose3ds = new ArrayList<>();
         m_camera.getLatestResult().targets.forEach((target) -> {
