@@ -259,15 +259,14 @@ public class RobotContainer {
       Commands.run(()->{
         Optional<Double> angle = m_vision.getAngleToTarget();
         if (angle.isEmpty()) {
-          m_leds.setColor(LEDs.Color.LAVA);
           DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Target Not Present.");
+          // m_leds.setColor(LEDs.Color.LAVA);
         } else if (Math.abs(angle.get()) < 5) {
-          m_vision.ledColor.setColor(m_vision.ledsIsAligned);
           DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Aligned.");
+          // m_leds.setColor(m_vision.ledsIsAligned);
         } else if (Math.abs(angle.get()) > 5) {
-          m_leds.setColor(LEDs.Color.LAVA);
+          // m_leds.setColor(LEDs.Color.LAVA);
           DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Unaligned.");
-          m_leds.setColor(LEDs.Color.FOREST);
         } 
       }, m_leds)
     );

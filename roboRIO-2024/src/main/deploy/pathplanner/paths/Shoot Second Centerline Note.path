@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.4096302478319247,
-        "y": 5.6025530060538795
+        "x": 7.918429551144817,
+        "y": 2.3161943466744086
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.6378678471642663,
-        "y": 5.585253456221199
+        "x": 5.761323840026815,
+        "y": 1.264103594380623
       },
       "isLocked": false,
-      "linkedName": "Starting Point"
+      "linkedName": "Source Side Centerline Note 2"
     },
     {
       "anchor": {
-        "x": 2.8169382053049823,
-        "y": 5.6025530060538795
+        "x": 0.7792735585471178,
+        "y": 4.353858993432273
       },
       "prevControl": {
-        "x": 1.8169382053049823,
-        "y": 5.6025530060538795
+        "x": 1.5741524548969252,
+        "y": 3.081786849197634
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Ring Two"
+      "linkedName": "Source Starting point"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
     "rotation": 0,
     "rotateFast": false
   },
-  "reversed": false,
+  "reversed": true,
   "folder": "3 Note Source Side",
   "previewStartingState": {
     "rotation": 0,

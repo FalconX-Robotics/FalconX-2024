@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7792735585471178,
-        "y": 4.353858993432273
-      },
-      "prevControl": null,
-      "nextControl": {
-        "x": 2.685003084291883,
-        "y": 0.7329728945172185
-      },
-      "isLocked": false,
-      "linkedName": "Source Starting point"
-    },
-    {
-      "anchor": {
         "x": 7.815813345912407,
         "y": 0.7622918102979067
       },
+      "prevControl": null,
+      "nextControl": {
+        "x": 5.719305850235382,
+        "y": 0.7622918102979069
+      },
+      "isLocked": false,
+      "linkedName": "Source Side Centerline Note"
+    },
+    {
+      "anchor": {
+        "x": 0.7792735585471178,
+        "y": 4.353858993432273
+      },
       "prevControl": {
-        "x": 4.457645414911007,
-        "y": 0.7622918102979067
+        "x": 1.6148626582967456,
+        "y": 0.9821836786530717
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Source Side Centerline Note"
+      "linkedName": "Source Starting point"
     }
   ],
   "rotationTargets": [],
@@ -42,10 +42,10 @@
     "rotation": 0,
     "rotateFast": false
   },
-  "reversed": false,
+  "reversed": true,
   "folder": "3 Note Source Side",
   "previewStartingState": {
-    "rotation": -59.036243467926475,
+    "rotation": 178.9860212772147,
     "velocity": 0
   },
   "useDefaultConstraints": true
