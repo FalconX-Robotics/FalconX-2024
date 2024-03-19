@@ -39,7 +39,7 @@ public final class Constants {
   /** To be changed later; change values based on the weight, offset, etc of the arm */
   public static class ArmFeedForwardConstants {
     public static final double maxVelocity = 100;
-    public static final double maxAcceleration = 1.5;
+    public static final double maxAcceleration = 4.;
 
     /** In radians, the offset of the arm */
     public static final double offset = Math.toRadians(25);

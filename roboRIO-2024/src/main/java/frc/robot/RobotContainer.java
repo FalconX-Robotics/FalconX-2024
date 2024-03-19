@@ -40,6 +40,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Sensor;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Vision;
 // import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.LEDs.Color;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -90,6 +91,7 @@ public class RobotContainer {
   private final XboxController driveController = new XboxController(OperatorConstants.kDriverControllerPort);
   private final XboxController noteController = new XboxController(OperatorConstants.kShooterControllerPort);
 
+  public final LEDs m_leds = new LEDs();
   private final Settings m_settings = new Settings(driveController, noteController);
 
   private final Drivetrain m_drivetrain = new Drivetrain(m_settings);
@@ -99,13 +101,12 @@ public class RobotContainer {
   private final Sensor m_sensor = new Sensor();
   private final Index m_index = new Index();
   private final Climber m_climber = new Climber();
-  // private final Vision m_vision = new Vision();
+  private final Vision m_vision = new Vision(m_leds);
 
   private final TankDrive m_tankDrive = new TankDrive(m_drivetrain, driveController);
   private final ArcadeDrive m_arcadeDrive = new ArcadeDrive(m_drivetrain, m_settings);
   private final CurvatureDrive m_curvatureDrive = new CurvatureDrive(m_drivetrain, m_settings);
 
-  public final LEDs m_leds = new LEDs();
   
 
   public void periodic() {
@@ -268,7 +269,7 @@ public class RobotContainer {
           // m_leds.setColor(LEDs.Color.LAVA);
           DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Unaligned.");
         } 
-      }, m_leds)
+      })
     );
     m_leds.setDefaultCommand(Commands.run(()->{
       var alliance = DriverStation.getAlliance();
@@ -287,9 +288,16 @@ public class RobotContainer {
 
     m_settings.noteSettings.resetArmEncoderTrigger.onTrue(new ResetArmEncoder(m_arm));
 
-    m_settings.noteSettings.ampTrigger.onTrue(new ArmGoToGoalRotation(m_arm, Math.toRadians(95)).onlyWhile(() -> {return !m_arm.armJoystickActive();}));
-    m_settings.noteSettings.storeTrigger.onTrue(new ArmGoToGoalRotation(m_arm, Math.toRadians(5.)).onlyWhile(() -> {return !m_arm.armJoystickActive();})
-      .withTimeout(3.));
+    new Trigger (() -> {return m_arm.armJoystickActive();}).whileTrue(
+      Commands.run (
+        () -> {m_arm.setSparks(m_settings.noteSettings.getManualArmJoystickValue() * .2);},
+        m_arm
+        )
+      );
+
+    m_settings.noteSettings.ampTrigger.onTrue(new ArmGoToGoalRotation(m_arm, Math.toRadians(95)));
+    m_settings.noteSettings.storeTrigger.onTrue(new ArmGoToGoalRotation(m_arm, Math.toRadians(5.))
+      .withTimeout(1.5));
 
     m_drivetrain.setDefaultCommand(m_curvatureDrive);
     m_climber.setDefaultCommand(new TriggerClimb(m_settings, m_climber));
