@@ -23,8 +23,12 @@ public final class Constants {
   // LED is in PWM and thus doesn't need a unique value unless there are other things in PWM.
   public static final int LED_PORT = 0;
 
-  // Sensor is in DIO and thus doesn't need a unique value unless there are other things in DIO..
-  public static final int SENSOR_PORT = 9;
+  // DIO on the RoboRIO.
+  public static class DIOConstants {
+    public static final int LEFT_CLIMB_SWITCH = 0;
+    public static final int RIGHT_CLIMB_SWITCH = 1;
+    public static final int SENSOR_PORT = 9;
+  }
 
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;

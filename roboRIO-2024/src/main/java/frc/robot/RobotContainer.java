@@ -5,6 +5,8 @@
 package frc.robot;
 
 import frc.robot.Constants.ArmFeedForwardConstants;
+import frc.robot.Constants.DIOConstants;
+
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -38,15 +40,16 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Index;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
-import frc.robot.subsystems.Sensor;
+import frc.robot.subsystems.LimitSwitch;
 import frc.robot.subsystems.Shooter;
 // import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.LEDs.Color;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.subsystems.OdometrySubsystem;
-import frc.robot.DashboardHelper;
 import frc.robot.subsystems.Sensor;
+import frc.robot.DashboardHelper;
+import frc.robot.subsystems.LimitSwitch;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -97,6 +100,8 @@ public class RobotContainer {
   private final Shooter m_shooter = new Shooter();
   private final Intake m_intake = new Intake();
   private final Sensor m_sensor = new Sensor();
+  private final LimitSwitch m_leftClimbLimitSwitch = new LimitSwitch(DIOConstants.LEFT_CLIMB_SWITCH);
+  private final LimitSwitch m_rightClimbLimitSwitch = new LimitSwitch(DIOConstants.RIGHT_CLIMB_SWITCH);
   private final Index m_index = new Index();
   private final Climber m_climber = new Climber();
   // private final Vision m_vision = new Vision();
