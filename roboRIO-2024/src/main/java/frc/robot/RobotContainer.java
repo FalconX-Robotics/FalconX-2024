@@ -30,6 +30,7 @@ import frc.robot.commands.RunIndex;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.SimpleShoot;
 import frc.robot.commands.TankDrive;
+import frc.robot.commands.AimArm;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.TriggerClimb;
 import frc.robot.subsystems.Arm;
@@ -246,6 +247,7 @@ public class RobotContainer {
       .alongWith(new RunIntake(m_intake, 1.))
     );
     m_settings.noteSettings.shootAmpTrigger.whileTrue(new RunIndex(m_index, .5).alongWith(new SimpleShoot(m_shooter, .6)));
+    m_settings.noteSettings.autoAimTrigger.whileTrue(new AimArm(m_arm, m_vision));
 
     new Trigger(()->  {return m_sensor.getNoteSensed();}).whileTrue(
       Commands.run(()->{

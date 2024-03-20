@@ -62,6 +62,7 @@ public class Settings {
         public Trigger ampTrigger             = new JoystickButton(m_noteController, Button.kStart.value);
         public Trigger storeTrigger           = new JoystickButton(m_noteController, Button.kBack.value);
         public Trigger resetArmEncoderTrigger = new JoystickButton(m_noteController, Button.kLeftStick.value);
+        public Trigger autoAimTrigger         = new JoystickButton(m_noteController, Button.kLeftStick.value);
 
         public double getManualArmJoystickValue () {return MathUtil.applyDeadband( 
             m_noteController.getLeftY(), deadband);
