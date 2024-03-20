@@ -15,7 +15,7 @@ import frc.robot.DashboardHelper.LogLevel;
 import frc.robot.subsystems.Arm;
 
 public class ArmGoToGoalRotation extends Command {
-  PIDController rotationPIDController = new PIDController(30., 0, 0);
+  PIDController rotationPIDController = new PIDController(20., 0, 0);
   // PIDController velocityPIDController = new PIDController(0., 0, 0);
   TrapezoidProfile trapezoidProfile = new TrapezoidProfile(
     new TrapezoidProfile.Constraints(ArmFeedForwardConstants.maxVelocity, ArmFeedForwardConstants.maxAcceleration));
@@ -57,7 +57,7 @@ public class ArmGoToGoalRotation extends Command {
     DashboardHelper.putNumber(LogLevel.Important, "Target State Velocity", targetState.velocity);
 
     // Why do we need to clamp? We already have a max voltage -w
-    m_arm.setSparksVoltage(MathUtil.clamp(voltageOutput + positionPIDOutput, -4., 4.));
+    m_arm.setSparksVoltage(MathUtil.clamp(voltageOutput + positionPIDOutput, -10., 10.));
     DashboardHelper.putNumber(LogLevel.Debug, "Attempt Spark Volt", voltageOutput + positionPIDOutput);
   }
 

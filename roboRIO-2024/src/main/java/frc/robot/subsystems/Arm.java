@@ -122,12 +122,6 @@ public class Arm extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // If no current command, set arm via joystick value.
-    if(this.getCurrentCommand() == null) {
-      if (armJoystickActive()) {
-        setSparks(m_settings.noteSettings.getManualArmJoystickValue() * .2);
-      }
-    }
 
       //TODO make work
       // armSparkMax.set(feedforward());
