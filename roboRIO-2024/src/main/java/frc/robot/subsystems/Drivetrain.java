@@ -12,6 +12,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.BaseUnits;
 import edu.wpi.first.units.Distance;
@@ -40,12 +41,15 @@ import frc.robot.Settings;
 import frc.robot.Constants.MotorConstants;
 import frc.robot.Constants.RatioConstants;
 import frc.robot.DashboardHelper.LogLevel;
+import frc.robot.util.BetterSlewRateLimiter;
 import frc.robot.DashboardHelper;
 
 public class Drivetrain extends SubsystemBase {
+  
   // There is a different system used than previous years because MotorControlGroup is deprecated :(.
   // We set a motor to a leader, and make followers follow the leader in the constructor.  
   // Front wheels are leaders for no reason because its redundant
+  BetterSlewRateLimiter slewRateLimiter = new BetterSlewRateLimiter(60, 0, 0);
   private CANSparkMax leftLeader = new CANSparkMax(MotorConstants.DrivetrainMotors.frontLeft.value, MotorType.kBrushless);
   private CANSparkMax rightLeader = new CANSparkMax(MotorConstants.DrivetrainMotors.frontRight.value, MotorType.kBrushless);
   private CANSparkMax leftFollower = new CANSparkMax(MotorConstants.DrivetrainMotors.backLeft.value, MotorType.kBrushless);
@@ -96,7 +100,7 @@ public class Drivetrain extends SubsystemBase {
     rightLeader.setSmartCurrentLimit(60);
     leftLeader.setSmartCurrentLimit(60);
     rightLeader.setSmartCurrentLimit(60);
-    applytoAllMotors((motor) -> {motor.setOpenLoopRampRate(0.2);});
+    // applytoAllMotors((motor) -> {motor.setOpenLoopRampRate(0.2);});
 
     applytoAllMotors((motor) -> {
       motor.setIdleMode(IdleMode.kBrake);
@@ -176,7 +180,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     DashboardHelper.putNumber(LogLevel.Debug, "Rotation", rotation);
-    WheelSpeeds wheelSpeeds = DifferentialDrive.curvatureDriveIK(speed, rotation, turnInPlace);
+    WheelSpeeds wheelSpeeds = DifferentialDrive.curvatureDriveIK(slewRateLimiter.calculate(speed), rotation, turnInPlace);
     wheelSpeeds.left += 0.00 * Math.signum(wheelSpeeds.left);
     wheelSpeeds.right += 0.00 * Math.signum(wheelSpeeds.right);
 
