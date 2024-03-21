@@ -24,6 +24,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.DashboardHelper.LogLevel;
 import frc.robot.commands.ArmGoToGoalRotation;
+import frc.robot.commands.Climb;
+import frc.robot.commands.ClimbIndividual;
 import frc.robot.commands.CurvatureDrive;
 import frc.robot.commands.PIDShoot;
 import frc.robot.commands.PathfindToPose;
@@ -34,6 +36,7 @@ import frc.robot.commands.SimpleShoot;
 import frc.robot.commands.TankDrive;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.TriggerClimb;
+import frc.robot.commands.ClimbIndividual.Side;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
@@ -43,7 +46,6 @@ import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.LimitSwitch;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Vision;
-// import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.LEDs.Color;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -52,21 +54,12 @@ import frc.robot.subsystems.Sensor;
 import frc.robot.DashboardHelper;
 import frc.robot.subsystems.LimitSwitch;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.concurrent.TimeUnit;
-
-import org.ejml.data.ComplexPolar_F32;
-import org.ejml.ops.ComplexMath_F64;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -94,7 +87,7 @@ public class RobotContainer {
   private final XboxController driveController = new XboxController(OperatorConstants.kDriverControllerPort);
   private final XboxController noteController = new XboxController(OperatorConstants.kShooterControllerPort);
 
-  public final LEDs m_leds = new LEDs();
+public final LEDs m_leds = new LEDs();
   private final Settings m_settings = new Settings(driveController, noteController);
 
   private final Drivetrain m_drivetrain = new Drivetrain(m_settings);
@@ -105,14 +98,14 @@ public class RobotContainer {
   private final LimitSwitch m_leftClimbLimitSwitch = new LimitSwitch(DIOConstants.LEFT_CLIMB_SWITCH);
   private final LimitSwitch m_rightClimbLimitSwitch = new LimitSwitch(DIOConstants.RIGHT_CLIMB_SWITCH);
   private final Index m_index = new Index();
-  private final Climber m_climber = new Climber();
+  private final Climber m_climber = new Climber(m_leftClimbLimitSwitch, m_rightClimbLimitSwitch);
   private final Vision m_vision = new Vision(m_leds);
 
   private final TankDrive m_tankDrive = new TankDrive(m_drivetrain, driveController);
   private final ArcadeDrive m_arcadeDrive = new ArcadeDrive(m_drivetrain, m_settings);
   private final CurvatureDrive m_curvatureDrive = new CurvatureDrive(m_drivetrain, m_settings);
 
-  
+    
 
   public void periodic() {
     // m_vision.getAngleToTarget();
@@ -305,8 +298,14 @@ public class RobotContainer {
       .withTimeout(1.5));
 
     m_drivetrain.setDefaultCommand(m_curvatureDrive);
-    m_climber.setDefaultCommand(new TriggerClimb(m_settings, m_climber));
-    // m_arm.setDefaultCommand(new ArmGoToGoalRotation(m_arm, 0.));
+    m_climber.setDefaultCommand(new Climb(m_climber, 0.));
+
+    // Trigger activates when a climb trigger is pushed (L2 or R2 in controller terms)
+    new Trigger(()->{return Math.abs(m_settings.noteSettings.getGreatestTriggerValue()) > 0;}).whileTrue(new TriggerClimb(m_settings, m_climber));
+
+    // Automatically moves the climbers down when the limit switch isnt active
+    new Trigger(()->{return m_leftClimbLimitSwitch.getAsBoolean();}).whileFalse(new ClimbIndividual(m_climber, .3, Side.LEFT));
+    new Trigger(()->{return m_rightClimbLimitSwitch.getAsBoolean();}).whileFalse(new ClimbIndividual(m_climber, .3, Side.RIGHT));
   }
 
   

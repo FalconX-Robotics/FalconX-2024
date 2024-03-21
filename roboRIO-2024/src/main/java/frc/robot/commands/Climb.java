@@ -8,6 +8,7 @@ public class Climb extends Command {
     double volt;
 
     public Climb(Climber climber, double volt) {
+        m_climber = climber;
         this.volt = volt;
     }
 

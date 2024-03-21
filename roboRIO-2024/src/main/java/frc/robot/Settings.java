@@ -72,6 +72,12 @@ public class Settings {
         public double getDownClimbValue () {return MathUtil.applyDeadband( 
             m_noteController.getRightTriggerAxis(), deadband);
         }
+        /** @return The trigger value of whichever joystick is pushed in more */
+        public double getGreatestTriggerValue(){
+            final double firstTrigger = getUpClimbValue();
+            final double secondTrigger = getDownClimbValue();
+            return firstTrigger>secondTrigger?firstTrigger:-secondTrigger;
+        }
         public double deadband = 0.1;
     }
 }

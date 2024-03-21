@@ -97,8 +97,10 @@ public class Arm extends SubsystemBase {
       armSparkMax.setVoltage(MathUtil.clamp(volt, 0., 15.));
     }
     if(isAtMaxExtension()){
-      SmartDashboard.putNumber("Arm Volt Set", MathUtil.clamp(volt, -15., -.3));
-      armSparkMax.setVoltage(MathUtil.clamp(volt, -15., -.3));
+      // SmartDashboard.putNumber("Arm Volt Set", MathUtil.clamp(volt, -15., -.3));
+      // armSparkMax.setVoltage(MathUtil.clamp(volt, -15., -.3));
+      SmartDashboard.putNumber("Arm Volt Set", MathUtil.clamp(volt, -15., Math.cos(getRotation())*ArmFeedForwardConstants.gravityGain));
+      armSparkMax.setVoltage(MathUtil.clamp(volt, -15., Math.cos(getRotation())*ArmFeedForwardConstants.gravityGain));
       return;
     }
     armSparkMax.setVoltage(volt);

@@ -19,16 +19,9 @@ public class TriggerClimb extends Command {
     addRequirements(climber);
   }
 
-  /** @return The trigger value of whichever joystick is pushed in more */
-  private double getGreatestTriggerValue(){
-    final double firstTrigger = m_settings.noteSettings.getUpClimbValue();
-    final double secondTrigger = m_settings.noteSettings.getDownClimbValue();
-    return firstTrigger>secondTrigger?firstTrigger:-secondTrigger;
-  }
-
   @Override
   public void execute() {
-    m_climber.setSparks(getGreatestTriggerValue() * .3);
+    m_climber.setSparks(m_settings.noteSettings.getGreatestTriggerValue() * .3);
   }
 
   // Called once the command ends or is interrupted.
