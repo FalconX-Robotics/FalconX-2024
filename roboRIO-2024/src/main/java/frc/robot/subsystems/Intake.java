@@ -11,17 +11,19 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MotorConstants;
 
 public class Intake extends SubsystemBase {
-  CANSparkMax topIntakeSparkMax = new CANSparkMax(MotorConstants.topIntake, MotorType.kBrushless);
-  CANSparkMax bottomIntakeSparkMax = new CANSparkMax(MotorConstants.bottomIntake, MotorType.kBrushless);
-  
-  public void setSparks(double volt) {
-    topIntakeSparkMax.set(volt);
-  }
+  CANSparkMax intakeSparkMax = new CANSparkMax(MotorConstants.intake, MotorType.kBrushless);
   
   /** Creates a new Intake. */
   public Intake() {
-    bottomIntakeSparkMax.follow(topIntakeSparkMax);
-    // TODO: Set inverted here if necessary
+    intakeSparkMax.restoreFactoryDefaults();
+    intakeSparkMax.setSmartCurrentLimit(40);
+    intakeSparkMax.setInverted(true);
+    intakeSparkMax.burnFlash();
+  }
+
+  public void setMotor(double speed){
+    // System.out.println("setting intake to "+speed);
+    intakeSparkMax.set(speed);
   }
 
   @Override

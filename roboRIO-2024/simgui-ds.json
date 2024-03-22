@@ -1,14 +1,4 @@
 {
-  "FMS": {
-    "window": {
-      "visible": false
-    }
-  },
-  "Joysticks": {
-    "window": {
-      "visible": false
-    }
-  },
   "System Joysticks": {
     "window": {
       "visible": false
@@ -107,6 +97,7 @@
     }
   ],
   "robotJoysticks": [
+    {},
     {
       "guid": "Keyboard0"
     }

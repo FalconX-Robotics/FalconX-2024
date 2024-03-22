@@ -1,64 +1,113 @@
 package frc.robot.subsystems;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants.VisionConstants;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.DashboardHelper;
+import frc.robot.DashboardHelper.LogLevel;
 
-public class Vision {
+public class Vision extends SubsystemBase {
 
-    // TODO why are we removing the camera from robot container??? -w
-    private PhotonCamera limelightCamera = new PhotonCamera("limelightCamera");
-
-    // TODO Red speaker
-    private Transform3d getSpeakerToFieldTransform() {
-        return VisionConstants.BLUE_SPEAKER_TRANSFORM;
+    LEDs m_leds;
+    public Vision(LEDs leds) {
+        m_leds = leds;
     }
 
-    public double getDistanceToSpeaker() {
-        var result = limelightCamera.getLatestResult();
+    PhotonCamera m_camera = new PhotonCamera("Shelldon");
 
-        if (result.getMultiTagResult().estimatedPose.isPresent) {
-            Transform3d transform = result.getMultiTagResult().estimatedPose.best;
-            SmartDashboard.putNumber("PV X", transform.getX());
-            SmartDashboard.putNumber("PV Y", transform.getY());
-            SmartDashboard.putNumber("PV Z", transform.getZ());
-            SmartDashboard.putNumber("PV Rotation Rad", transform.getRotation().getAngle());
+    //public LEDs.Color ledsIsAligned = LEDs.Color.HEARTBEAT_BLUE;
 
-            // This is wrong
-            Transform3d speakerToRobotTransform = getSpeakerToFieldTransform().plus(transform);
+    public Optional<Double> getAngleToSpeaker() {
 
-            //speakerToRobotTransform.getRotation().getY()''
-            
-            // As is this
-            // double range = PhotonUtils.calculateDistanceToTargetMeters(VisionConstants.CAMERA_HEIGHT_METERS, VisionConstants.TARGET_HEIGHT_METERS, VisionConstants.CAMERA_PITCH_RADIANS, Units.degreesToRadians(result.getMultiTagResult().estimatedPose.best.getPitch()));
-            
-            // TODO: by william; idk what you're tryin to do but this code i changed looks right now lol
-            double range = PhotonUtils.calculateDistanceToTargetMeters(
-                VisionConstants.CAMERA_HEIGHT_METERS,
-                VisionConstants.TARGET_HEIGHT_METERS,
-                VisionConstants.CAMERA_PITCH_RADIANS,
-                Units.degreesToRadians(result.getBestTarget().getPitch())
-            );
-            return range;
+        var result = m_camera.getLatestResult();
+
+        List<PhotonTrackedTarget> targets = result.getTargets();
+
+        for (PhotonTrackedTarget target : targets) {
+            if (target.getFiducialId() == 4 || target.getFiducialId() == 7) {
+                DashboardHelper.putNumber(LogLevel.Debug, "ambiguity" + target.getFiducialId(), target.getPoseAmbiguity());
+                if (target.getPoseAmbiguity() < 0.1) {
+                    DashboardHelper.putNumber(LogLevel.Debug, "yaw", target.getYaw());
+                    DashboardHelper.putBoolean(LogLevel.Debug, "tag detected", true);
+                    return Optional.of(Math.atan(Units.Inches.toBaseUnits(target.getBestCameraToTarget().getY()+15)
+                    /(Units.Inches.toBaseUnits(target.getBestCameraToTarget().getZ())-15))
+);
+                }
+            }
+            DashboardHelper.putBoolean(LogLevel.Debug, "tag detected", false);
+            return Optional.empty();
         }
-        return 99999;// returns 99999 if nothing?
-        
-        /* for (PhotonTrackedTarget target:result.getTargets()) {
-            if(target.getFiducialId() == )
-        
-        } */
+
+        return Optional.empty(); 
     }
 
-    public double getAngleToSpeaker() {
-        var result = limelightCamera.getLatestResult();
 
-        // TODO: temporary code added by william (best programmer) to remove an error i saw
-        // Taylor what is this..
-        return 99999999.;
+    public Optional<Double> getAngleToTarget() {
+
+        var result = m_camera.getLatestResult();
+
+        List<PhotonTrackedTarget> targets = result.getTargets();
+
+        for (PhotonTrackedTarget target : targets) {
+            if (target.getFiducialId() == 4 || target.getFiducialId() == 7) {
+                DashboardHelper.putNumber(LogLevel.Debug, "ambiguity" + target.getFiducialId(), target.getPoseAmbiguity());
+                if (target.getPoseAmbiguity() < 0.1) {
+                    DashboardHelper.putNumber(LogLevel.Debug, "yaw", target.getYaw());
+                    DashboardHelper.putBoolean(LogLevel.Debug, "tag detected", true);
+                    return Optional.of(target.getPitch());
+                }
+            }
+            DashboardHelper.putBoolean(LogLevel.Debug, "tag detected", false);
+            return Optional.empty();
+        }
+
+        return Optional.empty(); 
+
+    }/*double angle = Math.atan(Units.Inches.toBaseUnits(target.getBestCameraToTarget().getY())
+                                           /(Units.Inches.toBaseUnits(target.getBestCameraToTarget().getZ()+15)));
+                     */
+
+    public ArrayList<Pose3d> getTargetsToField() {
+        Transform3d blueResult = new Transform3d(new Translation3d(0, -5.5, 1.5), new Rotation3d()); //Translation3d for tags 7 and 8 (Blue side)
+        Transform3d redResult = new Transform3d(new Translation3d(16.5, 5.5, 1.5), new Rotation3d());
+
+        AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();  
+        ArrayList<Pose3d> pose3ds = new ArrayList<>();
+        m_camera.getLatestResult().targets.forEach((target) -> {
+            
+            pose3ds.add(aprilTagFieldLayout.getTagPose(target.getFiducialId()).get());
+        });
+
+        return pose3ds;
+
     }
+
+    public Optional<Double> getDistanceToTarget() {
+        var result = m_camera.getLatestResult();
+        Optional<Double> pitch = getAngleToTarget();
+        List<PhotonTrackedTarget> targets = result.getTargets();
+        double distance;
+        if(!targets.isEmpty() && pitch.isPresent()) {
+            distance = 63 / Math.tan(pitch.get());
+
+            return Optional.of(distance);
+        } 
+        return Optional.empty();
+    }
+   
+
+    
 }

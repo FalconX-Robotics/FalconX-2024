@@ -1,0 +1,43 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.7792735585471178,
+      "y": 4.353858993432273
+    },
+    "rotation": -60.255118703057796
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Go to Center Line"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Shoot from Center Line"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Pickup Second Centerline Note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Shoot Second Centerline Note"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

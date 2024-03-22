@@ -5,28 +5,26 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 
-public class RunIntake extends Command {
-  Intake m_intake;
-  double velocity;
-
-  /** Creates a new RunIntake. */
-  public RunIntake(Intake intake, double velocity) {
-    m_intake = intake;
-    this.velocity = velocity;
-    addRequirements(intake);
+public class SimpleShoot extends Command {
+  Shooter m_shooter;
+  double speedPercent;
+  /** Creates a new SimpleShoot. */
+  public SimpleShoot(Shooter shooter, double speedPercent) {
+    m_shooter = shooter;
+    this.speedPercent = speedPercent;
+    addRequirements(m_shooter);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_intake.setMotor(velocity);
+    m_shooter.setShooterSparks(speedPercent);
   }
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_intake.setMotor(0);
+    m_shooter.setShooterSparks(0.);
   }
 }
