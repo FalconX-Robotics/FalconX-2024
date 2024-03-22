@@ -83,8 +83,8 @@ public class Arm extends SubsystemBase {
       return;
     }
     if(isAtMaxExtension()){
-      SmartDashboard.putNumber("Arm Volt Set", MathUtil.clamp(percentOutput, -1.5, -.33) * 12);
-      armSparkMax.set(MathUtil.clamp(percentOutput, -1.5, -.33));
+      SmartDashboard.putNumber("Arm Volt Set", MathUtil.clamp(percentOutput, -1.5, Math.cos(getRotation())*ArmFeedForwardConstants.gravityGain/12.) * 12);
+      armSparkMax.set(MathUtil.clamp(percentOutput, -1.5, Math.min(Math.cos(getRotation())*ArmFeedForwardConstants.gravityGain/12., 0)));
       return;
     }
     armSparkMax.set(percentOutput);
@@ -100,7 +100,7 @@ public class Arm extends SubsystemBase {
       // SmartDashboard.putNumber("Arm Volt Set", MathUtil.clamp(volt, -15., -.3));
       // armSparkMax.setVoltage(MathUtil.clamp(volt, -15., -.3));
       SmartDashboard.putNumber("Arm Volt Set", MathUtil.clamp(volt, -15., Math.cos(getRotation())*ArmFeedForwardConstants.gravityGain));
-      armSparkMax.setVoltage(MathUtil.clamp(volt, -15., Math.cos(getRotation())*ArmFeedForwardConstants.gravityGain));
+      armSparkMax.setVoltage(MathUtil.clamp(volt, -15., Math.min(Math.cos(getRotation())*ArmFeedForwardConstants.gravityGain, 0)));
       return;
     }
     armSparkMax.setVoltage(volt);

@@ -62,15 +62,16 @@ public class Settings {
         public Trigger ampTrigger             = new JoystickButton(m_noteController, Button.kStart.value);
         public Trigger storeTrigger           = new JoystickButton(m_noteController, Button.kBack.value);
         public Trigger resetArmEncoderTrigger = new JoystickButton(m_noteController, Button.kLeftStick.value);
+        public Trigger moveClimbUpTrigger     = new JoystickButton(m_noteController, Button.kLeftBumper.value);
 
         public double getManualArmJoystickValue () {return MathUtil.applyDeadband( 
             m_noteController.getLeftY(), deadband);
         }
         public double getLeftClimbValue () {return MathUtil.applyDeadband( 
-            m_noteController.getLeftTriggerAxis(), deadband);
+            m_noteController.getLeftTriggerAxis(), deadband) * .3;
         }
         public double getRightClimbValue () {return MathUtil.applyDeadband( 
-            m_noteController.getRightTriggerAxis(), deadband);
+            m_noteController.getRightTriggerAxis(), deadband) * .3;
         }
         /** @return The trigger value of whichever joystick is pushed in more */
         public double getGreatestTriggerValue(){
@@ -78,6 +79,11 @@ public class Settings {
             final double secondTrigger = getRightClimbValue();
             return firstTrigger>secondTrigger?firstTrigger:-secondTrigger;
         }
+
+        public boolean climberTriggered(){
+            return getGreatestTriggerValue() !=0 || moveClimbUpTrigger.getAsBoolean();
+        }
         public double deadband = 0.1;
+        public double moveClimberUpPercent = -0.2; // must be negative
     }
 }

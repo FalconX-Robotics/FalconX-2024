@@ -300,7 +300,7 @@ public final LEDs m_leds = new LEDs();
     m_drivetrain.setDefaultCommand(m_curvatureDrive);
     // m_climber.setDefaultCommand(
     //   new Climb(m_climber, -.5)
-      // .until(()->{return m_leftClimbLimitSwitch.getAsBoolean() || m_rightClimbLimitSwitch.getAsBoolean();})
+    //   .until(()->{return m_leftClimbLimitSwitch.getAsBoolean() || m_rightClimbLimitSwitch.getAsBoolean();})
       // .andThen(new ClimbIndividual(
       //   m_climber,
       //   Math.abs(m_settings.noteSettings.getGreatestTriggerValue()),
@@ -309,14 +309,19 @@ public final LEDs m_leds = new LEDs();
     // );
 
     // Trigger activates when a climb trigger is pushed (L2 or R2 in controller terms)
-    // new Trigger(()->{return Math.abs(m_settings.noteSettings.getGreatestTriggerValue()) > 0;}).whileTrue(new TriggerClimb(m_settings, m_climber));
+    new Trigger(m_settings.noteSettings::climberTriggered).whileTrue(new TriggerClimb(m_settings, m_climber));
 
     // Automatically moves the climbers down when the limit switch isnt active
     // new Trigger(()->{return m_leftClimbLimitSwitch.getAsBoolean();}).whileFalse(new ClimbIndividual(m_climber, -.7, Side.LEFT));
     // new Trigger(()->{return m_rightClimbLimitSwitch.getAsBoolean();}).whileFalse(new ClimbIndividual(m_climber, -.7, Side.RIGHT));
   }
 
-  
+  public void autoInit () {
+    Commands.parallel(
+      Commands.run(()->{m_climber.setOneSide(Side.LEFT, .2);}, m_climber).until(()->{return m_climber.climberIsDown(Side.LEFT);}),
+      Commands.run(()->{m_climber.setOneSide(Side.RIGHT, .2);}, m_climber).until(()->{return m_climber.climberIsDown(Side.RIGHT);})
+    ).schedule();;;;
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

@@ -22,8 +22,16 @@ public class TriggerClimb extends Command {
 
   @Override
   public void execute() {
-    m_climber.setOneSide(Side.LEFT, m_settings.noteSettings.getLeftClimbValue());
-    m_climber.setOneSide(Side.RIGHT, m_settings.noteSettings.getRightClimbValue());
+    if(m_settings.noteSettings.moveClimbUpTrigger.getAsBoolean()){
+      m_climber.setSparks(m_settings.noteSettings.moveClimberUpPercent);
+      return;
+    }
+    if(!m_climber.climberIsDown(Side.LEFT)){
+      m_climber.setOneSide(Side.LEFT, m_settings.noteSettings.getLeftClimbValue());
+    }
+    if(!m_climber.climberIsDown(Side.RIGHT)){
+      m_climber.setOneSide(Side.RIGHT, m_settings.noteSettings.getRightClimbValue());
+    }
   }
 
   // Called once the command ends or is interrupted.

@@ -36,12 +36,24 @@ public class Climber extends SubsystemBase{
     }
 
     LimitSwitch m_leftLimitSwitch, m_rightLimitSwitch;
+
+    public boolean climberIsDown (Side side) {
+        switch (side) {
+            case LEFT:
+            return !m_leftLimitSwitch.getAsBoolean();
+            case RIGHT:
+            return !m_rightLimitSwitch.getAsBoolean();
+            default:
+            return false;
+        }
+    }
+
     public Climber(LimitSwitch leftLimitSwitch, LimitSwitch rightLimitSwitch) {
         m_leftLimitSwitch = leftLimitSwitch;
         m_rightLimitSwitch = rightLimitSwitch;
 
         leftClimberSparkMax.setIdleMode(IdleMode.kBrake);
-        leftClimberSparkMax.setInverted(false);
+        leftClimberSparkMax.setInverted(true);
         leftClimberSparkMax.setSmartCurrentLimit(50);
         leftClimberSparkMax.burnFlash();
 
@@ -56,5 +68,7 @@ public class Climber extends SubsystemBase{
     public void periodic() {
         DashboardHelper.putNumber(LogLevel.Info, "Left Climber Position", leftClimberSparkMax.getEncoder().getPosition());
         DashboardHelper.putNumber(LogLevel.Info, "Right Climber Position", rightClimberSparkMax.getEncoder().getPosition());
+        DashboardHelper.putBoolean(LogLevel.Info, "Left Climber Is Down", climberIsDown(Side.LEFT));
+        DashboardHelper.putBoolean(LogLevel.Info, "Right Climber Is Down", climberIsDown(Side.RIGHT));
     }
 }
