@@ -16,10 +16,16 @@ public class ClimbIndividual extends Command {
         m_climber = climber;
         this.volt = volt;
         this.side = side;
+        addRequirements(m_climber);
     }
 
     @Override
     public void execute() {
         m_climber.setOneSide(side, volt);
+    }
+    
+    @Override
+    public void end(boolean interrupted){
+        m_climber.setSparks(0.);
     }
 }

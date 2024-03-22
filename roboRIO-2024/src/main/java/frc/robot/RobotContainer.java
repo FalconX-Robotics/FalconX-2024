@@ -298,14 +298,22 @@ public final LEDs m_leds = new LEDs();
       .withTimeout(1.5));
 
     m_drivetrain.setDefaultCommand(m_curvatureDrive);
-    m_climber.setDefaultCommand(new Climb(m_climber, 0.));
+    // m_climber.setDefaultCommand(
+    //   new Climb(m_climber, -.5)
+      // .until(()->{return m_leftClimbLimitSwitch.getAsBoolean() || m_rightClimbLimitSwitch.getAsBoolean();})
+      // .andThen(new ClimbIndividual(
+      //   m_climber,
+      //   Math.abs(m_settings.noteSettings.getGreatestTriggerValue()),
+      //   m_settings.noteSettings.getGreatestTriggerValue()>0?Side.LEFT:Side.RIGHT)
+      // ).withTimeout(10.)
+    // );
 
     // Trigger activates when a climb trigger is pushed (L2 or R2 in controller terms)
-    new Trigger(()->{return Math.abs(m_settings.noteSettings.getGreatestTriggerValue()) > 0;}).whileTrue(new TriggerClimb(m_settings, m_climber));
+    // new Trigger(()->{return Math.abs(m_settings.noteSettings.getGreatestTriggerValue()) > 0;}).whileTrue(new TriggerClimb(m_settings, m_climber));
 
     // Automatically moves the climbers down when the limit switch isnt active
-    new Trigger(()->{return m_leftClimbLimitSwitch.getAsBoolean();}).whileFalse(new ClimbIndividual(m_climber, .3, Side.LEFT));
-    new Trigger(()->{return m_rightClimbLimitSwitch.getAsBoolean();}).whileFalse(new ClimbIndividual(m_climber, .3, Side.RIGHT));
+    // new Trigger(()->{return m_leftClimbLimitSwitch.getAsBoolean();}).whileFalse(new ClimbIndividual(m_climber, -.7, Side.LEFT));
+    // new Trigger(()->{return m_rightClimbLimitSwitch.getAsBoolean();}).whileFalse(new ClimbIndividual(m_climber, -.7, Side.RIGHT));
   }
 
   

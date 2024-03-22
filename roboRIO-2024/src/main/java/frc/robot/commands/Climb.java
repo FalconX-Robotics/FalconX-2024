@@ -10,10 +10,16 @@ public class Climb extends Command {
     public Climb(Climber climber, double volt) {
         m_climber = climber;
         this.volt = volt;
+        addRequirements(m_climber);
     }
 
     @Override
     public void execute() {
         m_climber.setSparks(volt);
+    }
+
+    @Override
+    public void end(boolean interrupted){
+        m_climber.setSparks(0.);
     }
 }

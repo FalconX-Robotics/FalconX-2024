@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Settings;
+import frc.robot.commands.ClimbIndividual.Side;
 import frc.robot.subsystems.Climber;
 
 public class TriggerClimb extends Command {
@@ -21,7 +22,8 @@ public class TriggerClimb extends Command {
 
   @Override
   public void execute() {
-    m_climber.setSparks(m_settings.noteSettings.getGreatestTriggerValue() * .3);
+    m_climber.setOneSide(Side.LEFT, m_settings.noteSettings.getLeftClimbValue());
+    m_climber.setOneSide(Side.RIGHT, m_settings.noteSettings.getRightClimbValue());
   }
 
   // Called once the command ends or is interrupted.

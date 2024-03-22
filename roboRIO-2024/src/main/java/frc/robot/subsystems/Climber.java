@@ -17,15 +17,19 @@ public class Climber extends SubsystemBase{
     Settings m_settings;
 
     public void setSparks (double volt) {
+        DashboardHelper.putNumber(LogLevel.Debug, "Left Climb set", volt);
+        DashboardHelper.putNumber(LogLevel.Debug, "Right Climb set", volt);
         leftClimberSparkMax.set(volt);
         rightClimberSparkMax.set(volt);
     }
     public void setOneSide (Side side, double volt) {
         switch (side) {
             case LEFT:
+            DashboardHelper.putNumber(LogLevel.Debug, "Left Climb set", volt);
             leftClimberSparkMax.set(volt);
             break;
             case RIGHT:
+            DashboardHelper.putNumber(LogLevel.Debug, "Right Climb set", volt);
             rightClimberSparkMax.set(volt);
             break;
         }

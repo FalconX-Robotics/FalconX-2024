@@ -66,16 +66,16 @@ public class Settings {
         public double getManualArmJoystickValue () {return MathUtil.applyDeadband( 
             m_noteController.getLeftY(), deadband);
         }
-        public double getUpClimbValue () {return MathUtil.applyDeadband( 
+        public double getLeftClimbValue () {return MathUtil.applyDeadband( 
             m_noteController.getLeftTriggerAxis(), deadband);
         }
-        public double getDownClimbValue () {return MathUtil.applyDeadband( 
+        public double getRightClimbValue () {return MathUtil.applyDeadband( 
             m_noteController.getRightTriggerAxis(), deadband);
         }
         /** @return The trigger value of whichever joystick is pushed in more */
         public double getGreatestTriggerValue(){
-            final double firstTrigger = getUpClimbValue();
-            final double secondTrigger = getDownClimbValue();
+            final double firstTrigger = getLeftClimbValue();
+            final double secondTrigger = getRightClimbValue();
             return firstTrigger>secondTrigger?firstTrigger:-secondTrigger;
         }
         public double deadband = 0.1;

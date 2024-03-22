@@ -25,8 +25,8 @@ public final class Constants {
 
   // DIO on the RoboRIO.
   public static class DIOConstants {
-    public static final int LEFT_CLIMB_SWITCH = 0;
-    public static final int RIGHT_CLIMB_SWITCH = 1;
+    public static final int LEFT_CLIMB_SWITCH = 8;
+    public static final int RIGHT_CLIMB_SWITCH = 7;
     public static final int SENSOR_PORT = 9;
   }
 
@@ -78,8 +78,8 @@ public final class Constants {
     public static final int shooterFollower = 13;
     public static final int arm = 20;
     public static final int armFollower = 21;
-    public static final int leftClimber = 30;
-    public static final int rightClimber = 31;
+    public static final int leftClimber = 31;
+    public static final int rightClimber = 30;
   }
 
   public static class VisionConstants {
