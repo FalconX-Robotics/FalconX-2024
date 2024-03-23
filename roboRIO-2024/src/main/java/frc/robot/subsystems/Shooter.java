@@ -62,10 +62,12 @@ public class Shooter extends SubsystemBase {
     shooterLeaderSparkMax.getEncoder().setAverageDepth(4);
     shooterLeaderSparkMax.getEncoder().setMeasurementPeriod(8);
 
+    shooterLeaderSparkMax.setSmartCurrentLimit(50);
     shooterLeaderSparkMax.setIdleMode(IdleMode.kCoast);
     shooterLeaderSparkMax.setInverted(false);
     shooterLeaderSparkMax.burnFlash();
 
+    shooterFollowerSparkMax.setSmartCurrentLimit(50);
     shooterFollowerSparkMax.setIdleMode(IdleMode.kCoast);
     shooterFollowerSparkMax.setInverted(true);
     shooterFollowerSparkMax.burnFlash();

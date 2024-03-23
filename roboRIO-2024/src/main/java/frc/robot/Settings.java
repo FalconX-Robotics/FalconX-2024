@@ -43,8 +43,8 @@ public class Settings {
             return output;
         }
 
-        public Trigger turboModeTrigger   = new JoystickButton(m_driveController, Button.kRightBumper.value);
-        public Trigger turnInPlaceTrigger = new JoystickButton(m_driveController, Button.kLeftBumper.value);
+        public Trigger turboModeTrigger       = new JoystickButton(m_driveController, Button.kRightBumper.value);
+        public Trigger turnInPlaceTrigger     = new JoystickButton(m_driveController, Button.kLeftBumper.value);
         
         public double deadband = 0.05;
         public double normalSpeed = 0.3;
@@ -68,10 +68,10 @@ public class Settings {
             m_noteController.getLeftY(), deadband);
         }
         public double getLeftClimbValue () {return MathUtil.applyDeadband( 
-            m_noteController.getLeftTriggerAxis(), deadband) * .3;
+            m_noteController.getLeftTriggerAxis(), deadband) * moveClimberDownPercent;
         }
         public double getRightClimbValue () {return MathUtil.applyDeadband( 
-            m_noteController.getRightTriggerAxis(), deadband) * .3;
+            m_noteController.getRightTriggerAxis(), deadband) * moveClimberDownPercent;
         }
         /** @return The trigger value of whichever joystick is pushed in more */
         public double getGreatestTriggerValue(){
@@ -81,9 +81,10 @@ public class Settings {
         }
 
         public boolean climberTriggered(){
-            return getGreatestTriggerValue() !=0 || moveClimbUpTrigger.getAsBoolean();
+            return getGreatestTriggerValue() != 0 || moveClimbUpTrigger.getAsBoolean();
         }
         public double deadband = 0.1;
-        public double moveClimberUpPercent = -0.2; // must be negative
+        public double moveClimberUpPercent = -.2; // must be negative
+        public double moveClimberDownPercent = .7;
     }
 }

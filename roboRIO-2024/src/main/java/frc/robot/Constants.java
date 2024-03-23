@@ -13,6 +13,7 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final double shooterSpeedAtSubwoofer = 2750.;
   public static final double SLIP_FACTOR = 1.;
   public static final double KITBOT_WHEEL_DIAMETER = 4. * SLIP_FACTOR;
   public static final double NESSIE_WHEEL_DIAMETER = 6.;
@@ -78,8 +79,8 @@ public final class Constants {
     public static final int shooterFollower = 13;
     public static final int arm = 20;
     public static final int armFollower = 21;
-    public static final int leftClimber = 31;
-    public static final int rightClimber = 30;
+    public static final int leftClimber = 30;
+    public static final int rightClimber = 31;
   }
 
   public static class VisionConstants {

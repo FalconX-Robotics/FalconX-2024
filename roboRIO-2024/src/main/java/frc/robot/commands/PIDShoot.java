@@ -17,8 +17,8 @@ public class PIDShoot extends Command {
   private double RPMin, leniency, initialTimestamp;
 
   /** Creates a new Shoot. */
-  public PIDShoot( Shooter shooter) {
-    this(shooter, 50., 2450.);
+  public PIDShoot(Shooter shooter, double RPMin) {
+    this(shooter, 50., RPMin);
   }
 
   public PIDShoot( Shooter shooter, double leniency, double RPMin) {

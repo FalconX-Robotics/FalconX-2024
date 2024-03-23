@@ -28,6 +28,6 @@ public class LimitSwitch extends SubsystemBase {
     }
     public boolean getAsBoolean() {
         // sensorOnLog.append(!input.get());
-        return !input.get();
+        return input.get();
     }
 }

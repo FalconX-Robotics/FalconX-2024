@@ -119,13 +119,13 @@ public final LEDs m_leds = new LEDs();
   public RobotContainer() {
     
     NamedCommands.registerCommand("Shoot", new ParallelCommandGroup(
-      new PIDShoot(m_shooter),
+      new PIDShoot(m_shooter, Constants.shooterSpeedAtSubwoofer),
       //arm go to 5 degrees
       new ArmGoToGoalRotation(m_arm, Math.toRadians(5.)),
       //run index when shooter is at velocity and arm is at angle
       new RunIndex(m_index, 0.)
         .until(() -> {
-          return m_shooter.velocityIsWithinTarget(2450., 50.)
+          return m_shooter.velocityIsWithinTarget(Constants.shooterSpeedAtSubwoofer, 50.)
           && Math.abs(Math.toDegrees(m_arm.getRotation()) - 5) <= 0.5;}
         )
         .withTimeout(.4)
@@ -139,11 +139,11 @@ public final LEDs m_leds = new LEDs();
     ));
     
     NamedCommands.registerCommand("Shoot Corner", new ParallelCommandGroup(
-      new PIDShoot(m_shooter),
+      new PIDShoot(m_shooter, Constants.shooterSpeedAtSubwoofer),
       new ArmGoToGoalRotation(m_arm, Math.toRadians(8.)),
       new RunIndex(m_index, 0.)
       .until(() -> {
-        return m_shooter.velocityIsWithinTarget(2450., 50.) 
+        return m_shooter.velocityIsWithinTarget(Constants.shooterSpeedAtSubwoofer, 50.) 
         && Math.abs(Math.toDegrees(m_arm.getRotation()) - 8) <= 0.5;}
       )
       .withTimeout(.4)
@@ -226,7 +226,7 @@ public final LEDs m_leds = new LEDs();
       )
     );
     m_settings.noteSettings.shooterChargeTrigger.whileTrue(
-      new PIDShoot(m_shooter)
+      new PIDShoot(m_shooter, Constants.shooterSpeedAtSubwoofer)
       .alongWith(
         new ArmGoToGoalRotation(m_arm, Math.toRadians(5))
       )
@@ -236,8 +236,8 @@ public final LEDs m_leds = new LEDs();
     );
     m_settings.noteSettings.shooterFireTrigger.whileTrue(
       new RunIndex(m_index, 1.)
-      .onlyIf(() -> {return m_shooter.velocityIsWithinTarget(2650., 25.);})
-      .withTimeout(1.5).andThen(new RunIndex(m_index, .5))
+      .onlyIf(() -> {return m_shooter.velocityIsWithinTarget(Constants.shooterSpeedAtSubwoofer, 25.);})
+      .withTimeout(1.5).andThen(new RunIndex(m_index, 1.))
     );
     m_settings.noteSettings.reverseTrigger.whileTrue(
       new RunIndex(m_index, -.5)
@@ -290,8 +290,14 @@ public final LEDs m_leds = new LEDs();
       Commands.run (
         () -> {m_arm.setSparks(m_settings.noteSettings.getManualArmJoystickValue() * .2);},
         m_arm
-        )
-      );
+      ).andThen(
+        Commands.run(() -> {
+          m_arm.setSparks(
+            Math.cos(m_arm.getRotation()) * ArmFeedForwardConstants.gravityGain
+          );
+        }, m_arm)
+      )
+    );
 
     m_settings.noteSettings.ampTrigger.onTrue(new ArmGoToGoalRotation(m_arm, Math.toRadians(95)));
     m_settings.noteSettings.storeTrigger.onTrue(new ArmGoToGoalRotation(m_arm, Math.toRadians(5.))
@@ -317,10 +323,14 @@ public final LEDs m_leds = new LEDs();
   }
 
   public void autoInit () {
-    Commands.parallel(
-      Commands.run(()->{m_climber.setOneSide(Side.LEFT, .2);}, m_climber).until(()->{return m_climber.climberIsDown(Side.LEFT);}),
-      Commands.run(()->{m_climber.setOneSide(Side.RIGHT, .2);}, m_climber).until(()->{return m_climber.climberIsDown(Side.RIGHT);})
-    ).schedule();;;;
+    // Commands.parallel(
+    //   Commands.run(()->{m_climber.setOneSide(Side.LEFT, .2);}, m_climber).until(()->{return m_climber.climberIsDown(Side.LEFT);}),
+    //   Commands.run(()->{m_climber.setOneSide(Side.RIGHT, .2);}, m_climber).until(()->{return m_climber.climberIsDown(Side.RIGHT);})
+    // ).schedule();;;;
+  }
+
+  public void teleopInit() {
+    m_climber.resetEncoder();
   }
 
   /**

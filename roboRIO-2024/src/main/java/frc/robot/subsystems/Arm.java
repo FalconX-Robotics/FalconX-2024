@@ -78,8 +78,8 @@ public class Arm extends SubsystemBase {
 
   public void setSparks (double percentOutput) {
     if(isStored()){
-      SmartDashboard.putNumber("Arm Volt Set", MathUtil.clamp(percentOutput, 0., 1.2) * 12);
-      armSparkMax.set(MathUtil.clamp(percentOutput, 0., 1.2));
+      SmartDashboard.putNumber("Arm Volt Set", MathUtil.clamp(percentOutput, -.5/12, 1.2) * 12);
+      armSparkMax.set(MathUtil.clamp(percentOutput, -.5/12, 1.2));
       return;
     }
     if(isAtMaxExtension()){
@@ -93,8 +93,8 @@ public class Arm extends SubsystemBase {
 
   public void setSparksVoltage(double volt){
     if (isStored()){
-      SmartDashboard.putNumber("Arm Volt Set", MathUtil.clamp(volt, 0., 15.));
-      armSparkMax.setVoltage(MathUtil.clamp(volt, 0., 15.));
+      SmartDashboard.putNumber("Arm Volt Set", MathUtil.clamp(volt, -.5, 15.));
+      armSparkMax.setVoltage(MathUtil.clamp(volt, -.5, 15.));
     }
     if(isAtMaxExtension()){
       // SmartDashboard.putNumber("Arm Volt Set", MathUtil.clamp(volt, -15., -.3));
@@ -139,6 +139,10 @@ public class Arm extends SubsystemBase {
     SmartDashboard.putNumber("Shooter Arm Encoder Velocity", m_armEncoder.getVelocity());
     shooterArmEncoderPositionEntry.append(m_armEncoder.getPosition());
     shooterArmEncoderVelocityEntry.append(m_armEncoder.getVelocity());
+
+    if (getCurrentCommand() == null && m_settings.noteSettings.getManualArmJoystickValue() == 0){
+      setSparksVoltage(Math.cos(getRotation()) * ArmFeedForwardConstants.gravityGain);;
+    }
   }
 
   private SingleJointedArmSim m_armSim = new SingleJointedArmSim(

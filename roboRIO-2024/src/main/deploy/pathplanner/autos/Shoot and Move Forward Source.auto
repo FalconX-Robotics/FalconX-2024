@@ -22,12 +22,6 @@
           "data": {
             "pathName": "Shoot and Move Forward Right"
           }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Intake"
-          }
         }
       ]
     }

@@ -62,6 +62,17 @@ public class Climber extends SubsystemBase{
         // rightClimberSparkMax.follow(climberSparkMax, true);
         rightClimberSparkMax.setSmartCurrentLimit(50);
         rightClimberSparkMax.burnFlash();
+
+        leftClimberSparkMax.getEncoder().setAverageDepth(2);
+        rightClimberSparkMax.getEncoder().setAverageDepth(2);
+
+        leftClimberSparkMax.getEncoder().setMeasurementPeriod(8);
+        rightClimberSparkMax.getEncoder().setMeasurementPeriod(8);
+    }
+
+    public void resetEncoder() {
+        rightClimberSparkMax.getEncoder().setPosition(0.0);
+        leftClimberSparkMax.getEncoder().setPosition(0.0);
     }
 
     @Override
