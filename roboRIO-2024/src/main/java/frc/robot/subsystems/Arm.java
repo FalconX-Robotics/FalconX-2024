@@ -73,7 +73,11 @@ public class Arm extends SubsystemBase {
     return getRotation() <= Math.toRadians(5);
   }
   public boolean isAtMaxExtension(){
-    return getRotation() >= Math.toRadians(120);
+    return getRotation() >= Math.toRadians(105);
+  }
+
+  public boolean isNearTarget(double targetDegrees, double leniency) {
+    return Math.abs(Math.toDegrees(getRotation())-targetDegrees)<leniency;
   }
 
   public void setSparks (double percentOutput) {
@@ -140,9 +144,9 @@ public class Arm extends SubsystemBase {
     shooterArmEncoderPositionEntry.append(m_armEncoder.getPosition());
     shooterArmEncoderVelocityEntry.append(m_armEncoder.getVelocity());
 
-    if (getCurrentCommand() == null && m_settings.noteSettings.getManualArmJoystickValue() == 0){
-      setSparksVoltage(Math.cos(getRotation()) * ArmFeedForwardConstants.gravityGain);;
-    }
+    // if (getCurrentCommand() == null && m_settings.noteSettings.getManualArmJoystickValue() == 0){
+    //   setSparksVoltage(Math.cos(getRotation()) * ArmFeedForwardConstants.gravityGain);;
+    // }
   }
 
   private SingleJointedArmSim m_armSim = new SingleJointedArmSim(

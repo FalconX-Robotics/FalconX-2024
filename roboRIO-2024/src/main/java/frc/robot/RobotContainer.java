@@ -99,7 +99,7 @@ public final LEDs m_leds = new LEDs();
   private final LimitSwitch m_rightClimbLimitSwitch = new LimitSwitch(DIOConstants.RIGHT_CLIMB_SWITCH);
   private final Index m_index = new Index();
   private final Climber m_climber = new Climber(m_leftClimbLimitSwitch, m_rightClimbLimitSwitch);
-  private final Vision m_vision = new Vision(m_leds);
+  // private final Vision m_vision = new Vision(m_leds);
 
   private final TankDrive m_tankDrive = new TankDrive(m_drivetrain, driveController);
   private final ArcadeDrive m_arcadeDrive = new ArcadeDrive(m_drivetrain, m_settings);
@@ -121,7 +121,7 @@ public final LEDs m_leds = new LEDs();
     NamedCommands.registerCommand("Shoot", new ParallelCommandGroup(
       new PIDShoot(m_shooter, Constants.shooterSpeedAtSubwoofer),
       //arm go to 5 degrees
-      new ArmGoToGoalRotation(m_arm, Math.toRadians(5.)),
+      new ArmGoToGoalRotation(m_arm, Math.toRadians(ArmFeedForwardConstants.shootingAngleDegrees)),
       //run index when shooter is at velocity and arm is at angle
       new RunIndex(m_index, 0.)
         .until(() -> {
@@ -228,16 +228,18 @@ public final LEDs m_leds = new LEDs();
     m_settings.noteSettings.shooterChargeTrigger.whileTrue(
       new PIDShoot(m_shooter, Constants.shooterSpeedAtSubwoofer)
       .alongWith(
-        new ArmGoToGoalRotation(m_arm, Math.toRadians(5))
+        new ArmGoToGoalRotation(m_arm, Math.toRadians(ArmFeedForwardConstants.shootingAngleDegrees))
       )
     ).onFalse(
       new ArmGoToGoalRotation(m_arm, 0)
       .withTimeout(.3)
     );
     m_settings.noteSettings.shooterFireTrigger.whileTrue(
-      new RunIndex(m_index, 1.)
-      .onlyIf(() -> {return m_shooter.velocityIsWithinTarget(Constants.shooterSpeedAtSubwoofer, 25.);})
-      .withTimeout(1.5).andThen(new RunIndex(m_index, 1.))
+      new RunIndex(m_index, 0.)
+      .until(() -> {return m_shooter.velocityIsWithinTarget(Constants.shooterSpeedAtSubwoofer, 25.)
+         && m_arm.isNearTarget(ArmFeedForwardConstants.shootingAngleDegrees, 1);})
+      .withTimeout(1.5)
+      .andThen(new RunIndex(m_index, 1.))
     );
     m_settings.noteSettings.reverseTrigger.whileTrue(
       new RunIndex(m_index, -.5)
@@ -245,7 +247,7 @@ public final LEDs m_leds = new LEDs();
     );
     m_settings.noteSettings.shootAmpTrigger.whileTrue(new RunIndex(m_index, .5).alongWith(new SimpleShoot(m_shooter, .6)));
 
-    new Trigger(()->  {return m_sensor.getNoteSensed();}).whileTrue(
+    new Trigger(m_sensor::getNoteSensed).whileTrue(
       Commands.run(()->{
         //m_vision.poseOffsetLedIndicator()
       // Optional<Double> angle = m_vision.getAngleToTarget();
@@ -254,21 +256,21 @@ public final LEDs m_leds = new LEDs();
       // }
       }, m_leds)
     );
-    new Trigger(()->  {return m_sensor.getNoteSensed();}).whileTrue(
-      Commands.run(()->{
-        Optional<Double> angle = m_vision.getAngleToTarget();
-        if (angle.isEmpty()) {
-          DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Target Not Present.");
-          // m_leds.setColor(LEDs.Color.LAVA);
-        } else if (Math.abs(angle.get()) < 5) {
-          DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Aligned.");
-          // m_leds.setColor(m_vision.ledsIsAligned);
-        } else if (Math.abs(angle.get()) > 5) {
-          // m_leds.setColor(LEDs.Color.LAVA);
-          DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Unaligned.");
-        } 
-      })
-    );
+    // new Trigger(()->  {return m_sensor.getNoteSensed();}).whileTrue(
+    //   Commands.run(()->{
+    //     Optional<Double> angle = m_vision.getAngleToTarget();
+    //     if (angle.isEmpty()) {
+    //       DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Target Not Present.");
+    //       // m_leds.setColor(LEDs.Color.LAVA);
+    //     } else if (Math.abs(angle.get()) < 5) {
+    //       DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Aligned.");
+    //       // m_leds.setColor(m_vision.ledsIsAligned);
+    //     } else if (Math.abs(angle.get()) > 5) {
+    //       // m_leds.setColor(LEDs.Color.LAVA);
+    //       DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Unaligned.");
+    //     } 
+    //   })
+    // );
     m_leds.setDefaultCommand(Commands.run(()->{
       var alliance = DriverStation.getAlliance();
           if (alliance.isPresent()) {
@@ -290,12 +292,14 @@ public final LEDs m_leds = new LEDs();
       Commands.run (
         () -> {m_arm.setSparks(m_settings.noteSettings.getManualArmJoystickValue() * .2);},
         m_arm
-      ).andThen(
-        Commands.run(() -> {
-          m_arm.setSparks(
-            Math.cos(m_arm.getRotation()) * ArmFeedForwardConstants.gravityGain
-          );
-        }, m_arm)
+      // ).finallyDo(
+      //   () -> {
+      //     Commands.run(() -> {
+      //       m_arm.setSparksVoltage(
+      //         Math.cos(m_arm.getRotation()) * ArmFeedForwardConstants.gravityGain
+      //       );
+      //     }, m_arm).schedule();;;;
+      //   }
       )
     );
 
@@ -303,6 +307,9 @@ public final LEDs m_leds = new LEDs();
     m_settings.noteSettings.storeTrigger.onTrue(new ArmGoToGoalRotation(m_arm, Math.toRadians(5.))
       .withTimeout(1.5));
 
+    m_arm.setDefaultCommand(
+      Commands.run(()->{m_arm.setSparks(0.);}, m_arm)
+    );
     m_drivetrain.setDefaultCommand(m_curvatureDrive);
     // m_climber.setDefaultCommand(
     //   new Climb(m_climber, -.5)

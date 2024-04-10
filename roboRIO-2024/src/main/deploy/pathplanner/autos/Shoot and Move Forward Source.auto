@@ -18,9 +18,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "deadline",
           "data": {
-            "pathName": "Shoot and Move Forward Right"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Shoot and Move Forward Right"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              }
+            ]
           }
         }
       ]

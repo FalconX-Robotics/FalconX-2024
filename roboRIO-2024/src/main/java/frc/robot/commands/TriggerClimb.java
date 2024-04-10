@@ -28,9 +28,13 @@ public class TriggerClimb extends Command {
     }
     if(!m_climber.climberIsDown(Side.LEFT)){
       m_climber.setOneSide(Side.LEFT, m_settings.noteSettings.getLeftClimbValue());
+    } else {
+      m_climber.setOneSide(Side.LEFT, 0.);
     }
     if(!m_climber.climberIsDown(Side.RIGHT)){
       m_climber.setOneSide(Side.RIGHT, m_settings.noteSettings.getRightClimbValue());
+    } else {
+      m_climber.setOneSide(Side.RIGHT, 0.);
     }
   }
 

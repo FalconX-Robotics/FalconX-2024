@@ -84,7 +84,7 @@ public class Settings {
             return getGreatestTriggerValue() != 0 || moveClimbUpTrigger.getAsBoolean();
         }
         public double deadband = 0.1;
-        public double moveClimberUpPercent = -.2; // must be negative
+        public double moveClimberUpPercent = -.8; // must be negative
         public double moveClimberDownPercent = .7;
     }
 }
