@@ -34,6 +34,7 @@ import frc.robot.commands.RunIndex;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.SimpleShoot;
 import frc.robot.commands.TankDrive;
+import frc.robot.commands.AimArm;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.TriggerClimb;
 import frc.robot.commands.ClimbIndividual.Side;
@@ -99,7 +100,7 @@ public final LEDs m_leds = new LEDs();
   private final LimitSwitch m_rightClimbLimitSwitch = new LimitSwitch(DIOConstants.RIGHT_CLIMB_SWITCH);
   private final Index m_index = new Index();
   private final Climber m_climber = new Climber(m_leftClimbLimitSwitch, m_rightClimbLimitSwitch);
-  // private final Vision m_vision = new Vision(m_leds);
+  private final Vision m_vision = new Vision(m_leds);
 
   private final TankDrive m_tankDrive = new TankDrive(m_drivetrain, driveController);
   private final ArcadeDrive m_arcadeDrive = new ArcadeDrive(m_drivetrain, m_settings);
@@ -117,7 +118,7 @@ public final LEDs m_leds = new LEDs();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    
+    // Named commands are commands for use in PathPlanner -w
     NamedCommands.registerCommand("Shoot", new ParallelCommandGroup(
       new PIDShoot(m_shooter, Constants.shooterSpeedAtSubwoofer),
       //arm go to 5 degrees
@@ -246,6 +247,7 @@ public final LEDs m_leds = new LEDs();
       .alongWith(new RunIntake(m_intake, 1.))
     );
     m_settings.noteSettings.shootAmpTrigger.whileTrue(new RunIndex(m_index, .5).alongWith(new SimpleShoot(m_shooter, .6)));
+    m_settings.driveSettings.autoAimTrigger.whileTrue(new AimArm(m_arm, m_vision));
 
     new Trigger(m_sensor::getNoteSensed).whileTrue(
       Commands.run(()->{

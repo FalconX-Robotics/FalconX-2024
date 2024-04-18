@@ -26,6 +26,8 @@ public class Settings {
 
     /** Configurations for controller centered around drivetrain repositioning */
     public class DriveSettings {
+        public Trigger autoAimTrigger         = new JoystickButton(m_driveController, Button.kY.value);
+
         public double getSpeedJoystickValue () { 
             double output = -m_driveController.getLeftY();
             output = MathUtil.applyDeadband(
