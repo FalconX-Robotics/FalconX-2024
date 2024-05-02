@@ -19,6 +19,7 @@ public class LEDs extends SubsystemBase{
 
     private Spark LEDs = new Spark(Constants.LED_PORT);
     private Color color = Color.PURPLE;
+    private int colorIndex = 0;
 
     public LEDs() {
         for (Color color : Color.values()) {
@@ -34,11 +35,20 @@ public class LEDs extends SubsystemBase{
     public void periodic() {
         // LEDs.set(color.getValue());
         // LEDs.set(colorChooser.getSelected().colorToSpeed());
-        LEDs.set(this.color.colorToSpeed());
+        LEDs.set(Color.values()[colorIndex].colorToSpeed());
     }
 
     public void setColor(Color color) {
         this.color = color;
+    }
+
+    public void incrementIndex() {
+        colorIndex++;
+        colorIndex = colorIndex % (Color.values().length - 1);
+    }
+    public void decrementIndex() {
+        // colorIndex--;
+        // colorIndex = colorIndex % (Color.values().length - 1);
     }
 
     public static enum Color {

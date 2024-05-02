@@ -88,7 +88,7 @@ public class RobotContainer {
   private final XboxController driveController = new XboxController(OperatorConstants.kDriverControllerPort);
   private final XboxController noteController = new XboxController(OperatorConstants.kShooterControllerPort);
 
-public final LEDs m_leds = new LEDs();
+  public final LEDs m_leds = new LEDs();
   private final Settings m_settings = new Settings(driveController, noteController);
 
   private final Drivetrain m_drivetrain = new Drivetrain(m_settings);
@@ -236,18 +236,20 @@ public final LEDs m_leds = new LEDs();
       .withTimeout(.3)
     );
     m_settings.noteSettings.shooterFireTrigger.whileTrue(
-      new RunIndex(m_index, 0.)
-      .until(() -> {return m_shooter.velocityIsWithinTarget(Constants.shooterSpeedAtSubwoofer, 25.)
-         && m_arm.isNearTarget(ArmFeedForwardConstants.shootingAngleDegrees, 1);})
-      .withTimeout(1.5)
-      .andThen(new RunIndex(m_index, 1.))
+      // new RunIndex(m_index, 0.)
+      // .until(() -> {return m_shooter.velocityIsWithinTarget(Constants.shooterSpeedAtSubwoofer, 25.)
+      //    && m_arm.isNearTarget(ArmFeedForwardConstants.shootingAngleDegrees, 1);})
+      // .withTimeout(1.5)
+      // .andThen(
+        new RunIndex(m_index, 1.)
+        // )
     );
     m_settings.noteSettings.reverseTrigger.whileTrue(
       new RunIndex(m_index, -.5)
       .alongWith(new RunIntake(m_intake, 1.))
     );
     m_settings.noteSettings.shootAmpTrigger.whileTrue(new RunIndex(m_index, .5).alongWith(new SimpleShoot(m_shooter, .6)));
-    m_settings.driveSettings.autoAimTrigger.whileTrue(new AimArm(m_arm, m_vision));
+    // m_settings.driveSettings.autoAimTrigger.whileTrue(new AimArm(m_arm, m_vision));
 
     new Trigger(m_sensor::getNoteSensed).whileTrue(
       Commands.run(()->{
@@ -274,25 +276,26 @@ public final LEDs m_leds = new LEDs();
     //   })
     // );
     m_leds.setDefaultCommand(Commands.run(()->{
-      var alliance = DriverStation.getAlliance();
-          if (alliance.isPresent()) {
-            if (alliance.get() == DriverStation.Alliance.Red) {
-              m_leds.setColor(Color.RED);
-            } else if (alliance.get() == DriverStation.Alliance.Blue){
-              m_leds.setColor(Color.BLUE);
-            } else {
-              m_leds.setColor(Color.PURPLE);
-            }
-          } else {
-            m_leds.setColor(Color.PURPLE);
-          }
+      // var alliance = DriverStation.getAlliance();
+      //     if (alliance.isPresent()) {
+      //       if (alliance.get() == DriverStation.Alliance.Red) {
+      //         m_leds.setColor(Color.RED);
+      //       } else if (alliance.get() == DriverStation.Alliance.Blue){
+      //         m_leds.setColor(Color.BLUE);
+      //       } else {
+      //         m_leds.setColor(Color.PURPLE);
+      //       }
+      //     } else {
+      //       m_leds.setColor(Color.PURPLE);
+      //     }
+      m_leds.setColor(Color.PURPLE);
     }, m_leds));
 
     m_settings.noteSettings.resetArmEncoderTrigger.onTrue(new ResetArmEncoder(m_arm));
 
     new Trigger (() -> {return m_arm.armJoystickActive();}).whileTrue(
       Commands.run (
-        () -> {m_arm.setSparks(m_settings.noteSettings.getManualArmJoystickValue() * .2);},
+        () -> {m_arm.setSparks(m_settings.noteSettings.getManualArmJoystickValue() * .1);},
         m_arm
       // ).finallyDo(
       //   () -> {
@@ -305,9 +308,11 @@ public final LEDs m_leds = new LEDs();
       )
     );
 
-    m_settings.noteSettings.ampTrigger.onTrue(new ArmGoToGoalRotation(m_arm, Math.toRadians(95)));
-    m_settings.noteSettings.storeTrigger.onTrue(new ArmGoToGoalRotation(m_arm, Math.toRadians(5.))
-      .withTimeout(1.5));
+    // m_settings.noteSettings.ampTrigger.onTrue(new ArmGoToGoalRotation(m_arm, Math.toRadians(95)));
+        m_settings.noteSettings.ampTrigger.onTrue(Commands.run(m_leds::incrementIndex, m_leds));
+        m_settings.noteSettings.storeTrigger.onTrue(Commands.run(m_leds::decrementIndex, m_leds));
+    // m_settings.noteSettings.storeTrigger.onTrue(new ArmGoToGoalRotation(m_arm, Math.toRadians(5.))
+    //   .withTimeout(1.5));
 
     m_arm.setDefaultCommand(
       Commands.run(()->{m_arm.setSparks(0.);}, m_arm)
@@ -324,7 +329,7 @@ public final LEDs m_leds = new LEDs();
     // );
 
     // Trigger activates when a climb trigger is pushed (L2 or R2 in controller terms)
-    new Trigger(m_settings.noteSettings::climberTriggered).whileTrue(new TriggerClimb(m_settings, m_climber));
+    // new Trigger(m_settings.noteSettings::climberTriggered).whileTrue(new TriggerClimb(m_settings, m_climber));
 
     // Automatically moves the climbers down when the limit switch isnt active
     // new Trigger(()->{return m_leftClimbLimitSwitch.getAsBoolean();}).whileFalse(new ClimbIndividual(m_climber, -.7, Side.LEFT));
@@ -348,7 +353,7 @@ public final LEDs m_leds = new LEDs();
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
+    return null;
   }
 
   public LogLevel getSelectedLogLevel(){

@@ -49,8 +49,8 @@ public class Settings {
         public Trigger turnInPlaceTrigger     = new JoystickButton(m_driveController, Button.kLeftBumper.value);
         
         public double deadband = 0.05;
-        public double normalSpeed = 0.3;
-        public double turboSpeed = 1.;
+        public double normalSpeed = 0.2;
+        public double turboSpeed = normalSpeed;
     }
     /** Configurations for controller centered around note manipulation */
     public class NoteSettings { 

@@ -21,11 +21,11 @@ public class PIDShoot extends Command {
     this(shooter, 50., RPMin);
   }
 
-  public PIDShoot( Shooter shooter, double leniency, double RPMin) {
+  public PIDShoot(Shooter shooter, double leniency, double RPMin) {
     this(shooter, 0.001, 0, 0.0001, 0, 0.000178, -1, 1, RPMin);
   }
 
-  public PIDShoot ( Shooter shooter, double kP, double kI, double kD, double kIz, double kFF, double kMinOutput, double kMaxOutput, double RPMin) {
+  public PIDShoot (Shooter shooter, double kP, double kI, double kD, double kIz, double kFF, double kMinOutput, double kMaxOutput, double RPMin) {
     m_shooter = shooter;
     m_pidController = m_shooter.getShooterPidController();
     addRequirements(shooter);
