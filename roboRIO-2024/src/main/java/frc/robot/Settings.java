@@ -62,8 +62,12 @@ public class Settings {
         public Trigger ampTrigger             = new JoystickButton(m_noteController, Button.kStart.value);
         public Trigger storeTrigger           = new JoystickButton(m_noteController, Button.kBack.value);
         public Trigger resetArmEncoderTrigger = new JoystickButton(m_noteController, Button.kLeftStick.value);
-        public Trigger autoAimTrigger         = new JoystickButton(m_noteController, Button.kLeftStick.value);
+        // public Trigger autoAimTrigger         = new JoystickButton(m_noteController, Button.kLeftStick.value);
+        public Trigger autoAimTrigger = new Trigger(() -> {return m_noteController.getPOV() == 180;});
 
+        public boolean povIsActive () {
+            return m_noteController.getPOV() == -1;
+        }
         public double getManualArmJoystickValue () {return MathUtil.applyDeadband( 
             m_noteController.getLeftY(), deadband);
         }

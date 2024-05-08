@@ -115,7 +115,7 @@ public class RobotContainer {
     // DashboardHelper.putNumber(DashboardHelper.LogLevel.Info, "PV Angle", m_vision.getAngleToTarget().orElse(0.));
     // m_vision.getAngleToTarget();
     // SmartDashboard.putNumber("PV Angle", m_vision.getAngleToTarget().orElse(0.));
-    DashboardHelper.putString(LogLevel.Debug, "Arm Command", m_arm.getCurrentCommand() == null?"No Command":"Command Running");
+    DashboardHelper.putString(LogLevel.Debug, "Arm Command", m_arm.getCurrentCommand() == null?"No Command":m_arm.getCurrentCommand().getName());
   }
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -247,9 +247,17 @@ public class RobotContainer {
       .alongWith(new RunIntake(m_intake, 1.))
     );
     m_settings.noteSettings.shootAmpTrigger.whileTrue(new RunIndex(m_index, .5).alongWith(new SimpleShoot(m_shooter, .6)));
+    
     m_settings.noteSettings.autoAimTrigger.whileTrue(new AimArm(m_arm, m_vision));
+    // m_settings.noteSettings.autoAimTrigger.whileTrue(
+    //   Commands.run(()->{
+    //     m_leds.setColor(Color.YELLOW);
+    //   },
+    //   m_arm, m_vision, m_leds)
+    //   .until(m_settings.noteSettings::povIsActive)
+    // );
 
-    new Trigger(()->  {return m_sensor.getNoteSensed();}).whileTrue(
+    new Trigger(m_sensor::getNoteSensed).whileTrue(
       Commands.run(()->{
         //m_vision.poseOffsetLedIndicator()
       // Optional<Double> angle = m_vision.getAngleToTarget();
@@ -294,8 +302,8 @@ public class RobotContainer {
       Commands.run (
         () -> {m_arm.setSparks(m_settings.noteSettings.getManualArmJoystickValue() * .2);},
         m_arm
-        )
-      );
+      )
+    );
 
     m_settings.noteSettings.ampTrigger.onTrue(new ArmGoToGoalRotation(m_arm, Math.toRadians(95)));
     m_settings.noteSettings.storeTrigger.onTrue(new ArmGoToGoalRotation(m_arm, Math.toRadians(5.))

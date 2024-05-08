@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.swing.text.html.Option;
+
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -14,6 +16,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.DashboardHelper;
@@ -108,6 +111,13 @@ public class Vision extends SubsystemBase {
         return Optional.empty();
     }
    
-
+    @Override
+    public void periodic () {
+        DashboardHelper.putString(LogLevel.Info, "angle to speaker", 
+            getAngleToSpeaker().equals(Optional.empty())
+            ? "No Angle Present"
+            : getAngleToSpeaker().get().toString()
+        );
+    }
     
 }
