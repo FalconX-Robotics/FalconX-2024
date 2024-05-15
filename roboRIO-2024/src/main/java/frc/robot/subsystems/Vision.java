@@ -41,13 +41,13 @@ public class Vision extends SubsystemBase {
 
         for (PhotonTrackedTarget target : targets) {
             if (target.getFiducialId() == 4 || target.getFiducialId() == 7) {
-                DashboardHelper.putNumber(LogLevel.Debug, "ambiguity" + target.getFiducialId(), target.getPoseAmbiguity());
-                if (target.getPoseAmbiguity() < 0.1) {
+                if (target.getPoseAmbiguity() < 0.2) {
                     DashboardHelper.putNumber(LogLevel.Debug, "yaw", target.getYaw());
                     DashboardHelper.putBoolean(LogLevel.Debug, "tag detected", true);
+                    target.getAlternateCameraToTarget();
                     return Optional.of(Math.atan(Units.Inches.toBaseUnits(target.getBestCameraToTarget().getY()+15)
                     /(Units.Inches.toBaseUnits(target.getBestCameraToTarget().getZ())-15))
-);
+                    );
                 }
             }
             DashboardHelper.putBoolean(LogLevel.Debug, "tag detected", false);
@@ -61,17 +61,14 @@ public class Vision extends SubsystemBase {
     public Optional<Double> getAngleToTarget() {
 
         var result = m_camera.getLatestResult();
-
         List<PhotonTrackedTarget> targets = result.getTargets();
 
         for (PhotonTrackedTarget target : targets) {
             if (target.getFiducialId() == 4 || target.getFiducialId() == 7) {
-                DashboardHelper.putNumber(LogLevel.Debug, "ambiguity" + target.getFiducialId(), target.getPoseAmbiguity());
-                if (target.getPoseAmbiguity() < 0.1) {
+                // if (target.getPoseAmbiguity() < 0.1) {
                     DashboardHelper.putNumber(LogLevel.Debug, "yaw", target.getYaw());
-                    DashboardHelper.putBoolean(LogLevel.Debug, "tag detected", true);
                     return Optional.of(target.getPitch());
-                }
+                // }
             }
             DashboardHelper.putBoolean(LogLevel.Debug, "tag detected", false);
             return Optional.empty();
@@ -104,20 +101,41 @@ public class Vision extends SubsystemBase {
         List<PhotonTrackedTarget> targets = result.getTargets();
         double distance;
         if(!targets.isEmpty() && pitch.isPresent()) {
-            distance = 63 / Math.tan(pitch.get());
+            distance = 63 / Math.toDegrees(Math.tan(Math.toRadians(pitch.get())));
 
             return Optional.of(distance);
         } 
         return Optional.empty();
     }
-   
+
+    private boolean noTarget() {
+        var result = m_camera.getLatestResult();
+        List<PhotonTrackedTarget> targets = result.getTargets();
+        return targets.isEmpty();
+    }
+
     @Override
     public void periodic () {
-        DashboardHelper.putString(LogLevel.Info, "angle to speaker", 
-            getAngleToSpeaker().equals(Optional.empty())
-            ? "No Angle Present"
-            : getAngleToSpeaker().get().toString()
-        );
+        
+        var result = m_camera.getLatestResult();
+        List<PhotonTrackedTarget> targets = result.getTargets();
+        if (noTarget()) {
+            DashboardHelper.putString(LogLevel.Info, "angle to speaker", "No Angle Present");
+            DashboardHelper.putString(LogLevel.Info, "distance to target", "No Distnance Present");
+        }else{
+            DashboardHelper.putString(LogLevel.Info, "angle to speaker", getAngleToSpeaker().toString());
+            DashboardHelper.putString(LogLevel.Info, "distance to target", getDistanceToTarget().toString());
+        }
+
+        DashboardHelper.putBoolean(LogLevel.Debug, "tag detected", !noTarget());
+
+        for (PhotonTrackedTarget target : targets) {
+            DashboardHelper.putNumber(LogLevel.Debug, "ambiguity: " + target.getFiducialId(), target.getPoseAmbiguity());
+        }
     }
     
+    //TODO: yk
+    // public Optional<Double> getXMeters() {
+    //     return m_camera.getLatestResult().getTargets().
+    // }
 }
