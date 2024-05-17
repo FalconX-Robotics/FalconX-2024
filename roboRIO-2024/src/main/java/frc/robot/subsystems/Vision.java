@@ -58,25 +58,25 @@ public class Vision extends SubsystemBase {
     }
 
 
-    public Optional<Double> getAngleToTarget() {
+    // public Optional<Double> getAngleToTarget() {
 
-        var result = m_camera.getLatestResult();
-        List<PhotonTrackedTarget> targets = result.getTargets();
+    //     var result = m_camera.getLatestResult();
+    //     List<PhotonTrackedTarget> targets = result.getTargets();
 
-        for (PhotonTrackedTarget target : targets) {
-            if (target.getFiducialId() == 4 || target.getFiducialId() == 7) {
-                // if (target.getPoseAmbiguity() < 0.1) {
-                    DashboardHelper.putNumber(LogLevel.Debug, "yaw", target.getYaw());
-                    return Optional.of(target.getPitch());
-                // }
-            }
-            DashboardHelper.putBoolean(LogLevel.Debug, "tag detected", false);
-            return Optional.empty();
-        }
+    //     for (PhotonTrackedTarget target : targets) {
+    //         if (target.getFiducialId() == 4 || target.getFiducialId() == 7) {
+    //             // if (target.getPoseAmbiguity() < 0.1) {
+    //                 DashboardHelper.putNumber(LogLevel.Debug, "yaw", target.getYaw());
+    //                 return Optional.of(target.getPitch());
+    //             // }
+    //         }
+    //         DashboardHelper.putBoolean(LogLevel.Debug, "tag detected", false);
+    //         return Optional.empty();
+    //     }
 
-        return Optional.empty(); 
+    //     return Optional.empty(); 
 
-    }/*double angle = Math.atan(Units.Inches.toBaseUnits(target.getBestCameraToTarget().getY())
+    /*double angle = Math.atan(Units.Inches.toBaseUnits(target.getBestCameraToTarget().getY())
                                            /(Units.Inches.toBaseUnits(target.getBestCameraToTarget().getZ()+15)));
                      */
 
@@ -95,19 +95,6 @@ public class Vision extends SubsystemBase {
 
     }
 
-    public Optional<Double> getDistanceToTarget() {
-        var result = m_camera.getLatestResult();
-        Optional<Double> pitch = getAngleToTarget();
-        List<PhotonTrackedTarget> targets = result.getTargets();
-        double distance;
-        if(!targets.isEmpty() && pitch.isPresent()) {
-            distance = 63 / Math.toDegrees(Math.tan(Math.toRadians(pitch.get())));
-
-            return Optional.of(distance);
-        } 
-        return Optional.empty();
-    }
-
     private boolean noTarget() {
         var result = m_camera.getLatestResult();
         List<PhotonTrackedTarget> targets = result.getTargets();
@@ -124,7 +111,7 @@ public class Vision extends SubsystemBase {
             DashboardHelper.putString(LogLevel.Info, "distance to target", "No Distnance Present");
         }else{
             DashboardHelper.putString(LogLevel.Info, "angle to speaker", getAngleToSpeaker().toString());
-            DashboardHelper.putString(LogLevel.Info, "distance to target", getDistanceToTarget().toString());
+            DashboardHelper.putString(LogLevel.Info, "distance to target", getDistanceToTargetMeters().toString());
         }
 
         DashboardHelper.putBoolean(LogLevel.Debug, "tag detected", !noTarget());
@@ -134,8 +121,43 @@ public class Vision extends SubsystemBase {
         }
     }
     
-    //TODO: yk
-    // public Optional<Double> getXMeters() {
-    //     return m_camera.getLatestResult().getTargets().
-    // }
+    public Optional<Double> getXMeters() {
+        var target = m_camera.getLatestResult().getBestTarget();
+        if (target.getFiducialId() == 4 || target.getFiducialId() == 7) {
+            return Optional.of( m_camera.getLatestResult().getBestTarget().getBestCameraToTarget().getX());
+        }
+        return Optional.empty();
+    }
+    
+    public Optional<Double> getYMeters() {
+        var target = m_camera.getLatestResult().getBestTarget();
+        if (target.getFiducialId() == 4 || target.getFiducialId() == 7) {
+            return Optional.of( m_camera.getLatestResult().getBestTarget().getBestCameraToTarget().getY());
+        }
+        return Optional.empty();
+    }
+    
+    public Optional<Double> getZMeters() {
+        var target = m_camera.getLatestResult().getBestTarget();
+        if (target.getFiducialId() == 4 || target.getFiducialId() == 7) {
+            return Optional.of( m_camera.getLatestResult().getBestTarget().getBestCameraToTarget().getZ());
+        }
+        return Optional.empty();
+    }
+
+    public Optional<Double> getDistanceToTargetMeters() {
+        Optional<Double> x = getXMeters(), y = getYMeters(), z = getZMeters();
+        if (x.isEmpty() || y.isEmpty() || z.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(Math.sqrt(Math.pow(x.get(), 2) + Math.pow(y.get(), 2) + Math.pow(z.get(), 2)));
+    }
+
+    public Optional<Double> getAngleToTarget() {
+        Optional<Double> x = getXMeters(), y = getYMeters(), z = getZMeters();
+        if (x.isEmpty() || y.isEmpty() || z.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(Math.toDegrees(Math.atan(getYMeters().get()/getXMeters().get())));
+    }
 }
