@@ -38,15 +38,21 @@ public class Settings {
             double output = -m_driveController.getRightX();
             output = MathUtil.applyDeadband(
                 output, deadband
-            );
-            output = curveInput(output);
-            return output;
-        }
+                );
+                output = curveInput(output);
+                return output;
+            }
+            
+            public boolean povIsActive () {
+                return m_driveController.getPOV() == -1;
+            }
+            // public Trigger autoAimTrigger = new Trigger(() -> {return m_driveController.getPOV() == 180;});
+            public Trigger autoAimTrigger = new JoystickButton(m_driveController, Button.kY.value);
 
-        public Trigger turboModeTrigger   = new JoystickButton(m_driveController, Button.kRightBumper.value);
-        public Trigger turnInPlaceTrigger = new JoystickButton(m_driveController, Button.kLeftBumper.value);
-        
-        public double deadband = 0.05;
+            public Trigger turboModeTrigger   = new JoystickButton(m_driveController, Button.kRightBumper.value);
+            public Trigger turnInPlaceTrigger = new JoystickButton(m_driveController, Button.kLeftBumper.value);
+            
+            public double deadband = 0.05;
         public double normalSpeed = 0.3;
         public double turboSpeed = 1.;
     }
@@ -63,11 +69,7 @@ public class Settings {
         public Trigger storeTrigger           = new JoystickButton(m_noteController, Button.kBack.value);
         public Trigger resetArmEncoderTrigger = new JoystickButton(m_noteController, Button.kLeftStick.value);
         // public Trigger autoAimTrigger         = new JoystickButton(m_noteController, Button.kLeftStick.value);
-        public Trigger autoAimTrigger = new Trigger(() -> {return m_noteController.getPOV() == 180;});
-
-        public boolean povIsActive () {
-            return m_noteController.getPOV() == -1;
-        }
+        
         public double getManualArmJoystickValue () {return MathUtil.applyDeadband( 
             m_noteController.getLeftY(), deadband);
         }

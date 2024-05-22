@@ -248,7 +248,7 @@ public class RobotContainer {
     );
     m_settings.noteSettings.shootAmpTrigger.whileTrue(new RunIndex(m_index, .5).alongWith(new SimpleShoot(m_shooter, .6)));
     
-    m_settings.noteSettings.autoAimTrigger.whileTrue(new AimArm(m_arm, m_vision));
+    m_settings.driveSettings.autoAimTrigger.whileTrue(new AimArm(m_arm, m_vision));
     // m_settings.noteSettings.autoAimTrigger.whileTrue(
     //   Commands.run(()->{
     //     m_leds.setColor(Color.YELLOW);

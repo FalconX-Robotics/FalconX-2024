@@ -1,0 +1,37 @@
+package frc.robot.simulation;
+
+import org.opencv.core.Mat.Tuple2;
+
+import edu.wpi.first.math.util.Units;
+import frc.robot.DashboardHelper;
+import frc.robot.DashboardHelper.LogLevel;
+
+public class TrajectorySim {
+public static final double speakerHeight = Units.inchesToMeters(80.5); // meters
+    public static final double g = 9.8; // acceleration due to gravity m/s^2
+
+    //meters
+    public static double getAngle(double x, double y) {
+        double vy; // Y-Velocity on shoot
+        double vx; // X-Velocity on shoot
+        double tyMax; // Time it takes for note to reach peak
+
+        vy = Math.sqrt((speakerHeight - y)*2*g);
+        tyMax = vy/g;
+        vx = x/tyMax;
+        DashboardHelper.putNumber(LogLevel.Debug, "vx", vx);
+        DashboardHelper.putNumber(LogLevel.Debug, "vy", vy);
+        return Math.atan(vy/vx);
+    } //radians
+
+    public static double getVelocity(double x, double y) {
+        double vy;
+        double vx;
+        double tyMax;
+
+        vy = Math.sqrt((speakerHeight - y)*2*g);
+        tyMax = vy/g;
+        vx = -x/tyMax;
+        return Math.sqrt(Math.pow(vy, 2) + Math.pow(vx, 2));
+    }
+}

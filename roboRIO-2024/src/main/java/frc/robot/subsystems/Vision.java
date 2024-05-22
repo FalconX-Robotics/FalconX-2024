@@ -111,6 +111,9 @@ public class Vision extends SubsystemBase {
             DashboardHelper.putString(LogLevel.Info, "distance to target", "No Distnance Present");
         }else{
             DashboardHelper.putString(LogLevel.Info, "angle to speaker", getAngleToSpeaker().toString());
+            DashboardHelper.putNumber(LogLevel.Debug, "X meters to target", getXMeters().get());
+            DashboardHelper.putNumber(LogLevel.Debug, "Y meters to target", getYMeters().get());
+            DashboardHelper.putNumber(LogLevel.Debug, "Z meters to target", getZMeters().get());
             DashboardHelper.putString(LogLevel.Info, "distance to target", getDistanceToTargetMeters().toString());
         }
 
