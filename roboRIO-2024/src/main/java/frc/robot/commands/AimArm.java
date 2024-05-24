@@ -38,12 +38,13 @@ public class AimArm extends Command{
                         + Math.pow(m_vision.getZMeters().get(), 2)),
                     0.5)
                 );
+                DashboardHelper.putNumber(LogLevel.Debug, "shooting angle after calcs", m_arm.targetAngleToArmAngle(angle.get()));
+                CommandScheduler.getInstance().schedule(new ArmGoToGoalRotation(m_arm, m_arm.targetAngleToArmAngle(angle.get())));
             } else {angle = Optional.empty();}
             //get angle
 
         // angle = m_vision.getAngleToSpeaker();
-        DashboardHelper.putNumber(LogLevel.Debug, "shooting angle after calcs", m_arm.targetAngleToArmAngle(angle.get()));
-        CommandScheduler.getInstance().schedule(new ArmGoToGoalRotation(m_arm, m_arm.targetAngleToArmAngle(angle.get())));
+        
         
         // CommandScheduler.getInstance().schedule(/);
     }
@@ -51,8 +52,12 @@ public class AimArm extends Command{
 
     @Override
     public void execute() {
-        DashboardHelper.putBoolean(LogLevel.Debug, "has target angle", angle.isPresent());
-        DashboardHelper.putNumber(LogLevel.Debug, "target angle", angle.get());
+        if (!m_vision.getXMeters().isEmpty() &&
+            !m_vision.getYMeters().isEmpty() &&
+            !m_vision.getZMeters().isEmpty()) {
+            DashboardHelper.putBoolean(LogLevel.Debug, "has target angle", angle.isPresent());
+            DashboardHelper.putNumber(LogLevel.Debug, "target angle", angle.get());
+        }
         //Pose2d start, List<Translation2d> interiorWaypoints, Pose2d end, TrajectoryConfig config)
         
     }

@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.DashboardHelper.LogLevel;
 import frc.robot.commands.ArmGoToGoalRotation;
+import frc.robot.commands.AutoShoot;
 import frc.robot.commands.CurvatureDrive;
 import frc.robot.commands.PIDShoot;
 import frc.robot.commands.PathfindToPose;
@@ -122,7 +123,7 @@ public class RobotContainer {
   public RobotContainer() {
     
     NamedCommands.registerCommand("Shoot", new ParallelCommandGroup(
-      new PIDShoot(m_shooter),
+      new PIDShoot(m_shooter, m_index),
       //arm go to 5 degrees
       new ArmGoToGoalRotation(m_arm, Math.toRadians(5.)),
       //run index when shooter is at velocity and arm is at angle
@@ -142,7 +143,7 @@ public class RobotContainer {
     ));
     
     NamedCommands.registerCommand("Shoot Corner", new ParallelCommandGroup(
-      new PIDShoot(m_shooter),
+      new PIDShoot(m_shooter, m_index),
       new ArmGoToGoalRotation(m_arm, Math.toRadians(8.)),
       new RunIndex(m_index, 0.)
       .until(() -> {
@@ -229,7 +230,7 @@ public class RobotContainer {
       )
     );
     m_settings.noteSettings.shooterChargeTrigger.whileTrue(
-      new PIDShoot(m_shooter)
+      new PIDShoot(m_shooter, m_index)
       .alongWith(
         new ArmGoToGoalRotation(m_arm, Math.toRadians(5))
       )
@@ -249,6 +250,7 @@ public class RobotContainer {
     m_settings.noteSettings.shootAmpTrigger.whileTrue(new RunIndex(m_index, .5).alongWith(new SimpleShoot(m_shooter, .6)));
     
     m_settings.driveSettings.autoAimTrigger.whileTrue(new AimArm(m_arm, m_vision));
+    m_settings.driveSettings.autoShootTrigger.whileTrue(new AutoShoot(m_shooter, m_vision, m_index));
     // m_settings.noteSettings.autoAimTrigger.whileTrue(
     //   Commands.run(()->{
     //     m_leds.setColor(Color.YELLOW);
@@ -268,17 +270,21 @@ public class RobotContainer {
     );
     new Trigger(()->  {return m_sensor.getNoteSensed();}).whileTrue(
       Commands.run(()->{
-        Optional<Double> angle = m_vision.getAngleToTarget();
-        if (angle.isEmpty()) {
-          DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Target Not Present.");
-          // m_leds.setColor(LEDs.Color.LAVA);
-        } else if (Math.abs(angle.get()) < 5) {
-          DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Aligned.");
-          // m_leds.setColor(m_vision.ledsIsAligned);
-        } else if (Math.abs(angle.get()) > 5) {
-          // m_leds.setColor(LEDs.Color.LAVA);
-          DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Unaligned.");
-        } 
+        if (!m_vision.getXMeters().isEmpty() &&
+        !m_vision.getYMeters().isEmpty() &&
+        !m_vision.getZMeters().isEmpty())
+        {  Optional<Double> angle = m_vision.getAngleToTarget();
+          if (angle.isEmpty()) {
+            DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Target Not Present.");
+            // m_leds.setColor(LEDs.Color.LAVA);
+          } else if (Math.abs(angle.get()) < 5) {
+            DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Aligned.");
+            // m_leds.setColor(m_vision.ledsIsAligned);
+          } else if (Math.abs(angle.get()) > 5) {
+            // m_leds.setColor(LEDs.Color.LAVA);
+            DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Unaligned.");
+          } 
+        }
       })
     );
     m_leds.setDefaultCommand(Commands.run(()->{
@@ -288,6 +294,7 @@ public class RobotContainer {
               m_leds.setColor(Color.RED);
             } else if (alliance.get() == DriverStation.Alliance.Blue){
               m_leds.setColor(Color.BLUE);
+
             } else {
               m_leds.setColor(Color.PURPLE);
             }

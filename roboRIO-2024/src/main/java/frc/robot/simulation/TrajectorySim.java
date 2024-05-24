@@ -34,4 +34,13 @@ public static final double speakerHeight = Units.inchesToMeters(80.5); // meters
         vx = -x/tyMax;
         return Math.sqrt(Math.pow(vy, 2) + Math.pow(vx, 2));
     }
+
+    public static double convertMetersToRPM(double meters) {
+        double wheelDiameter = Units.inchesToMeters(4);
+        double wheelCircumference = wheelDiameter * Math.PI;
+
+        double mpm = meters * 60;
+
+        return mpm / wheelCircumference;
+    }
 }

@@ -110,11 +110,11 @@ public class Vision extends SubsystemBase {
             DashboardHelper.putString(LogLevel.Info, "angle to speaker", "No Angle Present");
             DashboardHelper.putString(LogLevel.Info, "distance to target", "No Distnance Present");
         }else{
-            DashboardHelper.putString(LogLevel.Info, "angle to speaker", getAngleToSpeaker().toString());
-            DashboardHelper.putNumber(LogLevel.Debug, "X meters to target", getXMeters().get());
-            DashboardHelper.putNumber(LogLevel.Debug, "Y meters to target", getYMeters().get());
-            DashboardHelper.putNumber(LogLevel.Debug, "Z meters to target", getZMeters().get());
-            DashboardHelper.putString(LogLevel.Info, "distance to target", getDistanceToTargetMeters().toString());
+            // DashboardHelper.putString(LogLevel.Info, "angle to speaker", getAngleToSpeaker().toString());
+            // DashboardHelper.putNumber(LogLevel.Debug, "X meters to target", getXMeters().get());
+            // DashboardHelper.putNumber(LogLevel.Debug, "Y meters to target", getYMeters().get());
+            // DashboardHelper.putNumber(LogLevel.Debug, "Z meters to target", getZMeters().get());
+            // DashboardHelper.putString(LogLevel.Info, "distance to target", getDistanceToTargetMeters().toString());
         }
 
         DashboardHelper.putBoolean(LogLevel.Debug, "tag detected", !noTarget());
@@ -126,24 +126,30 @@ public class Vision extends SubsystemBase {
     
     public Optional<Double> getXMeters() {
         var target = m_camera.getLatestResult().getBestTarget();
-        if (target.getFiducialId() == 4 || target.getFiducialId() == 7) {
-            return Optional.of( m_camera.getLatestResult().getBestTarget().getBestCameraToTarget().getX());
+        if (m_camera.getLatestResult().hasTargets()){
+            if (target.getFiducialId() == 4 || target.getFiducialId() == 7) {
+                return Optional.of( m_camera.getLatestResult().getBestTarget().getBestCameraToTarget().getX());
+            }
         }
         return Optional.empty();
     }
     
     public Optional<Double> getYMeters() {
         var target = m_camera.getLatestResult().getBestTarget();
-        if (target.getFiducialId() == 4 || target.getFiducialId() == 7) {
-            return Optional.of( m_camera.getLatestResult().getBestTarget().getBestCameraToTarget().getY());
+        if (m_camera.getLatestResult().hasTargets()){
+            if (target.getFiducialId() == 4 || target.getFiducialId() == 7) {
+                return Optional.of( m_camera.getLatestResult().getBestTarget().getBestCameraToTarget().getY());
+            }
         }
         return Optional.empty();
     }
     
     public Optional<Double> getZMeters() {
         var target = m_camera.getLatestResult().getBestTarget();
-        if (target.getFiducialId() == 4 || target.getFiducialId() == 7) {
-            return Optional.of( m_camera.getLatestResult().getBestTarget().getBestCameraToTarget().getZ());
+        if (m_camera.getLatestResult().hasTargets()){
+            if (target.getFiducialId() == 4 || target.getFiducialId() == 7) {
+                return Optional.of( m_camera.getLatestResult().getBestTarget().getBestCameraToTarget().getZ());
+            }
         }
         return Optional.empty();
     }

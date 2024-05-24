@@ -48,6 +48,7 @@ public class Settings {
             }
             // public Trigger autoAimTrigger = new Trigger(() -> {return m_driveController.getPOV() == 180;});
             public Trigger autoAimTrigger = new JoystickButton(m_driveController, Button.kY.value);
+            public Trigger autoShootTrigger = new JoystickButton(m_driveController, Button.kB.value);
 
             public Trigger turboModeTrigger   = new JoystickButton(m_driveController, Button.kRightBumper.value);
             public Trigger turnInPlaceTrigger = new JoystickButton(m_driveController, Button.kLeftBumper.value);

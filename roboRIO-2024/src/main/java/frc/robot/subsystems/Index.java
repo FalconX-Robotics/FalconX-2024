@@ -14,6 +14,7 @@ public class Index extends SubsystemBase {
   CANSparkMax indexSparkMax = new CANSparkMax(MotorConstants.index, MotorType.kBrushless);
   /** Creates a new Index. */
   public Index() {
+    setName("index");
     indexSparkMax.setInverted(false); // change later if necessary
   }
 
