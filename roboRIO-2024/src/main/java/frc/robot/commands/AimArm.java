@@ -2,6 +2,8 @@ package frc.robot.commands;
 
 import java.util.Optional;
 
+import com.ctre.phoenix6.mechanisms.DifferentialMechanism.DisabledReason;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -20,6 +22,7 @@ public class AimArm extends Command{
     Arm m_arm;
     Vision m_vision;
     private double shotHeight = 0.5; // meters
+    Command moveArmCommand;
 
     public AimArm(Arm arm, Vision vision) {
         m_arm = arm;
@@ -29,18 +32,27 @@ public class AimArm extends Command{
 
     @Override
     public void initialize() {
-        if (!m_vision.getXMeters().isEmpty() &&
-            !m_vision.getYMeters().isEmpty() &&
-            !m_vision.getZMeters().isEmpty()) {
-                angle = Optional.of(TrajectorySim.getAngle(
-                    Math.sqrt(
-                        Math.pow(m_vision.getXMeters().get(), 2)
-                        + Math.pow(m_vision.getZMeters().get(), 2)),
-                    0.5)
-                );
-                DashboardHelper.putNumber(LogLevel.Debug, "shooting angle after calcs", m_arm.targetAngleToArmAngle(angle.get()));
-                CommandScheduler.getInstance().schedule(new ArmGoToGoalRotation(m_arm, m_arm.targetAngleToArmAngle(angle.get())));
-            } else {angle = Optional.empty();}
+        // i cleaned up this code so that it doesn't hurt my eyes when i look at it
+        // - sam madsen
+
+        boolean isXMetersEmpty = m_vision.getXMeters().isEmpty();
+        boolean isYMetersEmpty = m_vision.getYMeters().isEmpty();
+        boolean isZMetersEmpty = m_vision.getZMeters().isEmpty();
+
+        boolean condition = (!isXMetersEmpty) && (!isYMetersEmpty) && (!isZMetersEmpty);
+
+        if (condition) {
+            double metersX = m_vision.getXMeters().get();
+            double metersY = m_vision.getYMeters().get();
+            double distance = Math.sqrt( Math.pow(metersX, 2) + Math.pow(metersY, 2) );
+
+            angle = Optional.of( TrajectorySim.getAngle( distance, 0.5) );
+            double calculatedAngle = m_arm.targetAngleToArmAngle( angle.get() );
+
+            DashboardHelper.putNumber( LogLevel.Debug, "Calculated Shooting Angle", calculatedAngle );
+            moveArmCommand = new ArmGoToGoalRotation( m_arm, calculatedAngle ).withTimeout(1.5) ;
+            CommandScheduler.getInstance().schedule(moveArmCommand);
+        } else angle = Optional.empty();
             //get angle
 
         // angle = m_vision.getAngleToSpeaker();
@@ -52,11 +64,14 @@ public class AimArm extends Command{
 
     @Override
     public void execute() {
-        if (!m_vision.getXMeters().isEmpty() &&
-            !m_vision.getYMeters().isEmpty() &&
-            !m_vision.getZMeters().isEmpty()) {
-            DashboardHelper.putBoolean(LogLevel.Debug, "has target angle", angle.isPresent());
-            DashboardHelper.putNumber(LogLevel.Debug, "target angle", angle.get());
+        boolean isXMetersEmpty = m_vision.getXMeters().isEmpty();
+        boolean isYMetersEmpty = m_vision.getYMeters().isEmpty();
+        boolean isZMetersEmpty = m_vision.getZMeters().isEmpty();
+
+        boolean condition = (!isXMetersEmpty) && (!isYMetersEmpty) && (!isZMetersEmpty);
+        if (condition) {
+            DashboardHelper.putBoolean( LogLevel.Debug, "Has Target Angle", angle.isPresent() );
+            DashboardHelper.putNumber( LogLevel.Debug, "Target Angle", angle.get() );
         }
         //Pose2d start, List<Translation2d> interiorWaypoints, Pose2d end, TrajectoryConfig config)
         
@@ -64,7 +79,15 @@ public class AimArm extends Command{
 
     @Override
     public boolean isFinished() {
-        if (angle.isEmpty()) return true;
-        return !(Math.abs(m_arm.getRotation() - angle.get()) < 1); //true if angle is within 1 degree
+        if ( angle.isEmpty() ) return true;
+
+        double arm_rotation = m_arm.getRotation();
+        return !( Math.abs( arm_rotation - angle.get() ) < 1 ); // true if angle is within 1 degree
+    }
+    
+    @Override
+    public void end(boolean interrupted) {
+        moveArmCommand.cancel();
+        CommandScheduler.getInstance().schedule(new ArmGoToGoalRotation(m_arm, 0.5).withTimeout(0.8));
     }
 }

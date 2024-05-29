@@ -128,7 +128,7 @@ public class Vision extends SubsystemBase {
         var target = m_camera.getLatestResult().getBestTarget();
         if (m_camera.getLatestResult().hasTargets()){
             if (target.getFiducialId() == 4 || target.getFiducialId() == 7) {
-                return Optional.of( m_camera.getLatestResult().getBestTarget().getBestCameraToTarget().getX());
+                return Optional.of(m_camera.getLatestResult().getBestTarget().getBestCameraToTarget().getX());
             }
         }
         return Optional.empty();

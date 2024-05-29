@@ -11,6 +11,7 @@ public class AutoShoot extends Command{
     Shooter m_shooter;
     Vision m_vision;
     Index m_index;
+    Command pidShootCommand;
 
     public AutoShoot(Shooter shooter, Vision camera, Index index) {
         m_shooter = shooter;
@@ -18,19 +19,19 @@ public class AutoShoot extends Command{
         m_vision = camera;
 
         addRequirements(m_shooter, m_index);
-    }
+    }boolean finished = false;
 
     @Override
     public void initialize() {
         if ((!m_vision.getXMeters().isEmpty() &&
              !m_vision.getYMeters().isEmpty() &&
              !m_vision.getZMeters().isEmpty())) {
-            CommandScheduler.getInstance().schedule(
-                new PIDShoot(m_shooter, m_index, 50, TrajectorySim.convertMetersToRPM( TrajectorySim.getVelocity(Math.sqrt(
+                
+                pidShootCommand = new PIDShoot(m_shooter, m_index, 50, TrajectorySim.convertMetersToRPM( TrajectorySim.getVelocity(Math.sqrt(
                 Math.pow(m_vision.getXMeters().get(), 2)
                 + Math.pow(m_vision.getZMeters().get(), 2)),
-            0.5)))
-            );
+            0.5))).withTimeout(1.5);
+            CommandScheduler.getInstance().schedule(pidShootCommand);
         }
     }
 /*
@@ -43,5 +44,11 @@ public class AutoShoot extends Command{
     @Override
     public boolean isFinished() {
         return true;
+    }
+    @Override
+    public void end (boolean interrupted) {
+        pidShootCommand.cancel();
+        m_shooter.setShooterSparks(0.);
+        m_index.setIndexMotor(0.);
     }
 }

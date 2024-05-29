@@ -117,6 +117,7 @@ public class RobotContainer {
     // m_vision.getAngleToTarget();
     // SmartDashboard.putNumber("PV Angle", m_vision.getAngleToTarget().orElse(0.));
     DashboardHelper.putString(LogLevel.Debug, "Arm Command", m_arm.getCurrentCommand() == null?"No Command":m_arm.getCurrentCommand().getName());
+    DashboardHelper.putString(LogLevel.Debug, "Shooter Command", m_shooter.getCurrentCommand() == null?"No Command":m_shooter.getCurrentCommand().getName());
   }
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -250,7 +251,7 @@ public class RobotContainer {
     m_settings.noteSettings.shootAmpTrigger.whileTrue(new RunIndex(m_index, .5).alongWith(new SimpleShoot(m_shooter, .6)));
     
     m_settings.driveSettings.autoAimTrigger.whileTrue(new AimArm(m_arm, m_vision));
-    m_settings.driveSettings.autoShootTrigger.whileTrue(new AutoShoot(m_shooter, m_vision, m_index));
+    m_settings.driveSettings.autoShootTrigger.whileTrue(new AutoShoot(m_shooter, m_vision, m_index).withTimeout(1.5));
     // m_settings.noteSettings.autoAimTrigger.whileTrue(
     //   Commands.run(()->{
     //     m_leds.setColor(Color.YELLOW);
