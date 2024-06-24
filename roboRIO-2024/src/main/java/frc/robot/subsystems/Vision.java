@@ -24,6 +24,11 @@ import frc.robot.DashboardHelper.LogLevel;
 
 public class Vision extends SubsystemBase {
 
+    // X - Forward (Normal to plane)
+    // Y - Right
+    // Z - Up
+    // Origin at center of tag
+
     LEDs m_leds;
     public Vision(LEDs leds) {
         m_leds = leds;
@@ -59,7 +64,10 @@ public class Vision extends SubsystemBase {
 
 
     // public Optional<Double> getAngleToTarget() {
+    // public Optional<Double> getAngleToTarget() {
 
+    //     var result = m_camera.getLatestResult();
+    //     List<PhotonTrackedTarget> targets = result.getTargets();
     //     var result = m_camera.getLatestResult();
     //     List<PhotonTrackedTarget> targets = result.getTargets();
 
@@ -73,9 +81,21 @@ public class Vision extends SubsystemBase {
     //         DashboardHelper.putBoolean(LogLevel.Debug, "tag detected", false);
     //         return Optional.empty();
     //     }
+    //     for (PhotonTrackedTarget target : targets) {
+    //         if (target.getFiducialId() == 4 || target.getFiducialId() == 7) {
+    //             // if (target.getPoseAmbiguity() < 0.1) {
+    //                 DashboardHelper.putNumber(LogLevel.Debug, "yaw", target.getYaw());
+    //                 return Optional.of(target.getPitch());
+    //             // }
+    //         }
+    //         DashboardHelper.putBoolean(LogLevel.Debug, "tag detected", false);
+    //         return Optional.empty();
+    //     }
 
     //     return Optional.empty(); 
+    //     return Optional.empty(); 
 
+    /*double angle = Math.atan(Units.Inches.toBaseUnits(target.getBestCameraToTarget().getY())
     /*double angle = Math.atan(Units.Inches.toBaseUnits(target.getBestCameraToTarget().getY())
                                            /(Units.Inches.toBaseUnits(target.getBestCameraToTarget().getZ()+15)));
                      */
@@ -115,6 +135,8 @@ public class Vision extends SubsystemBase {
             // DashboardHelper.putNumber(LogLevel.Debug, "Y meters to target", getYMeters().get());
             // DashboardHelper.putNumber(LogLevel.Debug, "Z meters to target", getZMeters().get());
             // DashboardHelper.putString(LogLevel.Info, "distance to target", getDistanceToTargetMeters().toString());
+            DashboardHelper.putString(LogLevel.Info, "angle to speaker", getAngleToSpeaker().toString());
+            DashboardHelper.putString(LogLevel.Info, "distance to target", getDistanceToTargetMeters().toString());
         }
 
         DashboardHelper.putBoolean(LogLevel.Debug, "tag detected", !noTarget());
@@ -125,31 +147,36 @@ public class Vision extends SubsystemBase {
     }
     
     public Optional<Double> getXMeters() {
-        var target = m_camera.getLatestResult().getBestTarget();
-        if (m_camera.getLatestResult().hasTargets()){
-            if (target.getFiducialId() == 4 || target.getFiducialId() == 7) {
-                return Optional.of(m_camera.getLatestResult().getBestTarget().getBestCameraToTarget().getX());
-            }
+        if (hasCorrectTargets()){
+            return Optional.of(m_camera.getLatestResult().getBestTarget().getBestCameraToTarget().getX());
         }
         return Optional.empty();
     }
     
     public Optional<Double> getYMeters() {
-        var target = m_camera.getLatestResult().getBestTarget();
-        if (m_camera.getLatestResult().hasTargets()){
-            if (target.getFiducialId() == 4 || target.getFiducialId() == 7) {
-                return Optional.of( m_camera.getLatestResult().getBestTarget().getBestCameraToTarget().getY());
-            }
+        if (hasCorrectTargets()){
+            return Optional.of( m_camera.getLatestResult().getBestTarget().getBestCameraToTarget().getY());
         }
         return Optional.empty();
     }
     
     public Optional<Double> getZMeters() {
-        var target = m_camera.getLatestResult().getBestTarget();
-        if (m_camera.getLatestResult().hasTargets()){
-            if (target.getFiducialId() == 4 || target.getFiducialId() == 7) {
-                return Optional.of( m_camera.getLatestResult().getBestTarget().getBestCameraToTarget().getZ());
-            }
+        if (hasCorrectTargets()){
+            return Optional.of( m_camera.getLatestResult().getBestTarget().getBestCameraToTarget().getZ());
+        }
+        return Optional.empty();
+    }
+
+    public Optional<Double> getYaw() {
+        if (hasCorrectTargets()){
+            return Optional.of( m_camera.getLatestResult().getBestTarget().getYaw());            
+        }
+        return Optional.empty();
+    }
+
+    public Optional<Double> getPitch() {
+        if (hasCorrectTargets()){
+            return Optional.of( m_camera.getLatestResult().getBestTarget().getPitch());            
         }
         return Optional.empty();
     }
@@ -168,5 +195,15 @@ public class Vision extends SubsystemBase {
             return Optional.empty();
         }
         return Optional.of(Math.toDegrees(Math.atan(getYMeters().get()/getXMeters().get())));
+    }
+
+    public boolean hasCorrectTargets() {
+        var target = m_camera.getLatestResult().getBestTarget();
+        if (m_camera.getLatestResult().hasTargets()){
+            if (target.getFiducialId() == 4 || target.getFiducialId() == 7) {
+                return true;
+            }
+        }
+        return false;
     }
 }

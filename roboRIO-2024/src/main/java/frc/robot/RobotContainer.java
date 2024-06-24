@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.DashboardHelper.LogLevel;
 import frc.robot.commands.ArmGoToGoalRotation;
+import frc.robot.commands.AutoRotate;
 import frc.robot.commands.AutoShoot;
 import frc.robot.commands.CurvatureDrive;
 import frc.robot.commands.PIDShoot;
@@ -241,7 +242,7 @@ public class RobotContainer {
     );
     m_settings.noteSettings.shooterFireTrigger.whileTrue(
       new RunIndex(m_index, 1.)
-      .onlyIf(() -> {return m_shooter.velocityIsWithinTarget(2650., 25.);})
+      .onlyIf(() -> {return m_shooter.velocityIsWithinTarget(1000., 25.);})
       .withTimeout(1.5).andThen(new RunIndex(m_index, .5))
     );
     m_settings.noteSettings.reverseTrigger.whileTrue(
@@ -252,6 +253,7 @@ public class RobotContainer {
     
     m_settings.driveSettings.autoAimTrigger.whileTrue(new AimArm(m_arm, m_vision));
     m_settings.driveSettings.autoShootTrigger.whileTrue(new AutoShoot(m_shooter, m_vision, m_index).withTimeout(1.5));
+    m_settings.driveSettings.autoRotateTrigger.whileTrue(new AutoRotate(m_drivetrain, m_vision));
     // m_settings.noteSettings.autoAimTrigger.whileTrue(
     //   Commands.run(()->{
     //     m_leds.setColor(Color.YELLOW);
