@@ -180,4 +180,8 @@ public class Arm extends SubsystemBase {
     armEncoderSim.setSimulationPosition(m_armSim.getAngleRads());
     armEncoderSim.setSimulationVelocity(m_armSim.getVelocityRadPerSec());
   }
+
+  public double targetAngleToArmAngle(double targetAngle) {
+    return Math.toRadians(50) - targetAngle;
+  }
 }

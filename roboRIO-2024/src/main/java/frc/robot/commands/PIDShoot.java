@@ -9,24 +9,30 @@ import com.revrobotics.SparkPIDController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.Index;
 import frc.robot.subsystems.Shooter;
 
 public class PIDShoot extends Command {
+  private Index m_index;
   private Shooter m_shooter;
   private SparkPIDController m_pidController;
   private double RPMin, leniency, initialTimestamp;
 
   /** Creates a new Shoot. */
-  public PIDShoot(Shooter shooter, double RPMin) {
-    this(shooter, 50., RPMin);
+  public PIDShoot(Shooter shooter, Index index) {
+    this(shooter, index, 50., 2450.);
+    SmartDashboard.putString("index", index.getName());
   }
 
-  public PIDShoot( Shooter shooter, double leniency, double RPMin) {
-    this(shooter, 0.001, 0, 0.0001, 0, 0.000178, -1, 1, RPMin);
+  public PIDShoot(Shooter shooter, Index index, double leniency, double RPMin) {
+    this(shooter, index, 0.001, 0, 0.0001, 0, 0.000178, -1, 1, RPMin);
   }
 
-  public PIDShoot ( Shooter shooter, double kP, double kI, double kD, double kIz, double kFF, double kMinOutput, double kMaxOutput, double RPMin) {
+  public PIDShoot (Shooter shooter, Index index, double kP, double kI, double kD, double kIz, double kFF, double kMinOutput, double kMaxOutput, double RPMin) {
     m_shooter = shooter;
+    m_index = index;
+    this.leniency = leniency;
     m_pidController = m_shooter.getShooterPidController();
     addRequirements(shooter);
     setPID(kP, kI, kD, kIz, kFF, kMinOutput, kMaxOutput, RPMin);
@@ -59,8 +65,9 @@ public class PIDShoot extends Command {
   }
 
   public boolean velocityIsInRange () {
-    return (m_shooter.getShooterEncoderVelocity() >= RPMin - leniency
-         && m_shooter.getShooterEncoderVelocity() <= RPMin + leniency);
+    SmartDashboard.putNumber("shooter speed offset", Math.abs(m_shooter.getShooterEncoderVelocity() - RPMin));
+    SmartDashboard.putNumber("shooter speed leniency", leniency);
+    return (Math.abs(m_shooter.getShooterEncoderVelocity() - RPMin) < 50);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -70,12 +77,16 @@ public class PIDShoot extends Command {
     // if (velocityIsInRange()){
     SmartDashboard.putNumber("Target Shooter Speed", RPMin);
     SmartDashboard.putNumber("Actual Shooter Speed", m_shooter.getShooterEncoderVelocity());
-    
+    SmartDashboard.putBoolean("velocity in range", velocityIsInRange());
+    if(velocityIsInRange()) {
+      m_index.setIndexMotor(1);  
+    }
   }
   
   @Override
   public void end (boolean interrupted) {
     m_shooter.setShooterSparks(0.);
+    m_index.setIndexMotor(0.);
     // SmartDashboard.putNumber("Actual Shooter Speed", 0.); // It won't be actual but it'll stop unintended behavior when the command is done and deleted
     // System.out.println("Note firing completed.");
   }
