@@ -38,23 +38,23 @@ public class Settings {
             double output = -m_driveController.getRightX();
             output = MathUtil.applyDeadband(
                 output, deadband
-                );
-                output = curveInput(output);
-                return output;
-            }
+            );
+            output = curveInput(output);
+            return output;
+        }
             
-            public boolean povIsActive () {
-                return m_driveController.getPOV() == -1;
-            }
-            // public Trigger autoAimTrigger = new Trigger(() -> {return m_driveController.getPOV() == 180;});
-            public Trigger autoAimTrigger     = new JoystickButton(m_driveController, Button.kY.value);
-            public Trigger autoShootTrigger   = new JoystickButton(m_driveController, Button.kB.value);
-            public Trigger autoRotateTrigger  = new JoystickButton(m_driveController, Button.kX.value);
+        public boolean povIsActive () {
+            return m_driveController.getPOV() == -1;
+        }
+        // public Trigger autoAimTrigger = new Trigger(() -> {return m_driveController.getPOV() == 180;});
+        public Trigger autoAimTrigger     = new JoystickButton(m_driveController, Button.kY.value);
+        public Trigger autoShootTrigger   = new JoystickButton(m_driveController, Button.kB.value);
+        public Trigger autoRotateTrigger  = new JoystickButton(m_driveController, Button.kX.value);
 
-            public Trigger turboModeTrigger   = new JoystickButton(m_driveController, Button.kRightBumper.value);
-            public Trigger turnInPlaceTrigger = new JoystickButton(m_driveController, Button.kLeftBumper.value);
-            
-            public double deadband = 0.05;
+        public Trigger turboModeTrigger   = new JoystickButton(m_driveController, Button.kRightBumper.value);
+        public Trigger turnInPlaceTrigger = new JoystickButton(m_driveController, Button.kLeftBumper.value);
+        
+        public double deadband = 0.05;
         public double normalSpeed = 0.3;
         public double turboSpeed = 1.;
     }
