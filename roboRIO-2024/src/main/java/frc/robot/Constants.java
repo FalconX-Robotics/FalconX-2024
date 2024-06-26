@@ -20,7 +20,9 @@ public final class Constants {
   public static final double SLIP_FACTOR = 1.;
   public static final double KITBOT_WHEEL_DIAMETER = 4. * SLIP_FACTOR;
   public static final double NESSIE_WHEEL_DIAMETER = 6.;
+
   public static final double ARM_RESTING_ANGLE = 34.82; // 45 works but is not the 'correct' value(34.82).
+  public static final double ARM_ESTIMATED_DISTANCE_TO_CAMERA = 19.; // This shouldn't technically be constant, but the calculations get more annoying very fast otherwise.
 
   //FIX THIS WHEN PIGEON IS ADDED
   public static final int PIGEON_PORT = 42;

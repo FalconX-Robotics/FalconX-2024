@@ -40,15 +40,15 @@ public class AimArm extends Command{
         boolean isYMetersEmpty = m_vision.getYMeters().isEmpty();
         boolean isZMetersEmpty = m_vision.getZMeters().isEmpty();
 
-        boolean condition = (!isXMetersEmpty) && (!isYMetersEmpty) && (!isZMetersEmpty);
+        boolean empty = (!isXMetersEmpty) && (!isYMetersEmpty) && (!isZMetersEmpty);
 
-        if (condition) {
+        if (empty) {
             double metersX = m_vision.getXMeters().get();
             double metersY = m_vision.getYMeters().get();
             double distance = Math.sqrt( Math.pow(metersX, 2) + Math.pow(metersY, 2) );
 
             angle = Optional.of(TrajectorySim.getAngle(metersX, shooterHeight));
-            double calculatedAngle = m_arm.targetAngleToArmAngle(angle.get());
+            double calculatedAngle = m_arm.targetAngleToArmAngle(angle.get(), distance);
 
             DashboardHelper.putNumber( LogLevel.Debug, "Calculated Shooting Angle", calculatedAngle );
             moveArmCommand = new ArmGoToGoalRotation( m_arm, calculatedAngle ).withTimeout(1.5) ;

@@ -72,7 +72,7 @@ public class Settings {
         public Trigger resetArmEncoderTrigger = new JoystickButton(m_noteController, Button.kLeftStick.value);
         public Trigger moveClimbUpTrigger     = new JoystickButton(m_noteController, Button.kLeftBumper.value);
         
-        public Trigger stayInPlaceTrigger     = new Trigger(() -> {return m_noteController.getPOV() == 0;});
+        public Trigger stayInPlaceTrigger     = new Trigger(() -> {return m_noteController.getPOV() == 180;});
 
         // public Trigger autoAimTrigger         = new JoystickButton(m_noteController, Button.kLeftStick.value);
         

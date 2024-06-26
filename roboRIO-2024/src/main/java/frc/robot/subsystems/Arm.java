@@ -12,6 +12,7 @@ import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.BaseUnits;
+import edu.wpi.first.units.UnitBuilder;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
@@ -25,6 +26,7 @@ import frc.robot.Robot;
 import frc.robot.Constants.ArmFeedForwardConstants;
 import frc.robot.Constants.MotorConstants;
 import frc.robot.Constants.RatioConstants;
+import frc.robot.DashboardHelper.LogLevel;
 import frc.robot.simulation.RelativeEncoderSim;
 import frc.robot.Settings;
 
@@ -182,7 +184,25 @@ public class Arm extends SubsystemBase {
     armEncoderSim.setSimulationVelocity(m_armSim.getVelocityRadPerSec());
   }
 
-  public double targetAngleToArmAngle(double targetAngle) {
-    return Math.toRadians(Constants.ARM_RESTING_ANGLE) - targetAngle;
+  /**
+   * The angle to rotate the arm to, translated based on the initial rotation of the arm.
+   * The {@code targetDistance} param is required to account for the distance from the note and camera.
+   * @param targetAngle target angle in radians
+   * @param targetDistance in meters
+   */
+  public double targetAngleToArmAngle(double targetAngle, double targetDistance) {
+    DashboardHelper.putString(LogLevel.Verbose, "angle and distance", "[" + targetAngle + ", " + targetDistance + "]");
+    double angleForCamera = Math.toRadians(Constants.ARM_RESTING_ANGLE) - targetAngle;
+
+    double estimatedDistanceShooterToCamera = Units.Meters.convertFrom(Constants.ARM_ESTIMATED_DISTANCE_TO_CAMERA, Units.Inches);
+    double horizontalDistCameraToTarget = Math.cos(angleForCamera) * targetDistance;
+    double horizontalDistShooterToTarget = estimatedDistanceShooterToCamera + horizontalDistCameraToTarget;
+    double verticalDistCameraToTarget = Math.abs(Math.sin(angleForCamera) * targetDistance);
+    double targetDistanceFromShooter = Math.sqrt(Math.pow(verticalDistCameraToTarget+(2*2.54*.01),2)+Math.pow(horizontalDistShooterToTarget,2));
+    // double targetDistanceFromShooter = 
+    double magicFudgeFactorOfDoomToMakeItAllWork = Math.toRadians(13.5) * (targetDistance/2.6);
+    double answer = Math.acos(horizontalDistShooterToTarget/targetDistanceFromShooter) + magicFudgeFactorOfDoomToMakeItAllWork;
+    DashboardHelper.putNumber(LogLevel.Debug, "target angle to arm angle", answer);
+    return answer;
   }
 }
