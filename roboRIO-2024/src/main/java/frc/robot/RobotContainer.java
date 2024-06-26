@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.DashboardHelper.LogLevel;
 import frc.robot.commands.ArmGoToGoalRotation;
+import frc.robot.commands.ArmStayInPlace;
 import frc.robot.commands.Climb;
 import frc.robot.commands.ClimbIndividual;
 import frc.robot.commands.AutoRotate;
@@ -248,7 +249,8 @@ public final LEDs m_leds = new LEDs();
       .alongWith(new RunIntake(m_intake, 1.))
     );
     m_settings.noteSettings.shootAmpTrigger.whileTrue(new RunIndex(m_index, .5).alongWith(new SimpleShoot(m_shooter, .6)));
-    
+    m_settings.noteSettings.stayInPlaceTrigger.onTrue(new ArmStayInPlace(m_arm));
+
     m_settings.driveSettings.autoAimTrigger.whileTrue(new AimArm(m_arm, m_vision));
     m_settings.driveSettings.autoShootTrigger.whileTrue(new AutoShoot(m_shooter, m_vision, m_index).withTimeout(1.5));
     m_settings.driveSettings.autoRotateTrigger.whileTrue(new AutoRotate(m_drivetrain, m_vision));
@@ -269,12 +271,14 @@ public final LEDs m_leds = new LEDs();
       // }
       }, m_leds)
     );
-    new Trigger(()->  {return m_sensor.getNoteSensed();}).whileTrue(
+    new Trigger(m_sensor::getNoteSensed).whileTrue(
       Commands.run(()->{
-        if (!m_vision.getXMeters().isEmpty() &&
-        !m_vision.getYMeters().isEmpty() &&
-        !m_vision.getZMeters().isEmpty())
-        {  Optional<Double> angle = m_vision.getAngleToTarget();
+        if (
+          !m_vision.getXMeters().isEmpty() &&
+          !m_vision.getYMeters().isEmpty() &&
+          !m_vision.getZMeters().isEmpty()
+        ) {
+          Optional<Double> angle = m_vision.getAngleToTarget();
           if (angle.isEmpty()) {
             DashboardHelper.putString(LogLevel.Info, "Angle alignment to target", "Target Not Present.");
             // m_leds.setColor(LEDs.Color.LAVA);

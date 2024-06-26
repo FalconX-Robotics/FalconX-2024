@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.DashboardHelper;
 import frc.robot.DashboardHelper.LogLevel;
 import frc.robot.simulation.TrajectorySim;
+import frc.robot.commands.ArmStayInPlace;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Vision;
 
@@ -21,7 +22,7 @@ public class AimArm extends Command{
     private Optional<Double> angle;
     Arm m_arm;
     Vision m_vision;
-    private double shotHeight = 0.5; // meters
+    private double shooterHeight = 0.56; // meters
     Command moveArmCommand;
 
     public AimArm(Arm arm, Vision vision) {
@@ -46,8 +47,8 @@ public class AimArm extends Command{
             double metersY = m_vision.getYMeters().get();
             double distance = Math.sqrt( Math.pow(metersX, 2) + Math.pow(metersY, 2) );
 
-            angle = Optional.of( TrajectorySim.getAngle( distance, 0.5) );
-            double calculatedAngle = m_arm.targetAngleToArmAngle( angle.get() );
+            angle = Optional.of(TrajectorySim.getAngle(metersX, shooterHeight));
+            double calculatedAngle = m_arm.targetAngleToArmAngle(angle.get());
 
             DashboardHelper.putNumber( LogLevel.Debug, "Calculated Shooting Angle", calculatedAngle );
             moveArmCommand = new ArmGoToGoalRotation( m_arm, calculatedAngle ).withTimeout(1.5) ;
@@ -88,6 +89,7 @@ public class AimArm extends Command{
     @Override
     public void end(boolean interrupted) {
         moveArmCommand.cancel();
-        CommandScheduler.getInstance().schedule(new ArmGoToGoalRotation(m_arm, 0.5).withTimeout(0.8));
+        CommandScheduler.getInstance().schedule(new ArmStayInPlace(m_arm)); // for debug
+        // CommandScheduler.getInstance().schedule(new ArmGoToGoalRotation(m_arm, Math.toDegrees(0.5)).withTimeout(0.8));
     }
 }

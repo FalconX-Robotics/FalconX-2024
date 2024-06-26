@@ -26,8 +26,6 @@ public class Settings {
 
     /** Configurations for controller centered around drivetrain repositioning */
     public class DriveSettings {
-        public Trigger autoAimTrigger         = new JoystickButton(m_driveController, Button.kY.value);
-
         public double getSpeedJoystickValue () { 
             double output = -m_driveController.getLeftY();
             output = MathUtil.applyDeadband(
@@ -62,8 +60,8 @@ public class Settings {
     }
     /** Configurations for controller centered around note manipulation */
     public class NoteSettings { 
-
-        public Trigger shooterChargeTrigger   = new JoystickButton(m_noteController, Button.kA.value);
+        public Trigger shooterChargeTrigger   = new Trigger(() -> {return false;});
+        // = new JoystickButton(m_noteController, Button.kA.value);
         public Trigger shooterFireTrigger     = new JoystickButton(m_noteController, Button.kX.value);
         public Trigger intakeTrigger          = new JoystickButton(m_noteController, Button.kB.value);
         public Trigger shootAmpTrigger        = new JoystickButton(m_noteController, Button.kY.value);
@@ -73,6 +71,8 @@ public class Settings {
         public Trigger storeTrigger           = new JoystickButton(m_noteController, Button.kBack.value);
         public Trigger resetArmEncoderTrigger = new JoystickButton(m_noteController, Button.kLeftStick.value);
         public Trigger moveClimbUpTrigger     = new JoystickButton(m_noteController, Button.kLeftBumper.value);
+        
+        public Trigger stayInPlaceTrigger     = new Trigger(() -> {return m_noteController.getPOV() == 0;});
 
         // public Trigger autoAimTrigger         = new JoystickButton(m_noteController, Button.kLeftStick.value);
         

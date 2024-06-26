@@ -20,6 +20,7 @@ public final class Constants {
   public static final double SLIP_FACTOR = 1.;
   public static final double KITBOT_WHEEL_DIAMETER = 4. * SLIP_FACTOR;
   public static final double NESSIE_WHEEL_DIAMETER = 6.;
+  public static final double ARM_RESTING_ANGLE = 34.82; // 45 works but is not the 'correct' value(34.82).
 
   //FIX THIS WHEN PIGEON IS ADDED
   public static final int PIGEON_PORT = 42;
@@ -48,7 +49,7 @@ public final class Constants {
   public static class ArmFeedForwardConstants {
     public static final double shootingAngleDegrees = 5.;
     public static final double maxVelocity = 100;
-    public static final double maxAcceleration = 4.;
+    public static final double maxAcceleration = 1.;
 
     /** In radians, the offset of the arm */
     public static final double offset = Math.toRadians(25);

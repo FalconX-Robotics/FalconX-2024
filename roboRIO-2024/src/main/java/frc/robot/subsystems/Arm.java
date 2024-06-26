@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.DashboardHelper;
 import frc.robot.Robot;
 import frc.robot.Constants.ArmFeedForwardConstants;
@@ -182,6 +183,6 @@ public class Arm extends SubsystemBase {
   }
 
   public double targetAngleToArmAngle(double targetAngle) {
-    return Math.toRadians(50) - targetAngle;
+    return Math.toRadians(Constants.ARM_RESTING_ANGLE) - targetAngle;
   }
 }

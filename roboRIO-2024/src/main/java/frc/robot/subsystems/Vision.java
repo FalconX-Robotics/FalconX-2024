@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.swing.text.html.Option;
-
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -198,6 +196,7 @@ public class Vision extends SubsystemBase {
     }
 
     public boolean hasCorrectTargets() {
+        if (!m_camera.getLatestResult().hasTargets()) {return false;}
         var target = m_camera.getLatestResult().getBestTarget();
         if (m_camera.getLatestResult().hasTargets()){
             if (target.getFiducialId() == 4 || target.getFiducialId() == 7) {
