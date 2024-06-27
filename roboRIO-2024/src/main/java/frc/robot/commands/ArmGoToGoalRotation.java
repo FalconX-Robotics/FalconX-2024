@@ -9,6 +9,7 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.DashboardHelper;
 import frc.robot.Constants.ArmFeedForwardConstants;
 import frc.robot.DashboardHelper.LogLevel;
@@ -25,8 +26,12 @@ public class ArmGoToGoalRotation extends Command {
   Arm m_arm;
   ArmFeedforward armFeedforward;
 
-  /** Creates a new ArmGoToGoalRotation. */
-  public ArmGoToGoalRotation(Arm arm, double goalRotationRad) {
+  public enum EndBehavior {
+    STAY, RETURN_TO_STORE, TURN_OFF
+  }
+  EndBehavior endBehavior;
+
+  public ArmGoToGoalRotation(Arm arm, double goalRotationRad, EndBehavior endBehavior) {
     armFeedforward = new ArmFeedforward(
       ArmFeedForwardConstants.staticGain,
       ArmFeedForwardConstants.gravityGain,
@@ -35,6 +40,13 @@ public class ArmGoToGoalRotation extends Command {
     addRequirements(arm);
     m_arm = arm;
     this.goalRotationRad = goalRotationRad;
+    this.endBehavior = endBehavior;
+  }
+
+
+  /** Creates a new ArmGoToGoalRotation. */
+  public ArmGoToGoalRotation(Arm arm, double goalRotationRad) {
+    this(arm, goalRotationRad, EndBehavior.TURN_OFF);
   }
 
   @Override
@@ -64,6 +76,17 @@ public class ArmGoToGoalRotation extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    switch (endBehavior){
+      case STAY:
+        CommandScheduler.getInstance().schedule(new ArmStayInPlace(m_arm));
+        break;
+      case RETURN_TO_STORE:
+        CommandScheduler.getInstance().schedule(new ArmGoToGoalRotation(m_arm, Math.toDegrees(0.5)));
+      case TURN_OFF:
+      default:
+      m_arm.setSparksVoltage(0);
+    }
+    
     m_arm.setSparksVoltage(0);
   }
 }

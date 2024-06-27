@@ -15,6 +15,7 @@ import frc.robot.DashboardHelper;
 import frc.robot.DashboardHelper.LogLevel;
 import frc.robot.simulation.TrajectorySim;
 import frc.robot.commands.ArmStayInPlace;
+import frc.robot.commands.ArmGoToGoalRotation.EndBehavior;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Vision;
 
@@ -51,7 +52,7 @@ public class AimArm extends Command{
             double calculatedAngle = m_arm.targetAngleToArmAngle(angle.get(), distance);
 
             DashboardHelper.putNumber( LogLevel.Debug, "Calculated Shooting Angle", calculatedAngle );
-            moveArmCommand = new ArmGoToGoalRotation( m_arm, calculatedAngle ).withTimeout(1.5) ;
+            moveArmCommand = new ArmGoToGoalRotation( m_arm, calculatedAngle, EndBehavior.STAY).withTimeout(2.) ;
             CommandScheduler.getInstance().schedule(moveArmCommand);
         } else angle = Optional.empty();
             //get angle
