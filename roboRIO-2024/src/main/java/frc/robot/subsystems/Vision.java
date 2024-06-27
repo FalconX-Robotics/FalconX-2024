@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -33,6 +34,7 @@ public class Vision extends SubsystemBase {
     }
 
     PhotonCamera m_camera = new PhotonCamera("Shelldon");
+    PhotonPipelineResult latestResult;
 
     //public LEDs.Color ledsIsAligned = LEDs.Color.HEARTBEAT_BLUE;
 
@@ -146,35 +148,35 @@ public class Vision extends SubsystemBase {
     
     public Optional<Double> getXMeters() {
         if (hasCorrectTargets()){
-            return Optional.of(m_camera.getLatestResult().getBestTarget().getBestCameraToTarget().getX());
+            return Optional.of(latestResult.getBestTarget().getBestCameraToTarget().getX());
         }
         return Optional.empty();
     }
     
     public Optional<Double> getYMeters() {
         if (hasCorrectTargets()){
-            return Optional.of( m_camera.getLatestResult().getBestTarget().getBestCameraToTarget().getY());
+            return Optional.of( latestResult.getBestTarget().getBestCameraToTarget().getY());
         }
         return Optional.empty();
     }
     
     public Optional<Double> getZMeters() {
         if (hasCorrectTargets()){
-            return Optional.of( m_camera.getLatestResult().getBestTarget().getBestCameraToTarget().getZ());
+            return Optional.of( latestResult.getBestTarget().getBestCameraToTarget().getZ());
         }
         return Optional.empty();
     }
 
     public Optional<Double> getYaw() {
         if (hasCorrectTargets()){
-            return Optional.of( m_camera.getLatestResult().getBestTarget().getYaw());            
+            return Optional.of( latestResult.getBestTarget().getYaw());            
         }
         return Optional.empty();
     }
 
     public Optional<Double> getPitch() {
         if (hasCorrectTargets()){
-            return Optional.of( m_camera.getLatestResult().getBestTarget().getPitch());            
+            return Optional.of( latestResult.getBestTarget().getPitch());            
         }
         return Optional.empty();
     }
@@ -196,10 +198,9 @@ public class Vision extends SubsystemBase {
     }
 
     public boolean hasCorrectTargets() {
-        if (!m_camera.getLatestResult().hasTargets()) {return false;}
-        var target = m_camera.getLatestResult().getBestTarget();
-        if (m_camera.getLatestResult().hasTargets()){
-            if (target.getFiducialId() == 4 || target.getFiducialId() == 7) {
+        latestResult = m_camera.getLatestResult();
+        if (latestResult.hasTargets()){
+            if (latestResult.getBestTarget().getFiducialId() == 4 || latestResult.getBestTarget().getFiducialId() == 7) {
                 return true;
             }
         }

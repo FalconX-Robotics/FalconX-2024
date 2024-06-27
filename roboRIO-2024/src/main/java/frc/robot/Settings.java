@@ -1,5 +1,7 @@
 package frc.robot;
 
+import frc.robot.DPad;
+import frc.robot.DPad.Direction;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
@@ -7,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
  
 public class Settings {
+    private Trigger unbindedTrigger = new Trigger(()->{return false;});
     // Access Controllers
     private XboxController m_driveController,  m_noteController;
     public DriveSettings driveSettings;
@@ -47,8 +50,8 @@ public class Settings {
             return m_driveController.getPOV() == -1;
         }
         // public Trigger autoAimTrigger = new Trigger(() -> {return m_driveController.getPOV() == 180;});
-        public Trigger autoAimTrigger     = new JoystickButton(m_driveController, Button.kY.value);
-        public Trigger autoShootTrigger   = new JoystickButton(m_driveController, Button.kB.value);
+        public Trigger autoAimTrigger     = unbindedTrigger;
+        public Trigger autoShootTrigger   = unbindedTrigger;
         public Trigger autoRotateTrigger  = new JoystickButton(m_driveController, Button.kX.value);
 
         public Trigger turboModeTrigger   = new JoystickButton(m_driveController, Button.kRightBumper.value);
@@ -60,9 +63,10 @@ public class Settings {
     }
     /** Configurations for controller centered around note manipulation */
     public class NoteSettings { 
-        public Trigger shooterChargeTrigger   = new Trigger(() -> {return false;});
-        // = new JoystickButton(m_noteController, Button.kA.value);
-        public Trigger shooterFireTrigger     = new JoystickButton(m_noteController, Button.kX.value);
+        public Trigger shooterChargeTrigger   = unbindedTrigger;
+        public Trigger shooterFireTrigger     = unbindedTrigger;
+        public Trigger autoAimTrigger         = new JoystickButton(m_noteController, Button.kX.value);
+        public Trigger autoShootTrigger       = new JoystickButton(m_noteController, Button.kA.value);
         public Trigger intakeTrigger          = new JoystickButton(m_noteController, Button.kB.value);
         public Trigger shootAmpTrigger        = new JoystickButton(m_noteController, Button.kY.value);
         public Trigger reverseTrigger         = new JoystickButton(m_noteController, Button.kRightBumper.value);
@@ -73,9 +77,10 @@ public class Settings {
         public Trigger moveClimbUpTrigger     = new JoystickButton(m_noteController, Button.kLeftBumper.value);
         
         public Trigger stayInPlaceTrigger     = new Trigger(() -> {return m_noteController.getPOV() == 180;});
+        // public Trigger stayInPlaceTrigger     = new DPad(m_noteController, Direction.UP.getValue());
 
         // public Trigger autoAimTrigger         = new JoystickButton(m_noteController, Button.kLeftStick.value);
-        
+
         public double getManualArmJoystickValue () {return MathUtil.applyDeadband( 
             m_noteController.getLeftY(), deadband);
         }

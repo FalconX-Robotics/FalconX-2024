@@ -26,7 +26,7 @@ public class PIDShoot extends Command {
   }
 
   public PIDShoot(Shooter shooter, Index index, double leniency, double RPMin) {
-    this(shooter, index, 0.001, 0, 0.0001, 0, 0.000178, -1, 1, RPMin);
+    this(shooter, index, 0.003, 0, 0.0001, 0, 0.000178, -1, 1, RPMin);
   }
 
   public PIDShoot (Shooter shooter, Index index, double kP, double kI, double kD, double kIz, double kFF, double kMinOutput, double kMaxOutput, double RPMin) {
@@ -67,7 +67,7 @@ public class PIDShoot extends Command {
   public boolean velocityIsInRange () {
     SmartDashboard.putNumber("shooter speed offset", Math.abs(m_shooter.getShooterEncoderVelocity() - RPMin));
     SmartDashboard.putNumber("shooter speed leniency", leniency);
-    return (Math.abs(m_shooter.getShooterEncoderVelocity() - RPMin) < 50);
+    return (Math.abs(m_shooter.getShooterEncoderVelocity() - RPMin) < leniency);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

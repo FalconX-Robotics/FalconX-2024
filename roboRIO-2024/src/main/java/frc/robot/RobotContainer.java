@@ -251,9 +251,9 @@ public final LEDs m_leds = new LEDs();
     m_settings.noteSettings.shootAmpTrigger.whileTrue(new RunIndex(m_index, .5).alongWith(new SimpleShoot(m_shooter, .6)));
     m_settings.noteSettings.stayInPlaceTrigger.onTrue(new ArmStayInPlace(m_arm));
 
-    m_settings.driveSettings.autoAimTrigger.whileTrue(new AimArm(m_arm, m_vision));
-    m_settings.driveSettings.autoShootTrigger.whileTrue(new AutoShoot(m_shooter, m_vision, m_index, m_arm).withTimeout(1.5));
-    m_settings.driveSettings.autoShootTrigger.onFalse(new ArmGoToGoalRotation(m_arm, Math.toRadians(0.5)));
+    m_settings.noteSettings.autoAimTrigger.whileTrue(new AimArm(m_arm, m_vision));
+    m_settings.noteSettings.autoShootTrigger.whileTrue(new AutoShoot(m_shooter, m_vision, m_index, m_arm).withTimeout(1.5));
+    m_settings.noteSettings.autoShootTrigger.onFalse(new ArmGoToGoalRotation(m_arm, Math.toRadians(0.5)).withTimeout(1.5));
     m_settings.driveSettings.autoRotateTrigger.whileTrue(new AutoRotate(m_drivetrain, m_vision));
     // m_settings.noteSettings.autoAimTrigger.whileTrue(
     //   Commands.run(()->{
