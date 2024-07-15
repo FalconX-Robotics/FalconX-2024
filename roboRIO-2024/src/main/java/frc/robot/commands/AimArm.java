@@ -89,8 +89,9 @@ public class AimArm extends Command{
     
     @Override
     public void end(boolean interrupted) {
-        moveArmCommand.cancel();
-        CommandScheduler.getInstance().schedule(new ArmStayInPlace(m_arm)); // for debug
-        // CommandScheduler.getInstance().schedule(new ArmGoToGoalRotation(m_arm, Math.toDegrees(0.5)).withTimeout(0.8));
-    }
+        if (moveArmCommand != null) {
+            moveArmCommand.cancel();
+        }
+        CommandScheduler.getInstance().schedule(new ArmGoToGoalRotation(m_arm, 0.5).withTimeout(0.8));
+}
 }
